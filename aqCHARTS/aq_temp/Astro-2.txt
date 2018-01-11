@@ -1,0 +1,58 @@
+Astronomical Data
+Julian Date 2457529.835637
+Sidereal Time  0:43:54
+Eo 23.43453
+SA 0.00000
+dE -0.00261
+dF -0.00134
+Universal Date 21.05.2016
+Universal Time  8:03:19
+dT 68.63
+                Long		Lat		R.A.		Dist		A.Spd		M.Spd		Spd %		A.Diam		Inc		Ecc		A
+Earth                                                                                                     					0.00000		0.01669939	1.00000000
+Sun		60.69909	0.00013		3.9032057	1.012180179	0.96152		0.98		97.6		31.6
+Moon		234.60421	4.5		15.5		403729km	12.02		13.17		91.2		29.8		5.15		0.05		0.002
+Mercury(R)	44.39		0		0		0		0		0		0		0		0		0		0
+Venus		56.22526	0		0		0		0		0		0		0		0		0		0
+Mars(R)		0		0		0		0		0		0		0		0		0		0		0
+Jupiter		0		0		0		0		0		0		0		0		0		0		0
+Saturn(R)	0		0		0		0		0		0		0		0		0		0		0
+Uranus		0		0		0		0		0		0		0		0		0		0		0
+Neptune		0		0		0		0		0		0		0		0		0		0		0
+Pluto(R)	0		0		0		0		0		0		0		0		0		0		0
+Node(R)		0		0		0		0		0		0		0		0		0		0		0
+S.Node(R)	0		0		0		0		0		0		0		0		0		0		0
+Lilith		0		0		0		0		0		0		0		0		0		0		0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

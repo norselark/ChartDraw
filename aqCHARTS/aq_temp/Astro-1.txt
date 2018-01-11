@@ -1,0 +1,25 @@
+Sun		0°41'56.18"Gem	0°51'47"	XI
+Moon		0°41'56.18"Sco	0°51'47"	IV
+Mercury		0°41'56.18"Tau	0°51'47"	X
+Venus		0°41'56.18"Tau	0°51'47"	XI
+Mars		0°41'56.18"Sgr	0°51'47"	V
+Jupiter		0°41'56.18"Vir	0°51'47"	III
+Saturn		0°41'56.18"Sgr	0°51'47"	V
+Uranus		0°41'56.18"Ari	0°51'47"	X
+Neptune		0°41'56.18"Psc	0°51'47"	VIII
+Pluto		0°41'56.18"Cap	0°51'47"	VI
+Node		0°41'56.18"Vir	0°51'47"	III
+Lilith		0°41'56.18"Lib	0°51'47"	IV
+
+I	11x15'26.28"Leo
+II	11x15'26.28"Leo
+III	11x15'26.28"Vir
+IV	11x15'26.28"Lib
+V	11x15'26.28"Sco
+VI	11x15'26.28"Cap
+VII	11x15'26.28"Aqr
+VIII	11x15'26.28"Aqr
+IX	11x15'26.28"Psc
+X	11x15'26.28"Ari
+XI	11x15'26.28"Tau
+XII	11x15'26.28"Cnc
