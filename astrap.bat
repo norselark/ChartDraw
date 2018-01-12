@@ -14,7 +14,7 @@ copy CHOICE.MAS choice.sw0 /Y
 dir *. > catdirs.ms
 
 rem rem --menu--here--
-qbasic /run aqTIE.BAS
+bin\qbasic /run aqTIE.BAS
 
 rem erase catdirs.*
 rem erase *.swi -----
