@@ -13,3 +13,5 @@ aqCHARTS/aq_temp/ANGDAT.1.DAT
 aqCHARTS/aq_temp/PDAT.1.DAT
 aqCHARTS/aq_temp/IDENTITY.1.TIE
 .vscode/
+__pycache__/
+bufferdisplay.txt

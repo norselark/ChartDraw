@@ -11,7 +11,6 @@ ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
                'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
 def calczet9(input_line):
-    global ZODIAC_ZET9
     degrees = int(input_line[:2])
     minutes = int(input_line[3:5])
     seconds = float(input_line[6:11])
