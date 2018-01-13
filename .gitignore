@@ -8,3 +8,8 @@ aqCHARTS/aq_temp/IDENTITY.TIE
 aqCHARTS/aq_temp/SWI.SWI
 CATDIRS.MS
 bin/
+switch.1.sw0
+aqCHARTS/aq_temp/ANGDAT.1.DAT
+aqCHARTS/aq_temp/PDAT.1.DAT
+aqCHARTS/aq_temp/IDENTITY.1.TIE
+.vscode/
