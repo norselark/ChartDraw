@@ -511,30 +511,30 @@ PreAspectCalc:
 RETURN
 
 AspectCalc:
- FOR m = 1 TO hp%
- K1% = VAL(LEFT$(w$(0, 0, m), 3))
- U1% = VAL(RIGHT$(w$(0, 0, m), 2))
- FOR y = 1 TO hp%
- :
- K2% = VAL(LEFT$(P$(CH%, y), 3)): '' // <[h%>12 --[?]
- U2% = VAL(RIGHT$(P$(CH%, y), 2))
- :
- IF U2% > U1% THEN K1% = K1% - 1: U1% = U1% + 60
- IF K2% > K1% THEN K1% = K1% + 360
- i% = K1% - K2%
- IF i% > 180 THEN r% = ABS(60 - r%): i% = ABS(360 - (i% + 1))
-   '' // I% = ABS(I%-360) <<-?
-   '' // (c% obs!)* (*i%) <<-?
- Q1$ = STR$(i%)
- Q1$ = MID$(Q1$, 2)
- IF i% < 100 THEN Q1$ = "0" + Q1$
- IF i% < 10 THEN Q1$ = "0" + Q1$
- Q2$ = STR$(r%)
- Q2$ = MID$(Q2$, 2)
- IF r% < 10 THEN Q2$ = "0" + Q2$
- w$(HC%, m, y) = Q1$ + "-" + Q2$
- NEXT y
- NEXT m
+  FOR m = 1 TO hp%
+    K1% = VAL(LEFT$(w$(0, 0, m), 3))
+    U1% = VAL(RIGHT$(w$(0, 0, m), 2))
+    FOR y = 1 TO hp%
+      :
+      K2% = VAL(LEFT$(P$(CH%, y), 3)): '' // <[h%>12 --[?]
+      U2% = VAL(RIGHT$(P$(CH%, y), 2))
+      :
+      IF U2% > U1% THEN K1% = K1% - 1: U1% = U1% + 60
+      IF K2% > K1% THEN K1% = K1% + 360
+      i% = K1% - K2%
+      IF i% > 180 THEN r% = ABS(60 - r%): i% = ABS(360 - (i% + 1))
+        '' // I% = ABS(I%-360) <<-?
+        '' // (c% obs!)* (*i%) <<-?
+      Q1$ = STR$(i%)
+      Q1$ = MID$(Q1$, 2)
+      IF i% < 100 THEN Q1$ = "0" + Q1$
+      IF i% < 10 THEN Q1$ = "0" + Q1$
+      Q2$ = STR$(r%)
+      Q2$ = MID$(Q2$, 2)
+      IF r% < 10 THEN Q2$ = "0" + Q2$
+      w$(HC%, m, y) = Q1$ + "-" + Q2$
+    NEXT y
+  NEXT m
 RETURN
 
 
@@ -661,7 +661,7 @@ CHART:
  LOCATE m% + 13, 68: PRINT "<1> <2> <3>";
  :
  locate (31 + PP%),72:
- IF tt$ = "i" THEN PRINT "[i]"; : GOTO L20020: ' [cfL1636]
+ IF tt$ = "i" THEN PRINT "[i]"; : GOTO L20020: ' [cfL1636] ' second [i]
  IF MI$ = "y" THEN PRINT "[M]"; : GOTO L20020
  IF SU$ = "y" THEN PRINT "[S]";
  IF SU$ <> "y" THEN PRINT "[ ]"; : '' // [=chr$(13)?]--[cf1282]
@@ -672,7 +672,7 @@ if tt$ <> "i" then goto L20030
 xx$ = "": gosub STATUSx: '' // --Firstrun only -[?] -- [xx%="" -[?]
 locate (xloc% + 4), 3: print "Choose Chart variant";
 locate (xloc% + 6), 3: print "<1> <2> <3>";
-locate (32 + PP%), 72: print "[i]";: '' // --REDUN-[?]-[Cf. above]
+locate (32 + PP%), 72: print "[i]";: '' // --REDUN-[?]-[Cf. above] ' third [i]
 
 L20030:
  KK$ = INKEY$: '' // input$()? [blw!:in$=""/i%:cf2170+]

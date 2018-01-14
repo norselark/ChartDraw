@@ -12,20 +12,14 @@ from aq_functions import *
 
 TB = qb_utils.TextBuffer()
 
+NPINT = 10
+HPINT = 11
+PPINT = 13
+
 def waitx():
     """Sub WAITx"""
     pass
 
-def coordinates(p, ch, hp):
-    """Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"""
-    yy = 360 - float(p[ch, hp + 2])
-    yz = yy + 180
-    if yz > 360:
-        yz -= 360
-    zy = 180 - yy
-    if zy < 0:
-        zy += 360
-    return yy, yz, zy
 
 def l1640():
     """Sub L1640"""
@@ -87,7 +81,7 @@ def boxes():
         TB.print('|           |')
     TB.locate(14, 67)
     TB.print('|-----------|')
-    TB.locate(19 + ppINT, 68)
+    TB.locate(19 + PPINT, 68)
     TB.print('           ')
     in_boxes()
 
@@ -159,13 +153,10 @@ if cgSTR == 'N':
 #hp% = NP% + 1: '' // [highest 'planet' no. (w/ Node)] <[+Arab?] <-[Cf. FactorData]]
 #PP% = hp% + 2: '' // [w/ axes (MC&ASC) [Cf. LT%] <[InMainDraw+/PlanetSymbols+]] <-[Cf. FactorData]]
 #YS% = 2:       '' // [3 Quadrant House Syst] <[incl. dim's 0-elem] <-[Equal Houses drawed by default]
-npINT = 10
-hpINT = npINT + 1
-ppINT = hpINT + 2
 ysINT = 2
 
 #DIM w$(1, PP%, PP%): '' // [w$(0,0,m)=transit[laan p$(0,m) <--> asp x,y][PreAspectCalc+]]
-wSTR_ARR = np.empty((2, ppINT + 1, ppINT + 1), dtype=str).astype(object)
+wSTR_ARR = np.empty((2, PPINT + 1, PPINT + 1), dtype=str).astype(object)
 #   '' // [dim w$(2,x,x)]!!
 #   '' // [x,0]? +transitlaan g$="t"::[cf40060 oo%=1->w$(1,..)!][div.0-dim!]
 
@@ -176,9 +167,9 @@ hSTR_ARR = np.empty((2, ysINT + 1, 4), dtype=str).astype(object)
 
 #   '' // [0=cyc?]['advanced'?]
 #DIM N$(2, PP%): '' // (har,planet+axes):(+node/arab!)[(x,0)=f%!]
-nSTR_ARR = np.empty((3, ppINT + 1), dtype=str).astype(object)
+nSTR_ARR = np.empty((3, PPINT + 1), dtype=str).astype(object)
 #DIM P$(2, PP%): '' // [0:g$='p'][1:radix][2:g$='h'/a$='x'](chorder?[FactorData+])
-pSTR_ARR = np.empty((3, ppINT + 1), dtype=str).astype(object)
+pSTR_ARR = np.empty((3, PPINT + 1), dtype=str).astype(object)
 #:               '' // [p$(0,0)<-cf19600,InMainDraw,1632,2200]
 #DIM m$(1, 5): '' // [cf18620]
 mSTR_ARR = np.empty((2, 6), dtype=str).astype(object)
@@ -267,7 +258,6 @@ zINT = 0
 uINT = 1
 vINT = 1
 #'------>
-#a% = 0: '' // ....
 aINT = 0
 #'-----
 #E = 0: '[sub Asp+][float?]
@@ -283,18 +273,9 @@ oaINT = 8
 #LY% = 0:
 lyINT = 0
 #LT% = PP%: '' // [+ + w/ Arab] [lines(scrollmax/screen)]--[t%!?][lx%&lz%?]--[FactorData+,39003,53050+]
-ltINT = ppINT
+ltINT = PPINT
 
-#'' // [e,z,x,d,v] <-(FLOAT?/var%):?: M <-> M% *!!* -> [z-z%-z()] <-[^no!no! z% & z%()^] <- [use dummy z%]? <(if 'z' used)
-#'' // [FREE?]:[L%: <(cf. il%)]
-#'' // [v%,d]:x$[L1800+]?[os$<-opsyst?]
-#'' // [ro%] R%/K1% U1% K2% U2%/q1$ q2$
-# '' // [OBS][!]--[POS 80] '|           | ' ##
-#'--------
-#'{xx$]
-#xx$ = ""
 xxSTR = ''
-#'--------
 
 #locate 3, 58: print "        ";
 TB.locate(3, 58)
@@ -331,7 +312,7 @@ TB.locate(xlocINT + 4, 3)
 TB.print("ASC  / Aries")
 TB.locate(xlocINT + 6, 3)
 TB.print('<CR> / <y>')
-TB.locate(30 + ppINT, 72)
+TB.locate(30 + PPINT, 72)
 TB.print('[i]')
 
 #gosub Boxes
@@ -351,7 +332,7 @@ if ehSTR == 'y':
 else:
     ehSTR = ' '
 # LOCATE (34 + PP%), 72: PRINT "[" + EH$ + "]"; : '' // --cfMenuInternAndExternGoto] [L7000]
-TB.locate(34 + ppINT, 72)
+TB.locate(34 + PPINT, 72)
 TB.print('[' + ehSTR + ']')
 
 #' ' ###
@@ -417,7 +398,7 @@ with open(fSTR + 'pdat.dat') as infile:
     mSTR_ARR[1, 5] = infile.readline().rstrip('\n')
     if wsSTR == 'a':
         zSTR = infile.readline().rstrip('\n')
-    for mINT in range(1, hpINT + 1):
+    for mINT in range(1, HPINT + 1):
         pSTR_ARR[1, mINT] = infile.readline().rstrip('\n')
         zSTR = pSTR_ARR[1, mINT]
         v = float(zSTR)
@@ -430,10 +411,10 @@ with open(fSTR + 'ANGDAT.DAT') as infile:
     syINT = 1 # What is this variable
     for m in [1, 2]:
         zSTR = infile.readline().rstrip('\n')
-        pSTR_ARR[1, hpINT + m] = zSTR
+        pSTR_ARR[1, HPINT + m] = zSTR
         zSTR = truncate_rounding(zSTR)
-        nSTR_ARR[1, hpINT + m] = zSTR
-        pSTR_ARR[1, hpINT + m] = pSTR_ARR[1, hpINT + m] + '   '
+        nSTR_ARR[1, HPINT + m] = zSTR
+        pSTR_ARR[1, HPINT + m] = pSTR_ARR[1, HPINT + m] + '   '
 
 aINT = 0
 #GOTO CHART
@@ -447,39 +428,6 @@ aINT = 0
 #'' // [m/m%]-[?]-->
 
 # SUB
-#PreAspectCalc:
-#'' // [cfL620-22]
-# FOR m = 1 TO PP%
-#  w$(0, 0, m) = P$(CH%, m): '' // [Temp Borrow! =NOT= w$! <-> [Change this]-[!!]-[?] ## [ch%=?] ##
-# NEXT m: '' // [cf662]
-#RETURN
-#
-#AspectCalc:
-# FOR m = 1 TO hp%
-# K1% = VAL(LEFT$(w$(0, 0, m), 3))
-# U1% = VAL(RIGHT$(w$(0, 0, m), 2))
-# FOR y = 1 TO hp%
-# :
-# K2% = VAL(LEFT$(P$(CH%, y), 3)): '' // <[h%>12 --[?]
-# U2% = VAL(RIGHT$(P$(CH%, y), 2))
-# :
-# IF U2% > U1% THEN K1% = K1% - 1: U1% = U1% + 60
-# IF K2% > K1% THEN K1% = K1% + 360
-# i% = K1% - K2%
-# IF i% > 180 THEN r% = ABS(60 - r%): i% = ABS(360 - (i% + 1))
-#   '' // I% = ABS(I%-360) <<-?
-#   '' // (c% obs!)* (*i%) <<-?
-# Q1$ = STR$(i%)
-# Q1$ = MID$(Q1$, 2)
-# IF i% < 100 THEN Q1$ = "0" + Q1$
-# IF i% < 10 THEN Q1$ = "0" + Q1$
-# Q2$ = STR$(r%)
-# Q2$ = MID$(Q2$, 2)
-# IF r% < 10 THEN Q2$ = "0" + Q2$
-# w$(HC%, m, y) = Q1$ + "-" + Q2$
-# NEXT y
-# NEXT m
-#RETURN
 
 #'[Label]
 #HARMONIC:
@@ -646,7 +594,9 @@ aINT = 0
 # : IF SU$ = "y" THEN SU% = SU% + 1: GOSUB L6500: '' // [20080else?][coll 20087?(x88)][cf2200]
 # : '' // [subBlank/BlankMain? redun?]<<-<*
 # GOSUB PreAspectCalc
+wSTR_ARR = preAspectCalc(wSTR_ARR, pSTR_ARR, chINT)
 # GOSUB AspectCalc: '' // [asp[(t$)switch=<>5drawing?)]-[?]
+wSTR_ARR = aspectCalc(wSTR_ARR, pSTR_ARR, chINT, hcINT)
 # '' // [mov?]^
 # IF EH$ = "A" THEN GOSUB L19600: '' // [cf19307]!
 # IF SU$ = "y" AND g$ <> "t" THEN GOSUB InMainDraw: GOTO Menu: '' // +[g$='N']/[Mi$='y']..!?:::[sub AspLines her?]-[ No?!!]
@@ -694,7 +644,7 @@ aINT = 0
 #'' // :: if EP ! :: [etc.]
 #:
 #GOSUB Coordinates
-yyFLT, yzFLT, zyFLT = coordinates(pSTR_ARR, chINT, hpINT)
+yyFLT, yzFLT, zyFLT = coordinates(float(pSTR_ARR[chINT, PPINT]))
 #GOSUB MainDraw: '' // --[yz redun: ?][cf20261,20274,20288,]
 #gosub STATUSx
 #GOTO Menu: '' // ['ChartDraw:' mangler 'RETURN' !?] <-[cf L2150, L2170, L39240] <* <* <* ==??== <* obs! === ### === OBS-RETURN-ERR--[??] ##
