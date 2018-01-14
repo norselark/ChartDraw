@@ -58,7 +58,7 @@ class App:
         bottom_bar.pack(side=tk.TOP, fill=tk.X)
         bl_text = tk.Label(bottom_bar, text='2-D Radix\nHorizon view\nOrigo: Tropos')
         bl_text.pack(side=tk.LEFT)
-        br_text = tk.Label(bottom_bar, text='MC >> S\nASC > E')
+        br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
         br_text.pack(side=tk.RIGHT)
 
         self.button = tk.Button(right_frame, text="Dot", command=self.place_dot)
