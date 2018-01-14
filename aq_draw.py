@@ -16,6 +16,17 @@ def waitx():
     """Sub WAITx"""
     pass
 
+def coordinates(p, ch, hp):
+    """Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"""
+    yy = 360 - float(p[ch, hp + 2])
+    yz = yy + 180
+    if yz > 360:
+        yz -= 360
+    zy = 180 - yy
+    if zy < 0:
+        zy += 360
+    return yy, yz, zy
+
 def l1640():
     """Sub L1640"""
     global chINT, hcINT, tSTR, tfSTR # pylint: disable=W0601
@@ -45,8 +56,8 @@ def l1630():
 
 def l6020():
     """Draws three small concentric circles at (x%, y%)"""
-    for lINT in [5, 10, 15]:
-        print('CIRCLE ({}, {}), {}, {}'.format(xINT, yINT, lINT, ilINT))
+    for l in [5, 10, 15]:
+        print('CIRCLE ({}, {}), {}, {}'.format(xINT, yINT, l, ilINT))
 
 def l6010():
     global ilINT # pylint: disable=W0601
@@ -71,8 +82,8 @@ def boxes():
         return in_boxes()
     TB.locate(8, 67)
     TB.print('|-----------|')
-    for lINT in range(9, 14):
-        TB.locate(lINT, 67)
+    for l in range(9, 14):
+        TB.locate(l, 67)
         TB.print('|           |')
     TB.locate(14, 67)
     TB.print('|-----------|')
@@ -300,7 +311,6 @@ TB.print(str(sINT))
 TB.locate(4, 58)
 TB.print(prSTR[:8])
 
-
 #'' // (Blw): [f$!?]-[no!]--[cf1632,19600,61050,60030]
 #'----------------------------------->
 #L2200: '' // O-B-S----!! ##  (w/ [A]
@@ -389,15 +399,10 @@ if cgSTR == 'z':
 #in:
 #OPEN f$ + "pdat.dat" FOR INPUT AS #1: '[ws$='z' ?]
 with open(fSTR + 'pdat.dat') as infile:
-    # INPUT #1, m$(1, 0)
     mSTR_ARR[1, 0] = infile.readline().rstrip('\n')
-    # INPUT #1, f1$
     f1STR = infile.readline().rstrip('\n')
-    # INPUT #1, N1$
     n1STR = infile.readline().rstrip('\n')
-    # INPUT #1, m$(1, 2)
     mSTR_ARR[1, 2] = infile.readline().rstrip('\n')
-    # IF ws$ = "p" OR ws$ = "z" THEN GOTO L2330: '[chorderin'atie.bas'! [<>'a' ?]]
     if wsSTR in ['p', 'z']:
         tzSTR = infile.readline().rstrip('\n')
         dsSTR = infile.readline().rstrip('\n')
@@ -416,19 +421,11 @@ with open(fSTR + 'pdat.dat') as infile:
         pSTR_ARR[1, mINT] = infile.readline().rstrip('\n')
         zSTR = pSTR_ARR[1, mINT]
         v = float(zSTR)
-        #  P$(1, m%) = z$ + "   ": '' // [FORMATTING]--[Why +3 spc ? (--Debug !?)]--[Cf. 'SubHarmonic:'] --[Temp!?][no delay/sub53300  [<+> <=>!]
         pSTR_ARR[1, mINT] = zSTR + '   '
-        #  GOSUB TruncateRounding: '--[z$]
         zSTR = truncate_rounding(zSTR)
-        #  N$(1, m%) = z$
         nSTR_ARR[1, mINT] = zSTR
-    # NEXT m%
-    #  '' // [ecl lat pluto?]--[?]
-    #CLOSE #1
 #'---
-#
-#
-#'' // [What if other than ZET9]-[?]:
+
 with open(fSTR + 'ANGDAT.DAT') as infile:
     syINT = 1 # What is this variable
     for m in [1, 2]:
@@ -437,20 +434,18 @@ with open(fSTR + 'ANGDAT.DAT') as infile:
         zSTR = truncate_rounding(zSTR)
         nSTR_ARR[1, hpINT + m] = zSTR
         pSTR_ARR[1, hpINT + m] = pSTR_ARR[1, hpINT + m] + '   '
-#
-#'-##^##----
-#a% = 0
+
 aINT = 0
 #GOTO CHART
 #'[a%]-[!]
 #'-##^##----
-#
+
 #'' // =-------------------------------------=
 #'' // L9000:  ' errchk [<-MEMO-OLD: reserved]
 #'' // =-------------------------------------=
-#
+
 #'' // [m/m%]-[?]-->
-#
+
 # SUB
 #PreAspectCalc:
 #'' // [cfL620-22]
@@ -485,8 +480,7 @@ aINT = 0
 # NEXT y
 # NEXT m
 #RETURN
-#
-#
+
 #'[Label]
 #HARMONIC:
 #'' // [g$="h"]
@@ -615,14 +609,14 @@ aINT = 0
 # IF SU$ = "y" THEN PRINT "[S]";
 # IF SU$ <> "y" THEN PRINT "[ ]"; : '' // [=chr$(13)?]--[cf1282]
 # '' // [variations]-[!?]
-#
+
 #L20020:
 #if tt$ <> "i" then goto L20030
 #xx$ = "": gosub STATUSx: '' // --Firstrun only -[?] -- [xx%="" -[?]
 #locate (xloc% + 4), 3: print "Choose Chart variant";
 #locate (xloc% + 6), 3: print "<1> <2> <3>";
 #locate (32 + PP%), 72: print "[i]";: '' // --REDUN-[?]-[Cf. above]
-#
+
 #L20030:
 # KK$ = INKEY$: '' // input$()? [blw!:in$=""/i%:cf2170+]
 # ::: if kk$ = CHR$(27) then gosub WAITx: goto Menu: '' // DEBUGTEMP =#-#-#=
@@ -630,23 +624,23 @@ aINT = 0
 # '' // IF KK$ = CHR$(27) THEN il% = 0: GOSUB L6020: GOTO Menu: ' ^[in$:cf3550,3732]
 # '' // [cf6000!] <-[su$=,EH$=??]
 # IF KK$ <> "1" AND KK$ <> "2" AND KK$ <> "3" THEN GOTO L20030
-#
+
 #'' // [OBS! xx$]--
 #xx$ = "[" + KK$  + "]": GOSUB WAITx: '' // --[rpt in ChartDraw]-[!?]
-#
+
 #'---
 #'' // ## vague:UNFINISHED--[!]
 #'' // if tt$ <> "i" then GOSUB Boxes: '' //--[REDUN]-[i]-[?]-##
 #'' // if tt$ <> "i" and g$ <> "t" then goto L20050: '' // [i]-[?]--[if cg$ <> "z"...]-[?]
 #'---
-#
+
 #'' // ##
 #if g$ <> "t" then goto L20050
 #for m% = 18 to PP%
 # locate m%, 67:
 # print "             ";
 #next m%
-#
+
 #L20050:
 # : IF SU$ = CHR$(13) THEN GOSUB Blank: '' // [=""]?<-[cf mi$][BlankMain?][cf1282]
 # : IF SU$ = "y" THEN SU% = SU% + 1: GOSUB L6500: '' // [20080else?][coll 20087?(x88)][cf2200]
@@ -658,8 +652,7 @@ aINT = 0
 # IF SU$ = "y" AND g$ <> "t" THEN GOSUB InMainDraw: GOTO Menu: '' // +[g$='N']/[Mi$='y']..!?:::[sub AspLines her?]-[ No?!!]
 # : '' // [swap EH$/su$ ?]^^
 #'^-----
-#
-#
+
 #ChartDraw: '///
 # IF tt$ <> "i" THEN GOTO L20180: '' // [Cf. L20020]
 # locate (xloc% + 4), 3: print "                    ";
@@ -701,6 +694,7 @@ aINT = 0
 #'' // :: if EP ! :: [etc.]
 #:
 #GOSUB Coordinates
+yyFLT, yzFLT, zyFLT = coordinates(pSTR_ARR, chINT, hpINT)
 #GOSUB MainDraw: '' // --[yz redun: ?][cf20261,20274,20288,]
 #gosub STATUSx
 #GOTO Menu: '' // ['ChartDraw:' mangler 'RETURN' !?] <-[cf L2150, L2170, L39240] <* <* <* ==??== <* obs! === ### === OBS-RETURN-ERR--[??] ##
@@ -714,98 +708,68 @@ aINT = 0
 #
 #
 #
-#Coordinates:
-# '' // [Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]
-# YY = 360 - VAL(P$(CH%, hp% + 2)):
-# YZ = YY + 180: IF YZ > 360 THEN YZ = YZ - 360: '' // (asc)
-# ZY = 180 - YY: IF ZY < 0 THEN ZY = ZY + 360
-#RETURN
 #
 #: '' // # GOTO 20260:?:(see gwAmap) <-[no(equal)housepartit]:?:[blw!:float!'s] ##
 #
 #'[Label]
 #MainDraw:
-# '' // --['c15'=default]-- 
 # FOR x = 0 TO 360 STEP 30: '' // [float! obs!x/x%] <-(use vars!)]
-# PSET (x%, y%)
-# u$ = STR$(x): u$ = MID$(u$, 2)
-#    '' //# ZZ=VAL(P$(H%,1))
-#    '' //# FOR K=1 TO (360/WA%): '' // [1=asc]!
-#    '' //# ZZ%=INT(ZZ):U$=STR$(ZZ%):U$=MID$(U$,2)
-#    '' //# PSET(X%,Y%): '[el. circle 0]? [draw "bm240,100"]["x"+var$]
-# '' // DRAW "TA" + u$: DRAW "br180 c3 r41": '["BR44 R12"][use vars!] <-[check! <(alternative)]
-# DRAW "TA" + u$: DRAW "br181 c15 r40": '' // ["BR44 R12"][use vars!]    <-['c15' redun=default]
-#    '' //# ZZ=ZZ+WA%:IF ZZ > 360 THEN ZZ=ZZ-360
-#    '' //# NEXT K
+    # PSET (x%, y%)
+    # u$ = STR$(x): u$ = MID$(u$, 2)
+    # DRAW "TA" + u$: DRAW "br181 c15 r40": '' // ["BR44 R12"][use vars!]    <-['c15' redun=default]
 # NEXT x
-# :
 # ZZ% = YZ: '' // [Zodiac division]['c3']
 # FOR K = 1 TO (360 / WA%)
-# u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-# PSET (x%, y%)
-# DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r33": '' // [+var!]
-#    '' //# GOSUB Zodiac::->[20278!]
-# ZZ% = ZZ% + WA%: IF ZZ% > 360 THEN ZZ% = ZZ% - 360
+    # u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    # PSET (x%, y%)
+    # DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r33": '' // [+var!]
+    # ZZ% = ZZ% + WA%: IF ZZ% > 360 THEN ZZ% = ZZ% - 360
 # NEXT K
-# :
 # ZZ% = YZ + WB%: '' // [Signs]['c3']
 # FOR K = 1 TO (360 / WA%)
-# PSET (x%, y%)
-# IF ZZ% > 360 THEN ZZ% = ZZ% - 360
-# u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-# v = VAL(u$) - 90: v$ = STR$(v): IF v >= 0 THEN v$ = MID$(v$, 2)
-# DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r3 br4": DRAW "ta" + v$: DRAW "bu9 bl9": '' // <-([3+4]! (=7 !] <---
-# IF SU$ <> "y" THEN GOSUB Zodiac: '' // <------------->'if g$ <> "t"]<->[M]!
-#  '' // ---- [Here can be inserted div. choices/options]-[Variants]
-#  '' // ---- [zodiacal signs/divisions around circle (+subcycles etc.) --[?]-[!]
-# ZZ% = ZZ% + WA%: '' // <-[if > ...?]
+    # PSET (x%, y%)
+    # IF ZZ% > 360 THEN ZZ% = ZZ% - 360
+    # u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    # v = VAL(u$) - 90: v$ = STR$(v): IF v >= 0 THEN v$ = MID$(v$, 2)
+    # DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r3 br4": DRAW "ta" + v$: DRAW "bu9 bl9": '' // <-([3+4]! (=7 !] <---
+    # IF SU$ <> "y" THEN GOSUB Zodiac: '' // <------------->'if g$ <> "t"]<->[M]!
+    # ZZ% = ZZ% + WA%: '' // <-[if > ...?]
 # NEXT K
-# :
 # ZZ = YZ
 # FOR K = 1 TO (360 / WC%)
-# ZZ% = INT(ZZ): u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-# PSET (x%, y%)
-# DRAW "TA" + u$: DRAW "BR" + p2$: DRAW "r" + PX$: '' // [px$:cf1062:mov->here?] <*
-# ZZ = ZZ + WC%: IF ZZ > 360 THEN ZZ = ZZ - 360
+    # ZZ% = INT(ZZ): u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    # PSET (x%, y%)
+    # DRAW "TA" + u$: DRAW "BR" + p2$: DRAW "r" + PX$: '' // [px$:cf1062:mov->here?] <*
+    # ZZ = ZZ + WC%: IF ZZ > 360 THEN ZZ = ZZ - 360
 # NEXT K
-# '' // ['double' 5-degrees subdivs by g$='t'/[M] <-(due Trunc ?)-[!]
-#
-#'##------
-#IF KK$ <> "2" THEN GOTO InMainDraw: '[<1><2><3>]
+# IF KK$ <> "2" THEN GOTO InMainDraw: '[<1><2><3>]
 #'##------
 #
 # z = (ZC / 360) * (2 * PI):                             ' <-[movup?][float,x/x%!]
 # FOR x = 0 TO 360 - (2 * WC%) STEP (2 * WC%)
-# z = z + ((2 * PI) / (360 / WC%))                       ' [IF Z > (2*PI) THEN Z=Z-(2*PI)]
-# FOR K = (p2% + 1) TO (P3% - 1)
-# CIRCLE (x%, y%), K, , z, z + ((2 * PI) / (360 / WC%))
-# NEXT K
-# z = z + ((2 * PI) / (360 / WC%))                       ' [ej v/ w%=15 ?]  <[[[ <* missing ':' <-^^ yields err?? ]]]^^ <*
+    # z = z + ((2 * PI) / (360 / WC%))                       ' [IF Z > (2*PI) THEN Z=Z-(2*PI)]
+    # FOR K = (p2% + 1) TO (P3% - 1)
+        # CIRCLE (x%, y%), K, , z, z + ((2 * PI) / (360 / WC%))
+    # NEXT K
+    # z = z + ((2 * PI) / (360 / WC%))                       ' [ej v/ w%=15 ?]  <[[[ <* missing ':' <-^^ yields err?? ]]]^^ <*
 # NEXT x
-# '      '#  CIRCLE (X%,Y%),(P3%+2),,Z,Z+((2*PI)/(360)): '[PI-test !?] <<-<*
-# '
-#
-#'--#--
+
 #'[Label]
 #InMainDraw:
 # IF g$ = "t" OR EH$ = "A" THEN P$(mm%, hp% + 2) = P$(0, 0): '' //[MM%=0: <-OBS!] <[cf19600+]-> w h y  mm% ?]
-#  :
-#  IF tt$ = "i" THEN m = 1: GOSUB TurnAngle: sv$ = v$
-#  '' // <[Sun's pos vs. horizon (Desc <- 'ta0')]<-[cf. 'PlanetSymbols:(MO)' + cf. 'Axes:(MC)]
-#  :
-#  FOR m = (hp% + 2) TO (hp% + 1) STEP -1: '' // [Reverse hp%+ (Asc/Mc)]:?:[cf. 'Axes:']
-#  GOSUB axes
-#  NEXT m
-#  :
-#  FOR m = 1 TO (NP% + 1): '' //   :: [^^EH$=""/chr$(13)?]
-#  GOSUB TurnAngle
-#  GOSUB PlanetSymbols
-#  '# V=(V/360)*(2*PI)::rem:[float,x/x%!]
-#  '# FOR X=1 TO 7:CIRCLE (X%,Y%),P1%-X,,V,V+((2*PI)/360):NEXT X
-#  '# FOR X=1 TO 5:CIRCLE (X%,Y%),PA%+X,,V,V+((2*PI)/360):NEXT X
-#  NEXT m
-#    '' //# [if a%<>0/=2 then ret][<=her?]<-[cf39001]!
-#GOSUB Tropos
+  
+# IF tt$ = "i" THEN m = 1: GOSUB TurnAngle: sv$ = v$
+# '' // <[Sun's pos vs. horizon (Desc <- 'ta0')]<-[cf. 'PlanetSymbols:(MO)' + cf. 'Axes:(MC)]
+ 
+# FOR m = (hp% + 2) TO (hp% + 1) STEP -1: '' // [Reverse hp%+ (Asc/Mc)]:?:[cf. 'Axes:']
+# GOSUB axes
+# NEXT m
+
+# FOR m = 1 TO (NP% + 1): '' //   :: [^^EH$=""/chr$(13)?]
+# GOSUB TurnAngle
+# GOSUB PlanetSymbols
+# NEXT m
+# GOSUB Tropos
 #RETURN: '>[CHART] >(goto Menu)
 # '' // [Debug-Search gosub maindraw]
 # 
@@ -965,19 +929,17 @@ aINT = 0
 #  CALL psc
 # END SELECT
 #RETURN
-#
-#
-#
+
 #'--->
 #'[Label]
 #Menu: '' // [text/infopage (toggle)?] /// <-[g$='N'] ///
 # IF a% = 2 THEN RETURN: '' // [a%<>0,a%=1,..?]<-[cf2100+]::
 # IF g$ = "N" THEN LY% = 0: GOTO PrintPosNewChart: GOTO MenuInternAndExternGoto: '' // <<-<< [err goto]--[!!]
-#:
+
 # tf$ = "1":
 # IF tt$ = "i" THEN  tt$ = "1": LY% = 0: GOTO PrintPosNewChart: '' // [cf20460]:[1674]
 # '' // (i) sub^53030-> movup->20500+!?]
-#:
+
 #MenuInternAndExternGoto: '' // --[cf CHART+?]
 #  '' // FOR L% = 8 TO 8: LOCATE L%, 80: PRINT " "; : NEXT L%: --[WHY / Redun]-[?]
 #  '' // LOCATE 9, 66: PRINT " ";:'[L7000]
