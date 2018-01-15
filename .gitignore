@@ -15,3 +15,5 @@ aqCHARTS/aq_temp/IDENTITY.1.TIE
 .vscode/
 __pycache__/
 bufferdisplay.txt
+env/
+*.pyc
