@@ -82,10 +82,9 @@ def main():
         switch = 1
         print(PROGRAM_NAME)
 
-    bbINT = 33
+    num_labels = len(LABELS_ZET9)
 
-    rxSTR_ARR = [' '] * (bbINT + 1)
-    pSTR_ARR = np.empty((bbINT + 1), dtype=str).astype(object)
+    pSTR_ARR = np.empty((num_labels + 1), dtype=str).astype(object)
     mSTR_ARR = np.empty((2, 6), dtype=str).astype(object)
 
     mSTR_ARR[0, 0] = "'realname'    "
@@ -119,9 +118,7 @@ def main():
     with open(input_dir / filename_1) as infile:
         for line in infile:
             line = line.strip('\n')  # Remove trailing newline
-            for idx in range(1, bbINT + 1):
-                if line[:7] == LABELS_ZET9[idx] and line[25:26] == '-':
-                    rxSTR_ARR[idx] = 'r'
+            for idx in range(1, num_labels + 1):
                 if line[:1] == 'X':
                     if line[1] not in ['I', 'V', 'X']:
                         pSTR_ARR[NUM_HIGH_PLANETS + 1] = calczet9(line[-15:])
@@ -134,7 +131,7 @@ def main():
     with open(input_dir / filename_2) as infile:
         for line in infile:
             line = line.rstrip('\n')  # Remove trailing newline
-            for idx in range(1, bbINT + 1):
+            for idx in range(1, num_labels + 1):
                 if line[:4] == LABELS_ZET9[idx][:4]:
                     line = line[18:27]
                     pSTR_ARR[idx] = line
