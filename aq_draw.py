@@ -6,8 +6,11 @@
 #' aqDRAW.BAS --- Tue--Jun 02--2015--20:56--CEST
 #' [QBasic]
 """
+from pathlib import PurePath
+
 import numpy as np
 import qb_utils
+
 from aq_functions import *
 
 TB = qb_utils.TextBuffer()
@@ -102,19 +105,19 @@ rrFLT = 0
 rFLT = 0
 
 with open('switch.sw0') as infile:
-    swSTR = infile.readline().rstrip('\n')
-    sxSTR = infile.readline().rstrip('\n')
+    swSTR = PurePath(infile.readline().rstrip('\n'))
+    sxSTR = PurePath(infile.readline().rstrip('\n'))
     sINT = int(infile.readline())
 
 if sINT <= 0:
     raise SystemExit('Irregular')
 
-with open(sxSTR + 'SWI.SWI') as infile:
+with open(sxSTR / 'SWI.SWI') as infile:
     prSTR = infile.readline().rstrip('\n')
 prSTR = prSTR + "        "
 
-with open(sxSTR + 'IDENTITY.TIE') as infile:
-    fSTR = infile.readline().rstrip('\n')
+with open(sxSTR / 'IDENTITY.TIE') as infile:
+    fSTR = PurePath(infile.readline().rstrip('\n'))
 
 with open('choice.sw0') as infile:
     cgSTR = infile.readline().rstrip('\n')
@@ -379,7 +382,7 @@ if cgSTR == 'z':
 
 #in:
 #OPEN f$ + "pdat.dat" FOR INPUT AS #1: '[ws$='z' ?]
-with open(fSTR + 'pdat.dat') as infile:
+with open(fSTR / 'pdat.dat') as infile:
     mSTR_ARR[1, 0] = infile.readline().rstrip('\n')
     f1STR = infile.readline().rstrip('\n')
     n1STR = infile.readline().rstrip('\n')
@@ -407,7 +410,7 @@ with open(fSTR + 'pdat.dat') as infile:
         nSTR_ARR[1, mINT] = zSTR
 #'---
 
-with open(fSTR + 'ANGDAT.DAT') as infile:
+with open(fSTR / 'ANGDAT.DAT') as infile:
     syINT = 1 # What is this variable
     for m in [1, 2]:
         zSTR = infile.readline().rstrip('\n')
