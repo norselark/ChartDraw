@@ -851,9 +851,6 @@ InMainDraw:
   FOR m = 1 TO (NP% + 1): '' //   :: [^^EH$=""/chr$(13)?]
   GOSUB TurnAngle
   GOSUB PlanetSymbols
-  '# V=(V/360)*(2*PI)::rem:[float,x/x%!]
-  '# FOR X=1 TO 7:CIRCLE (X%,Y%),P1%-X,,V,V+((2*PI)/360):NEXT X
-  '# FOR X=1 TO 5:CIRCLE (X%,Y%),PA%+X,,V,V+((2*PI)/360):NEXT X
   NEXT m
     '' //# [if a%<>0/=2 then ret][<=her?]<-[cf39001]!
 GOSUB Tropos
@@ -1961,7 +1958,7 @@ locate xloc%+10,10: print "IRREGULAR": stop
 : '' ---loc!?---[autoexec.bat: 'break=off' !?]
 : '' ---cls!?
 : LOCATE xloc%, 40: PRINT "[tie]  'A' is started with '<a> <CR>' in base directory!"
-: locate xloc%, 42: print "<key>;
+: locate xloc%, 42: print "<key>";
 : in$ = INPUT$(1)
 '' '' [input$(1)]
 '' '' [DO UNTIL INKEY$ <> "": LOOP]

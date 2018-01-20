@@ -32,3 +32,9 @@ class TransformCanvas(Canvas):
         new_coords = np.dot(coords, self.rotation_matrix) + self.center
         new_coords = list(new_coords.flatten())
         self.create_text(new_coords, **kwargs)
+
+    def polygon(self, origin, coords, **kwargs):
+        transposed = origin + np.array(coords)
+        new_coords = np.dot(transposed, self.rotation_matrix) + self.center
+        new_coords = list(new_coords.flatten())
+        self.create_polygon(new_coords, **kwargs)
