@@ -85,33 +85,18 @@ def main():
     num_labels = len(LABELS_ZET9)
 
     pSTR_ARR = np.empty((num_labels + 1), dtype=str).astype(object)
-    mSTR_ARR = np.empty((2, 6), dtype=str).astype(object)
-
-    mSTR_ARR[0, 0] = "'realname'    "
-    mSTR_ARR[0, 1] = '0x.00.00      '
-    mSTR_ARR[0, 2] = 'Place X       '
-    mSTR_ARR[0, 3] = '0x=00         '  # time
-    mSTR_ARR[0, 4] = '0x0-00 X      '  # long
-    mSTR_ARR[0, 5] = '0x0-00 Y      '  # lat
 
     print('x')
     print('WAIT...')
-
-    mSTR_ARR[1, 0] = 'RealName'
-    mSTR_ARR[1, 1] = 'test1'
-    mSTR_ARR[1, 2] = 'GeoPlace'
-    mSTR_ARR[1, 3] = 'test2'
-    mSTR_ARR[1, 4] = 'test3'
-    mSTR_ARR[1, 5] = 'test4'
 
     # Sniff file to find source program
     with open(input_dir / filename_1) as infile:
         line = infile.readline()
         if line.startswith('Astrolog 5.34a'):
             source_program = 'astrolog543a'
-        if line.startswith('Astrolog 542J') or line[8:].startswith('Astrolog 542J'):
+        elif line.startswith('Astrolog 542J') or line[8:].startswith('Astrolog 542J'):
             source_program = 'astrolog542j07'
-        if line.startswith('Sun'):
+        elif line.startswith('Sun'):
             source_program = 'ZET9'
 
     # ZET9 calculations
