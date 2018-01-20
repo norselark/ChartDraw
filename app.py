@@ -81,8 +81,8 @@ class App(tk.Tk):
         self.tv = TreeviewPanel(right_frame)
         self.tv.pack(side=tk.TOP)
 
-        frame.bind('+', self.tv.scroll_up)
-        frame.bind('=', self.tv.toggle)
+        frame.focus_set()
+        frame.bind('<Key>', self.dispatch)
 
         self.draw_chart()
 
@@ -91,6 +91,12 @@ class App(tk.Tk):
         y = random.randrange(0, 480)
         self.canvas.create_oval((x, y, x + 5, y + 5),
                                 outline='red', fill="black")
+
+    def dispatch(self, event):
+        if event.type == tk.EventType.KeyPress and event.char == '=':
+            self.tv.toggle_column()
+        if event.type == tk.EventType.KeyPress and event.char == '+':
+            self.tv.scroll_up()
 
     def draw_chart(self):
         canv = self.canvas
