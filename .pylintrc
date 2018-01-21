@@ -56,7 +56,7 @@ disable=all
 # either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once). See also the "--disable" option for examples.
-enable=F,E,W0101,W0109,W0301,W0602,W0612,W0614,W0711,W1302,W1401,W1501
+enable=F,E,W0101,W0109,W0301,W0602,W0612,W0614,W0711,W1302,W1401,W1501,C0303
 
 
 [REPORTS]

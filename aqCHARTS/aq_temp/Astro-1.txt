@@ -1,26 +1,26 @@
-Sun     	22°14'35.78"Cap	  1° 1' 9"	IX
-Moon    	 2°39'38.96"Sgr	 11°57'25"	VI
-Mercury 	 1°45'01.32"Cap	  1°21'23"	VII
-Venus   	23°00'48.61"Cap	  1°15'28"	IX
-Mars    	21°20'04.68"Sco	  0°37'15"	VI
-Jupiter 	18°45'55.73"Sco	  0° 8'54"	VI
-Saturn  	 2°43'17.49"Cap	  0° 6'49"	VII
-Uranus  	24°36'45.68"Ari	  0° 0'31"	XII
-Neptune 	12°11'05.10"Psc	  0° 1'37"	XI
-Pluto   	19°10'15.12"Cap	  0° 2' 3"	VIII
-Node    	15°09'50.25"Leo	- 0° 3'42"	IV
-Lilith  	 7°10'07.07"Cap	  0° 6'41"	VII
+Sun     	22Â°14'35.78"Cap	  1Â° 1' 9"	IX
+Moon    	 2Â°39'38.96"Sgr	 11Â°57'25"	VI
+Mercury 	 1Â°45'01.32"Cap	  1Â°21'23"	VII
+Venus   	23Â°00'48.61"Cap	  1Â°15'28"	IX
+Mars    	21Â°20'04.68"Sco	  0Â°37'15"	VI
+Jupiter 	18Â°45'55.73"Sco	  0Â° 8'54"	VI
+Saturn  	 2Â°43'17.49"Cap	  0Â° 6'49"	VII
+Uranus  	24Â°36'45.68"Ari	  0Â° 0'31"	XII
+Neptune 	12Â°11'05.10"Psc	  0Â° 1'37"	XI
+Pluto   	19Â°10'15.12"Cap	  0Â° 2' 3"	VIII
+Node    	15Â°09'50.25"Leo	- 0Â° 3'42"	IV
+Lilith  	 7Â°10'07.07"Cap	  0Â° 6'41"	VII
 
-I	27°22'14.79"Gem
-II	 9°32'04.66"Cnc
-III	21°31'12.67"Cnc
-IV	 6°23'53.77"Leo
-V	29°48'25.89"Leo
-VI	18°51'29.91"Lib
-VII	27°22'14.79"Sgr
-VIII	 9°32'04.66"Cap
-IX	21°31'12.67"Cap
-X	 6°23'53.77"Aqr
-XI	29°48'25.89"Aqr
-XII	18°51'29.91"Ari
+I	27Â°22'14.79"Gem
+II	 9Â°32'04.66"Cnc
+III	21Â°31'12.67"Cnc
+IV	 6Â°23'53.77"Leo
+V	29Â°48'25.89"Leo
+VI	18Â°51'29.91"Lib
+VII	27Â°22'14.79"Sgr
+VIII	 9Â°32'04.66"Cap
+IX	21Â°31'12.67"Cap
+X	 6Â°23'53.77"Aqr
+XI	29Â°48'25.89"Aqr
+XII	18Â°51'29.91"Ari
 

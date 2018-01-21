@@ -5,13 +5,15 @@ ZODIAC_SIGNS = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
 PPINT = 13
 HPINT = 12
 
-def truncate_rounding(decimal_string):
+def truncate_rounding(angle):
     """Sub TruncateRounding"""
-    int_part = int(decimal_string[:3])
+    if type(angle) == str:
+        angle = float(angle)
+    int_part = int(angle)
+    decimal_part = angle - int_part
     zodiac_sign = ZODIAC_SIGNS[int_part // 30]
-    int_part -= 30 * (int_part // 30)
-    decimal_part = float(decimal_string[3:])
-    i = int(decimal_part * 60 + 0.5)
+    int_part = int_part % 30
+    i = round(decimal_part * 60)
     if i > 59:
         i -= 60
         int_part += 1

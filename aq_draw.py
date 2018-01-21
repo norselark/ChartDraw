@@ -6,7 +6,7 @@
 # aqDRAW.BAS --- Tue--Jun 02--2015--20:56--CEST
 # [QBasic]
 """
-from pathlib import PurePath
+from pathlib import Path
 
 import numpy as np
 import qb_utils
@@ -105,19 +105,19 @@ rrFLT = 0
 rFLT = 0
 
 with open('switch.sw0') as infile:
-    swSTR = PurePath(infile.readline().rstrip('\n'))
-    sxSTR = PurePath(infile.readline().rstrip('\n'))
+    swSTR = Path(infile.readline().rstrip('\n'))
+    sxSTR = Path(infile.readline().rstrip('\n'))
     sINT = int(infile.readline())
 
 if sINT <= 0:
     raise SystemExit('Irregular')
 
-with open(sxSTR / 'SWI.SWI') as infile:
+with (sxSTR / 'SWI.SWI').open() as infile:
     prSTR = infile.readline().rstrip('\n')
 prSTR = prSTR + "        "
 
-with open(sxSTR / 'IDENTITY.TIE') as infile:
-    fSTR = PurePath(infile.readline().rstrip('\n'))
+with (sxSTR / 'IDENTITY.TIE').open() as infile:
+    fSTR = Path(infile.readline().rstrip('\n'))
 
 with open('choice.sw0') as infile:
     cgSTR = infile.readline().rstrip('\n')
@@ -150,25 +150,14 @@ if cgSTR == 'N':
     TB.locate(xlocINT, 3)
     TB.print(spSTR)
 
-#NP% =10:       '' // [number of planets=8, Sun, Moon] [Node=11] <[np%>hp%?] <[cf2465] [=7= classic!] [Cf. Drawing] <-[dialog prompt!? (to be implemented)]
-#hp% = NP% + 1: '' // [highest 'planet' no. (w/ Node)] <[+Arab?] <-[Cf. FactorData]]
-#PP% = hp% + 2: '' // [w/ axes (MC&ASC) [Cf. LT%] <[InMainDraw+/PlanetSymbols+]] <-[Cf. FactorData]]
-#YS% = 2:       '' // [3 Quadrant House Syst] <[incl. dim's 0-elem] <-[Equal Houses drawed by default]
 ysINT = 2
 
-#DIM w$(1, PP%, PP%): '' // [w$(0,0,m)=transit[laan p$(0,m) <--> asp x,y][PreAspectCalc+]]
 wSTR_ARR = np.empty((2, PPINT + 1, PPINT + 1), dtype=str).astype(object)
-
-#DIM H$(1, YS%, 3): '' // [Quadrant houses(har,syst,no.)?!][+ secondary/tertiary/sol/etc.]? <-[Equal Houses default!]
 hSTR_ARR = np.empty((2, ysINT + 1, 4), dtype=str).astype(object)
 
-#DIM N$(2, PP%): '' // (har,planet+axes):(+node/arab!)[(x,0)=f%!]
 nSTR_ARR = np.empty((3, PPINT + 1), dtype=str).astype(object)
-#DIM P$(2, PP%): '' // [0:g$='p'][1:radix][2:g$='h'/a$='x'](chorder?[FactorData+])
 pSTR_ARR = np.empty((3, PPINT + 1), dtype=str).astype(object)
-#DIM m$(1, 5): '' // [cf18620]
 mSTR_ARR = np.empty((2, 6), dtype=str).astype(object)
-#DIM s$(12): '' // [s$(0)]?
 sSTR_ARR = ['', 'Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
             'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
@@ -230,13 +219,10 @@ qwSTR = ''
 inSTR = ''
 uSTR = ''
 
-#GOSUB L1630
 tSTR = '' # This variable must be defined
 tfSTR = '' # This one, too
 l1630()
-#GOTO dummies
 
-#dummies: '' // [+ local loop/linecounts]> <-#( list unfinished!/incomplete!)
 aaINT = 0
 bbINT = 0
 oINT = 0
@@ -250,19 +236,12 @@ zINT = 0
 uINT = 1
 vINT = 1
 aINT = 0
-#E = 0: '[sub Asp+][float?]
 eFLT = 0
-#E% = 0: '<[obs! e % e%]?
 eINT = 0
-#ST% = 1: '' // [dummy/loopcounts[g$="x"](local)]
 stINT = 1
-#OO% = 0:
 ooINT = 0
-#OA% = 8: '[aspsymbtoggle/maxorb] [L 42000+]
 oaINT = 8
-#LY% = 0:
 lyINT = 0
-#LT% = PP%: '' // [+ + w/ Arab] [lines(scrollmax/screen)]--[t%!?][lx%&lz%?]--[FactorData+,39003,53050+]
 ltINT = PPINT
 
 xxSTR = ''
@@ -329,33 +308,7 @@ if cgSTR == 'z':
     TB.locate(xlocINT, 3)
     TB.print('           ')
 
-#GOTO in: '-->
-
-#L7000: '//
-# LOCATE (32 + PP%), 74: PRINT "N";
-# LOCATE (34 + PP%), 74: PRINT EH$;
-# IF EH$ = "A" THEN LOCATE 9, 65: PRINT "A!"; : '<-['warning' for the next map!][BEEP?]
-# xx$ = "[NEW]    ": GOSUB WAITx: ::::::
-#RETURN
-
-#L6050:
-# IF SU$ = CHR$(13) THEN GOSUB L1640: ' [h%=1][t$:20054][tt$:Menu+] <-[cf53025+!]
-#RETURN: ' [->2200]
-
-#L6500: IF SU% = 3 THEN GOTO L6540: ' <ret
-# IF SU% = 1 THEN L% = 0: LOCATE 2, 57: PRINT cc$; : REM:<-[simplify!]*
-# IF SU% = 2 THEN L% = 21: LOCATE 24, 57: PRINT cc$;
-# LOCATE L% + 2, (67 - LEN(f1$)): PRINT f1$;
-# LOCATE L% + 3, (67 - LEN(N1$)): PRINT N1$;
-# IF SU% = 2 THEN L% = L% - 6
-# LOCATE L% + 5, (66 - LEN(cT$)): PRINT cT$;
-# LOCATE L% + 6, (66 - LEN(tf$)): PRINT cf$;
-#L6540:
-#RETURN:  ' [->20081]
-
-#in:
-#OPEN f$ + "pdat.dat" FOR INPUT AS #1: '[ws$='z' ?]
-with open(fSTR / 'pdat.dat') as infile:
+with (fSTR / 'PDAT.DAT').open() as infile:
     mSTR_ARR[1, 0] = infile.readline().rstrip('\n')
     f1STR = infile.readline().rstrip('\n')
     n1STR = infile.readline().rstrip('\n')
@@ -374,15 +327,15 @@ with open(fSTR / 'pdat.dat') as infile:
     mSTR_ARR[1, 5] = infile.readline().rstrip('\n')
     if wsSTR == 'a':
         zSTR = infile.readline().rstrip('\n')
-    for mINT in range(1, HPINT + 1):
-        pSTR_ARR[1, mINT] = infile.readline().rstrip('\n')
-        zSTR = pSTR_ARR[1, mINT]
-        v = float(zSTR)
-        pSTR_ARR[1, mINT] = zSTR + '   '
-        zSTR = truncate_rounding(zSTR)
-        nSTR_ARR[1, mINT] = zSTR
+    for idx in range(1, HPINT + 1):
+        line = infile.readline().rstrip('\n')
+        pSTR_ARR[1, idx] = line
+        v = float(line)
+        pSTR_ARR[1, idx] = line + '   '
+        line = truncate_rounding(line)
+        nSTR_ARR[1, idx] = line
 
-with open(fSTR / 'ANGDAT.DAT') as infile:
+with (fSTR / 'ANGDAT.DAT').open() as infile:
     syINT = 1 # What is this variable
     for m in [1, 2]:
         zSTR = infile.readline().rstrip('\n')
@@ -392,276 +345,10 @@ with open(fSTR / 'ANGDAT.DAT') as infile:
         pSTR_ARR[1, HPINT + m] = pSTR_ARR[1, HPINT + m] + '   '
 
 aINT = 0
-#GOTO CHART
-
-
-# SUB
-
-#HARMONIC:
-#GOSUB Waitx: '' // [xx$]-[?]-[rpt]
-#GOSUB Boxes
-# cT$ = t$
-# cf$ = tf$: '' // [tf$ here]-[?] [cf19311]
-# LOCATE 9, 68: PRINT H$; "-> <ESC>";
-# locate 11, 68: GOSUB TypeChoice
-# if u$ = CHR$(27) then gosub WAITx: goto Menu: '' // [WAITX Redun or elsewhere]-[?]
-# t$ = u$: IF VAL(u$) < 1 OR VAL(u$) > 300 THEN GOTO HARMONIC: '' // --[ErrChk!]
-# GOSUB SUorNot
-# if SU$ = CHR$(27) then gosub WAITx: goto HARMONIC: '' // [WAITX Redun or elsewhere]-[?]
-# if MI$ = CHR$(27) then gosub WAITx: goto HARMONIC: '' // [WAITX Redun or elsewhere]-[?]
-
-# H% = VAL(t$)
-# HC% = 1: '' // [movL19140-42->19100+?]? --[hc%:cf18884/w$()]
-# xx$ = "[CalcHar]": GOSUB WAITx: '' // [rpt]
-# GOSUB Boxes
-# IF H% = 1 THEN CH% = 1: GOTO CHART: '' // [cf. whatL16000 ?] [fm19160!] <-[mangler 'RETURN' ??]
-# CH% = 2: GOSUB SubHarmonic: GOTO CHART: '' // v%=1 ?: ch%=0 ?[dim]
-#SubHarmonic:
-# FOR m% = 1 TO PP%
-#  rr = val(p$(1, m%))
-#  if rr = 0 then rr = rr + 360: '' // --[Correct or Redun]-[?]-##
-#  rr = rr * H%
-#  Loopx: if rr >= 360 then rr = (rr - 360)
-#  if rr >= 360 then goto Loopx
-#  z$ = STR$(rr): z$ = MID$(z$, 2): : '' // <--[cf. 'TIE' & DRAW:'in']
-#  IF INT(rr) < 100 THEN z$ = " " + z$: '' // ["0" + z$]-[?]
-#  IF INT(rr) < 10 THEN z$ = " " + z$
-#  P$(CH%, m%) = z$ + "   ": '' // [FORMATTING]--[Why +3 spc ? (--Debug !?)] --[Cf. 'in:'] --[Cf. 'SubHarmonic:'] --[Temp!?][no delay/sub53300  [<+> <=>!]
-#  GOSUB TruncateRounding: '#(z$ only!)#
-#  N$(CH%, m%) = z$
-# NEXT m%
-#RETURN
-#
-#
-#DERIVED:
-# GOSUB L19600: '' // (--EH$!--) ! --[cf20212,InMainDraw]
-#InDer:
-# GOSUB Boxes:
-# cf$ = tf$: cT$ = t$:  '' // --(movup pre InDer?) '<[t$ h e r ?] [cf19030]
-# LOCATE 9, 68: PRINT "{Cyc}"; :  '  ' // <[c$ ?] [8,68 ?] ['..']-[?]
-# LOCATE 11, 68: print "> ";: GOSUB TypeChoice: '' // --[DIV. 'strange' ERRCHK !!]
-# tf$ = u$: IF VAL(u$) < 1 OR VAL(u$) > 12 THEN GOTO InDer
-# GOSUB SUorNot: '' // --[S][mi$]
-# f% = VAL(tf$)
-# xx$ = "[CalcCyc]": GOSUB WAITx: '' // [xx$ =.. +tf$]?
-# xx$ = "CYC      ": GOSUB Boxes
-# FF% = (f% - 1) * 30:                           '' // [cf. other prg inputs]
-# FF% = VAL(P$(mm%, hp% + 2)) + FF%: IF FF% > 360 THEN FF% = FF% - 360: '' // # [t$='0' ?!]
-# FP$ = STR$(FF%): FP$ = MID$(FP$, 2)
-# P$(mm%, hp% + 2) = FP$: '' // [obs!]
-# IF SU$ = "y" THEN GOSUB Coordinates
-#GOTO CHART: '' // [19260 ?]
-
-#L19600:
-# IF t$ = "1" THEN mm% = 1: '' // --[cfInMainDraw+]
-# IF t$ > "1" THEN mm% = CH%
-# P$(0, 0) = P$(mm%, hp% + 2): '' // [-- InMainDraw+]--[harm:h% gets > ch% !]
-# IF EH$ = "A" THEN P$(mm%, hp% + 2) = "000.00": '' // --[EH$:cf20040+,InMainDraw,1632,2200]
-#RETURN
-
-#SUorNot:
-# MI$ = CHR$(13)
-# LOCATE 13, 68, 1: PRINT "[S] <y><CR>"; : '' // [,1?]
-#L19812: SU$ = INKEY$: IF SU$ <> "y" AND SU$ <> CHR$(13) and SU$ <> CHR$(27) THEN GOTO L19812
-# IF SU$ = "y" THEN GOSUB InSuorNot: '' // [cf20080+]
-#RETURN: '' // [mi$:<>NEW:cf1640+]
-
-#InSuorNot:
-# LOCATE 13, 68, 1: PRINT "[M] <y><CR>"; : '' // [,1?]
-#L19862: MI$ = INKEY$: IF MI$ <> "y" AND MI$ <> CHR$(13) and MI$ <> CHR$(27) THEN GOTO L19862
-# IF MI$ <> "y" THEN GOTO RETInSuorNot
-# GOSUB TempCirc: CIRCLE (x%, y%), 120: CIRCLE (x%, y%), pa%, 0: '' // [rad?][x10!]
-# CIRCLE (x%, y%), 108: CIRCLE (x%, y%), pa% - 20
-#RETInSuorNot:
-#RETURN
-
-#CHART:
-# ln% = 0: '<[toggle Asp Lines]
-# m% = 0
-# LOCATE m% + 9, 68: PRINT "Har-> "; t$;
-# LOCATE m% + 10, 68: PRINT "Cyc-> "; tf$; : ' [f%?]
-# LOCATE m% + 12, 68: PRINT "Draw: <ESC>";
-# LOCATE m% + 13, 68: PRINT "<1> <2> <3>";
-
-# locate (31 + PP%),72:
-# IF tt$ = "i" THEN PRINT "[i]"; : GOTO L20020: ' [cfL1636]
-# IF MI$ = "y" THEN PRINT "[M]"; : GOTO L20020
-# IF SU$ = "y" THEN PRINT "[S]";
-# IF SU$ <> "y" THEN PRINT "[ ]"; : '' // [=chr$(13)?]--[cf1282]
-
-#L20020:
-#if tt$ <> "i" then goto L20030
-#xx$ = "": gosub STATUSx: '' // --Firstrun only -[?] -- [xx%="" -[?]
-#locate (xloc% + 4), 3: print "Choose Chart variant";
-#locate (xloc% + 6), 3: print "<1> <2> <3>";
-#locate (32 + PP%), 72: print "[i]";: '' // --REDUN-[?]-[Cf. above]
-
-#L20030:
-# KK$ = INKEY$: '' // input$()? [blw!:in$=""/i%:cf2170+]
-# if kk$ = CHR$(27) then gosub WAITx: goto Menu: '' // DEBUGTEMP =#-#-#=
-# IF KK$ <> "1" AND KK$ <> "2" AND KK$ <> "3" THEN GOTO L20030
-
-#xx$ = "[" + KK$  + "]": GOSUB WAITx: '' // --[rpt in ChartDraw]-[!?]
-
-#if g$ <> "t" then goto L20050
-#for m% = 18 to PP%
-# locate m%, 67:
-# print "             ";
-#next m%
-
-#L20050:
-# IF SU$ = CHR$(13) THEN GOSUB Blank: '' // [=""]?<-[cf mi$][BlankMain?][cf1282]
-# IF SU$ = "y" THEN SU% = SU% + 1: GOSUB L6500: '' // [20080else?][coll 20087?(x88)][cf2200]
-# GOSUB PreAspectCalc
 wSTR_ARR = preAspectCalc(wSTR_ARR, pSTR_ARR, chINT)
-# GOSUB AspectCalc: '' // [asp[(t$)switch=<>5drawing?)]-[?]
 wSTR_ARR = aspectCalc(wSTR_ARR, pSTR_ARR, chINT, hcINT)
-# IF EH$ = "A" THEN GOSUB L19600: '' // [cf19307]!
-# IF SU$ = "y" AND g$ <> "t" THEN GOSUB InMainDraw: GOTO Menu: '' // +[g$='N']/[Mi$='y']..!?:::[sub AspLines her?]-[ No?!!]
 
-#ChartDraw: '///
-# IF tt$ <> "i" THEN GOTO L20180: '' // [Cf. L20020]
-# locate (xloc% + 4), 3: print "                    ";
-# locate (xloc% + 6), 3: print "                    ";
-# GOSUB WAITx:  '' // [xx$ ?] --{rpt fm L20050 ?] [20162<->64 ?]::[cf2000+,20006]--[REDUN ?]
-# 
-#L20180: '' // [default color=15]
-# PSET (x%, y%)
-# CIRCLE (x%, y%), p2%
-# CIRCLE (x%, y%), p1%
-# PAINT (x%, y% + (p1% + ((p2% - p1%) / 2))), 11, 15: '<-[define/assign vars!]->
-# CIRCLE (x%, y%), P3%:                               '^^[diff color diff house system !??]<->[day/night houses?]
-# CIRCLE (x%, y%), pa%:                               '<-[Bordering Earth's horizon (Cyc=1)]
-# CIRCLE (x%, y%), P3% + 12, 3:                       '<-[define/assign color vars!]->
-# CIRCLE (x%, y%), 267, 3:                            '    -'-
-#
-#
-#LOCATE 1, 1: PRINT "Tropical Zodiac"; : '' // <[loc ,0 <-nocurs!?]
-#LOCATE 2, 1: PRINT "Equal Houses";
-#LOCATE 3, 1: PRINT "Quadrants";
-#
-#LOCATE 58, 1:
-#IF tf$ = "1" THEN PRINT "2-D Radix";
-#IF tf$ <> "1" THEN PRINT "2-D Turned";: '' // [OBS!]--[Harmonic]--[!] ##
-#LOCATE 59, 1:
-#IF tf$ = "1" THEN PRINT "Horizon view";
-#IF tf$ <> "1" THEN PRINT "Derived houses";
-#LOCATE 60, 1:
-#IF tf$ = "1" THEN PRINT "Origo: Tropos"; : '' //      <-^^[g$='r'(adix) !??]
-#IF tf$ <> "1" THEN PRINT "Radix Quadrants";  '' //      <-  [Center: Xxxxxx](r.[ ]Quadrants)
-#GOSUB Coordinates
 yyFLT, yzFLT, zyFLT = coordinates(float(pSTR_ARR[chINT, PPINT]))
-#GOSUB MainDraw: '' // --[yz redun: ?][cf20261,20274,20288,]
-#gosub STATUSx
-#GOTO Menu: '' // ['ChartDraw:' mangler 'RETURN' !?] <-[cf L2150, L2170, L39240] <* <* <* ==??== <* obs! === ### === OBS-RETURN-ERR--[??] ##
-
-#MainDraw:
-# FOR x = 0 TO 360 STEP 30: '' // [float! obs!x/x%] <-(use vars!)]
-    # PSET (x%, y%)
-    # u$ = STR$(x): u$ = MID$(u$, 2)
-    # DRAW "TA" + u$: DRAW "br181 c15 r40": '' // ["BR44 R12"][use vars!]    <-['c15' redun=default]
-# NEXT x
-# ZZ% = YZ: '' // [Zodiac division]['c3']
-# FOR K = 1 TO (360 / WA%)
-    # u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-    # PSET (x%, y%)
-    # DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r33": '' // [+var!]
-    # ZZ% = ZZ% + WA%: IF ZZ% > 360 THEN ZZ% = ZZ% - 360
-# NEXT K
-# ZZ% = YZ + WB%: '' // [Signs]['c3']
-# FOR K = 1 TO (360 / WA%)
-    # PSET (x%, y%)
-    # IF ZZ% > 360 THEN ZZ% = ZZ% - 360
-    # u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-    # v = VAL(u$) - 90: v$ = STR$(v): IF v >= 0 THEN v$ = MID$(v$, 2)
-    # DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r3 br4": DRAW "ta" + v$: DRAW "bu9 bl9": '' // <-([3+4]! (=7 !] <---
-    # IF SU$ <> "y" THEN GOSUB Zodiac: '' // <------------->'if g$ <> "t"]<->[M]!
-    # ZZ% = ZZ% + WA%: '' // <-[if > ...?]
-# NEXT K
-# ZZ = YZ
-# FOR K = 1 TO (360 / WC%)
-    # ZZ% = INT(ZZ): u$ = STR$(ZZ%): u$ = MID$(u$, 2)
-    # PSET (x%, y%)
-    # DRAW "TA" + u$: DRAW "BR" + p2$: DRAW "r" + PX$: '' // [px$:cf1062:mov->here?] <*
-    # ZZ = ZZ + WC%: IF ZZ > 360 THEN ZZ = ZZ - 360
-# NEXT K
-# IF KK$ <> "2" THEN GOTO InMainDraw: '[<1><2><3>]
-
-# z = (ZC / 360) * (2 * PI):                             ' <-[movup?][float,x/x%!]
-# FOR x = 0 TO 360 - (2 * WC%) STEP (2 * WC%)
-    # z = z + ((2 * PI) / (360 / WC%))                       ' [IF Z > (2*PI) THEN Z=Z-(2*PI)]
-    # FOR K = (p2% + 1) TO (P3% - 1)
-        # CIRCLE (x%, y%), K, , z, z + ((2 * PI) / (360 / WC%))
-    # NEXT K
-    # z = z + ((2 * PI) / (360 / WC%))                       ' [ej v/ w%=15 ?]  <[[[ <* missing ':' <-^^ yields err?? ]]]^^ <*
-# NEXT x
-
-#InMainDraw:
-# IF g$ = "t" OR EH$ = "A" THEN P$(mm%, hp% + 2) = P$(0, 0): '' //[MM%=0: <-OBS!] <[cf19600+]-> w h y  mm% ?]
-  
-# IF tt$ = "i" THEN m = 1: GOSUB TurnAngle: sv$ = v$
- 
-# FOR m = (hp% + 2) TO (hp% + 1) STEP -1: '' // [Reverse hp%+ (Asc/Mc)]:?:[cf. 'Axes:']
-# GOSUB axes
-# NEXT m
-
-# FOR m = 1 TO (NP% + 1): '' //   :: [^^EH$=""/chr$(13)?]
-# GOSUB TurnAngle
-# GOSUB PlanetSymbols
-# NEXT m
-# GOSUB Tropos
-#RETURN: '>[CHART] >(goto Menu)
- 
-#Tropos: '' // <-[ z% value assigned in 'DrawASC:[Outer:]' or 'InnerCircleLines:' (via 'PlusAspLines:')]
-
-#IF ln% = 1 THEN CIRCLE (x%, y%), 168, 7: '' // [,0] [,15 ?] '' // <[remove (brown) paint border]-[Ctrl-F comment 'brown']
-# IF tf$ = "1" THEN L% = 0: '' // <['free' l% ?]
-# IF tf$ <> "1" THEN L% = 15
-# CIRCLE (x%, y%), z%, L%: '' // <[diameter inner circle (pa% or 7)]
-# PSET (x%, y%), 0: '' // <-^[Tropos point set'd in Origo <(color=DawnDusk-circle!)] <[use var!]
-
-# IF z% <> pa% THEN GOTO InTroposData: '' // <--[UNFINISHED !!]-[!]
-
-# IF tf$ = "1" THEN CIRCLE (x%, y%), 1, 0
-
-#InTroposData: '' // [name>[xBoxes]?
-# GOSUB DataColumn
-# GOSUB DiffStatus
-#RETURN: '>[InMainDraw & MinusLines]
-
-#TurnAngle:
-#  v = VAL(P$(CH%, m)) - ZY: IF v < 0 THEN v = v + 360: '' //[gosub: cf 'sub' PlusAspLines+]
-#  b% = v: v$ = STR$(b%): v$ = MID$(v$, 2): PSET (x%, y%): DRAW "ta" + v$: '' // [pset!]
-#  RETURN: '>[InMainDraw+ & axes]
-
-#DataColumn: '[MAX=60]
-# IF tt$ <> "i" THEN GOTO L20520: ' <[x40?]
-#L20520:
-# IF MI$ = "y" THEN cc$ = "M" ELSE cc$ = "O"
-# LOCATE 2, 68: PRINT f1$; : LOCATE 2, 78: IF SU% > 0 THEN PRINT cc$; : '' // [?]
-# LOCATE 3, 68: PRINT N1$;
-
-# LOCATE 5, 68: PRINT H$; " "; t$;
-# LOCATE 6, 68: PRINT c$; " "; tf$; : ' [f% ?]
-#RETURN
-
-#DiffStatus:
-# IF a$ <> "p" THEN GOTO L20586
-# LOCATE (22 + PP%), 72: IF tt$ = t$ THEN PRINT "-S-";  ELSE PRINT "-D-"; : '' // <-[Same/Diff --(Cf. Help/Manual)]
-#L20586:
-# IF a$ <> "x" THEN GOTO L20594: ' >ret
-# LOCATE (25 + PP%), 70: IF TA$ = t$ THEN PRINT "-S-";  ELSE PRINT "-D-"; : '' // <-[print; ?]  '<-[S=Same Harmonic as drawing]
-# LOCATE (25 + PP%), 73: IF AT$ = t$ THEN PRINT "-S-";  ELSE PRINT "-D-"; : '' //  [or <> ]
-#L20594:
-#RETURN: '' // [+ [T|urned ! --###
-#
-#
-#WAITx: '' // locate ,,0 -[?]
-# locate 8, 67:  print "             ";
-# for L% = 9 to 13
-# locate L%, 67: print "             ";
-# next L%
-# locate 14, 67: print "             ";
 
 # LOCATE 1, 58: PRINT "         ";
 # LOCATE 2, 58: PRINT "         ";
@@ -1358,342 +1045,3 @@ yyFLT, yzFLT, zyFLT = coordinates(float(pSTR_ARR[chINT, PPINT]))
 #L61190:
 # CALL ArrowMC(i$, i%)
 #RETURN: '>axes
-
-#MO: DRAW "c0": '-----------------MO-----|''''|''''|''^'|''''|''''|:rem <[phases!]
-# DRAW "br10 r5 br10              bd1": '|          *****          '
-# DRAW "bl6 l4 bl5 l4 bl6         bd1": '|      ****     ****      '
-# DRAW "br3 r3 br4 r1 br8 r3 br3  bd1": '|   ***    *        ***   '
-# DRAW "bl2 l2 bl8 l2 bl7 l2 bl2  bd1": '|  **       **        **  '
-# DRAW "br1 r2 br10 r1 br8 r2 br1 bd1": '| **          *        ** '
-# DRAW "l1 bl9 l1 bl13 l1         bd1": '|*             *         *'
-# DRAW "r1 br14 r1 br8 r1         bd1": '-*              *        *'
-# DRAW "l1 bl9 l1 bl13 l1         bd1": '|*             *         *'
-# DRAW "br1 r2 br10 r1 br8 r2 br1 bd1": '| **          *        ** '
-# DRAW "bl2 l2 bl8 l2 bl7 l2 bl2  bd1": '|  **       **        **  '
-# DRAW "br3 r3 br4 r1 br8 r3 br3  bd1": '|   ***    *        ***   '
-# DRAW "bl6 l4 bl5 l4 bl6         bd1": '|      ****     ****      '
-# DRAW "br10 r5                      ": '|          *****          '<[bu 3]:?:[bl 6]
-# DRAW "bu3": '---------------------------
-#IF tf$ <> "1" THEN GOTO TurnedMO
-# i% = 14: IF VAL(sv$) < 180 THEN i% = 7: '' // <[7=daytime!] <[fading/graduated colors?]
-# PAINT STEP(0, 0), i%, 0: '' // <[cf SUN] -- <[cf. DrawAsc+DawnDusk]  [i% free ?]<->(SUBlocal?)]
-#TurnedMO:
-# DRAW "bl6": PAINT STEP(0, 0), 0, 0
-# RETURN
-
-#Irregular:
-#locate xloc%+10,10: print "IRREGULAR": stop
-# LOCATE xloc%, 40: PRINT "[tie]  'A' is started with '<a> <CR>' in base directory!"
-# locate xloc%, 42: print "<key>;
-# in$ = INPUT$(1)
-# CLEAR
-# SYSTEM
-
-#END: '<[redunexit]
-
-#SUB aqu : ' ' DRAW "c3": '-------------aqu----|''''|''''|''^'|''''|''''|
-# DRAW "br4 r2 br6 r2 br3               bd1": '|    **      **
-# DRAW "bl1 l2 bl2 l2 bl2 l2 bl2 l2 bl2 bd1": '|  **  **  **  **
-# DRAW "r2 br6 r2 br6 r1                bd1": '|**      **      *
-# DRAW "bl17                            bd1": '|
-# DRAW "br4 r2 br6 r2 br3               bd1": '-    **      **
-# DRAW "bl1 l2 bl2 l2 bl2 l2 bl2 l2 bl2 bd1": '|  **  **  **  **
-# DRAW "r2 br6 r2 br6 r1                   ": '|**      **      *
-#END SUB
-#
-#SUB ari :  ' ' DRAW "c3": '------------ari----|''''|''''|''^'|''''|''''|
-# DRAW "r5 br15 r5                      bd1": '|*****               *****
-# DRAW "l2 bl3 l2 bl11 l2 bl3 l2        bd1": '|**   **           **   **
-# DRAW "br1 r2 br3 r2 br9 r2 br3 r2 br1 bd1": '| **   **         **   **
-# DRAW "bl7 l2 bl7 l2 bl7               bd1": '|       **       **
-# DRAW "br8 r2 br5 r2 br8               bd1": '-       **     **
-# DRAW "bl9 l2 bl3 l2 bl9               bd1": '|         **   **
-# DRAW "br10 r2 br1 r2 br10             bd1": '|          ** **
-# DRAW "bl11 l3 bl11                    bd1": '|           ***
-# DRAW "br11 r3 br11                    bd1": '|           ***
-#END SUB
-#
-#SUB ArrowASC (i$, i%) : '-------|''''|''''|''^'|''''|''''|
-#DRAW "u3                    ": '|
-#DRAW "r5 br3             bd1": '|     *****
-#DRAW "l8                 bd1": '|     ********
-#DRAW "r11 br4            bd1": '|     ***********
-#DRAW "l15                bd1": '-     ***************
-#DRAW "r11 br4            bd1": '|     ***********
-#DRAW "bl7 l8             bd1": '|     ********
-#DRAW "r5                    ": '|     *****
-#DRAW "bu3"
-#IF VAL(i$) > 1 THEN CIRCLE STEP(0, 0), 2, i%: PAINT STEP(0, 0), i%, i%: '15: '<[no pset'd !?]
-#DRAW "bl5"
-#DRAW "bl150 bd10            ": '|
-#END SUB: '-----------------------
-#
-#SUB ArrowMC (i$, i%) : '--------|''''|''''|''^'|''''|''''|
-#DRAW "u3                    ": '|
-#DRAW "r5 br3             bd1": '|     *****
-#DRAW "l3 bl4 l1          bd1": '|     *oooo***
-#DRAW "r1 br7 r3 br4      bd1": '|     *ooooooo***
-#DRAW "l5 bl9 l1          bd1": '-     *oooooooo*****
-#DRAW "r1 br7 r3          bd1": '|     *ooooooo***
-#DRAW "bl3 l3 bl4 l1      bd1": '|     *oooo***
-#DRAW "r5                    ": '|     *****
-#IF VAL(i$) > 1 THEN DRAW "c" + STR$(i%): DRAW "bu1 l4 u4 r3 d3 l2 u2 r1 d2 r2 u2 r1 d2 r1 u2 d1 r1"
-#END SUB: '-----------------------
-#
-#SUB can : '------------------can----|''''|''''|''^'|''''|''''|
-# DRAW "r20                  bd1": '|********************
-# DRAW "l2 bl10 l1 bl6 l1    bd1": '|*      *          **
-# DRAW "r1 br7 r1 br8 r2 br1 bd1": '|*       *        **
-# DRAW "bl11 l9              bd1": '|*********
-# DRAW "br20                 bd1": '-
-# DRAW "l9 bl11              bd1": '|           *********
-# DRAW "br1 r2 br8 r2 br7 r1 bd1": '| **        *       *
-# DRAW "l1 bl6 l1 bl10 l2    bd1": '|**          *      *
-# DRAW "r20                  bd1": '|********************
-#END SUB
-#
-#SUB cap : '----------------------cap----|''''|''''|''^'|''''|''''|
-# DRAW "br9 r5 br3               bd1": '|          *****
-# DRAW "bl2 l2 bl3 l2 bl5 l2 l1  bd1": '|  **     **   **
-# DRAW "br2 r2 br5 r2 br1 r2 br3 bd1": '|   **     ** **
-# DRAW "bl3 l3 bl6 l2 bl3        bd1": '|    **      ***
-# DRAW "br4 r2 br4 r2 br2 r2 br1 bd1": '-     **    **  **
-# DRAW "l2 bl4 l2 bl2 l2 bl5     bd1": '|      **  **    **
-# DRAW "br7 r3 br3 r2               ": '|        ***   **
-#END SUB
-
-#SUB gem : '---------------gem----|''''|''''|''^'|''''|''''|
-# DRAW "r25               bd1": '|*************************
-# DRAW "l25               bd1": '|*************************
-# DRAW "br6 r3 br7 r3 br6 bd1": '|      ***       ***
-# DRAW "bl6 l3 bl7 l3 bl6 bd1": '|      ***       ***
-# DRAW "br6 r3 br7 r3 br6 bd1": '-      ***       ***
-# DRAW "bl6 l3 bl7 l3 bl6 bd1": '|      ***       ***
-# DRAW "br6 r3 br7 r3 br6 bd1": '|      ***       ***
-# DRAW "l25               bd1": '|*************************
-# DRAW "r25               bd1": '|*************************
-#END SUB
-#
-#SUB JU : DRAW "c0": '------JU-----|''''|''''|''^'|''''|''''|
-# DRAW "br25               bd1": '|
-# DRAW "bl19 l2 bl4        bd1": '|    **
-# DRAW "br6 r2 br17        bd1": '|      **
-# DRAW "bl15 l2 bl8        bd1": '|        **
-# DRAW "br9 r2 br14        bd1": '|         **
-# DRAW "bl14 l1 bl10       bd1": '|          *
-# DRAW "br10 r1 br8 r1 br5 bd1": '-          *        *
-# DRAW "bl5 l1 bl8 l1 bl10 bd1": '|          *        *
-# DRAW "br11 r11 br3       bd1": '|           ***********
-# DRAW "bl5 l1 bl19        bd1": '|                   *
-# DRAW "br19 r1 br5        bd1": '|                   *
-# DRAW "bl5 l1 bl19        bd1": '|                   *
-# DRAW "br19 r1 br5           ": '|                   *
-#END SUB
-#
-#SUB leo : '------------------leo----|''''|''''|''^'|''''|''''|
-# DRAW "r17                  bd1": '|      ***
-# DRAW "l17                  bd1": '|     *   **
-# DRAW "r17                  bd1": '|    *     **
-# DRAW "l17                  bd1": '|   *       **
-# DRAW "r17                  bd1": '-***         **  *
-# DRAW "l17                  bd1": '|* *          ** *
-# DRAW "r17                  bd1": '|***           **
-#END SUB
-#
-#SUB lib : '---------------lib----|''''|''''|''^'|''''|''''|
-# DRAW "br17              bd1": '|
-# DRAW "bl7 l3 bl7        bd1": '|        ***
-# DRAW "br4 r2 br5 r2 br4 bd1": '|     **     **
-# DRAW "l5 bl7 l5         bd1": '| *****       *****
-# DRAW "br17              bd1": '-
-# DRAW "l8 bl1 l8            ": '| ******** ********
-#END SUB
-#
-#SUB LineSpaces (xloc%, L$)
-# LOCATE xloc%, 1: PRINT SPC(79); L$;
-#END SUB
-#
-#SUB MA : DRAW "c0": '------MA-----|''''|''''|''^'|''''|''''|
-# DRAW "br12 r10 br3       bd1": '|            **********
-# DRAW "bl2 l2 bl1 l1 bl19 bd1": '|                   * **
-# DRAW "br17 r1 br4 r2 br1 bd1": '|                 *    **
-# DRAW "l2 bl6 l1 bl16     bd1": '|                *      **
-# DRAW "br14 r1 br10       bd1": '|              *
-# DRAW "bl11 l1 bl13       bd1": '|             *
-# DRAW "br6 r13 br6        bd1": '-      *************
-# DRAW "bl5 l1 bl13 l1 bl5 bd1": '|     *             *
-# DRAW "br4 r1 br15 r1 br4 bd1": '|    *               *
-# DRAW "bl3 l1 bl17 l1 bl3 bd1": '|   *                 *
-# DRAW "br4 r1 br15 r1 br4 bd1": '|    *               *
-# DRAW "bl5 l1 bl13 l1 bl5 bd1": '|     *             *
-# DRAW "br6 r13 br6           ": '|      *************
-#END SUB
-#
-#SUB ME : DRAW "c0": '------ME-----|''''|''''|''^'|''''|''''|
-# DRAW "br4 r4 br9 r4 br4  bd1": '|    ****         ****
-# DRAW "bl4 l4 bl9 l4 bl4  bd1": '|    ****         ****
-# DRAW "br5 r4 br7 r4 br5  bd1": '|     ****       ****
-# DRAW "bl5 l15 bl5        bd1": '|     ***************
-# DRAW "br3 r4 br11 r4 br3 bd1": '|   ****           ****
-# DRAW "bl2 l4 bl13 l4 l2  bd1": '|  ****             ****
-# DRAW "br3 r4 br11 r4 br3 bd1": '-   ****           ****
-# DRAW "bl6 l13 bl6        bd1": '|      *************
-# DRAW "br11 r3 br11       bd1": '|           ***
-# DRAW "bl11 l3 bl11       bd1": '|           ***
-# DRAW "br8 r9 br8         bd1": '|        *********
-# DRAW "bl11 l3 bl11       bd1": '|           ***
-# DRAW "br11 r3 br11          ": '|           ***
-#END SUB
-#
-#SUB NE : DRAW "c8": '------------NE-----|''''|''''|''^'|''''|''''|
-# DRAW "br25                     bd1": '|
-# DRAW "bl1 l1 bl19 l2 bl1       bd1": '| **                   **
-# DRAW "br2 r2 br8 r1 br8 r2 br2 bd1": '|  **        *        **
-# DRAW "bl3 l2 bl7 l1 bl7 l2 bl3 bd1": '|   **       *       **
-# DRAW "br3 r2 br7 r1 br7 r2 br3 bd1": '|   **       *       **
-# DRAW "bl4 l2 bl6 l1 bl6 l2 bl4 bd1": '|    **      *      **
-# DRAW "br6 r13 br6              bd1": '-      *************
-# DRAW "bl12 l1 bl12             bd1": '|            *
-# DRAW "br12 r1 br12             bd1": '|            *
-# DRAW "bl12 l1 bl12             bd1": '|            *
-# DRAW "br8 r9 br8               bd1": '|        *********
-# DRAW "bl12 l1 bl12             bd1": '|            *
-# DRAW "br12 r1 br12                ": '|            *
-#END SUB
-#
-#SUB PL : DRAW "c8": '------PL-----|''''|''''|''^'|''''|''''|
-# DRAW "br25               bd1": '|
-# DRAW "bl8 l12 bl5        bd1": '|     ************
-# DRAW "br4 r2 br11 r2 br6 bd1": '|    **           **
-# DRAW "bl5 l2 bl12 l2 bl4 bd1": '|    **            **
-# DRAW "br4 r2 br12 r2 br5 bd1": '|    **            **
-# DRAW "bl6 l2 bl11 l2 bl4 bd1": '|    **           **
-# DRAW "br4 r13 br8        bd1": '-    *************
-# DRAW "bl19 l2 bl4        bd1": '|    **
-# DRAW "br4 r2 br19        bd1": '|    **
-# DRAW "bl5 l2 bl12 l2 bl4 bd1": '|    **            **
-# DRAW "br4 r2 br12 r2 br5 bd1": '|    **            **
-# DRAW "bl6 l15 bl4        bd1": '|    ***************
-# DRAW "br25               bd1": '|
-#END SUB
-#
-#SUB psc : '---------------psc----|''''|''''|''^'|''''|''''|
-# DRAW "r3 br11 r3        bd1": '| ***           ***
-# DRAW "bl2 l2 bl9 l2 bl2 bd1": '|   **         **
-# DRAW "br3 r2 br7 r2 br3 bd1": '|    **       **
-# DRAW "bl4 l9 bl4        bd1": '|     *********
-# DRAW "br3 r2 br7 r2 br3 bd1": '-    **       **
-# DRAW "bl2 l2 bl9 l2 bl2 bd1": '|   **         **
-# DRAW "r3 br11 r3           ": '| ***           ***
-#END SUB
-#
-#SUB sag : '---------------sag----|''''|''''|''^'|''''|''''|
-# DRAW "br4 r8 br5        bd1": '|     ********
-# DRAW "bl4 l1 bl2 l2 bl8 bd1": '|         **  *
-# DRAW "br7 r2 br3 r1 br4 bd1": '|        **   *
-# DRAW "bl9 l2 bl6        bd1": '|       **
-# DRAW "br2 r8 br7        bd1": '-   ********
-# DRAW "bl11 l2 bl4       bd1": '|     **
-# DRAW "br3 r2               ": '|    **
-#END SUB
-#
-#SUB SA : DRAW "c0": '-----------SA-----|''''|''''|''^'|''''|''''|
-# DRAW "br5 r1 br19              bd1": '|     *
-# DRAW "bl19 l1 bl5              bd1": '|     *
-# DRAW "br1 r9 br15              bd1": '| *********
-# DRAW "bl19 l1 bl5              bd1": '|     *
-# DRAW "br5 r1 br5 r4 br10       bd1": '|     *     ****
-# DRAW "bl7 l2 bl5 l2 bl3 l1 bl5 bd1": '|     *   **     **
-# DRAW "br5 r1 br2 r2 br8 r2 br5 bd1": '-     *  **        **
-# DRAW "bl5 l2 bl10 l3 bl5       bd1": '|     ***          **
-# DRAW "br17 r2 br6              bd1": '|                 **
-# DRAW "bl8 l2 bl15              bd1": '|               **
-# DRAW "br13 r2 br10             bd1": '|             **
-# DRAW "bl12 l2 bl11             bd1": '|           **
-# DRAW "br12 r2 br11                ": '|            **
-#END SUB
-#
-#SUB sco : '------------------------------------sco----|''''|''''|''^'|''''|''''|
-# DRAW "br2 r8 br7                             bd1": '|   ********
-# DRAW "bl1 l1 bl5 l1 bl2 l1 bl2 l1 bl1 l1 bl1 bd1": '| * *  *  *    **
-# DRAW "r1 br2 r1 br2 r1 br2 r1 br2 r2 br1 r2  bd1": '| *  *  *  *  ** **
-# DRAW "bl3 l1 bl3 l1 bl2 l1 bl2 l1 bl2 l1     bd1": '| *  *  *  *   *
-# DRAW "r1 br2 r1 br2 r1 br2 r1 br2 r1 br4     bd1": '- *  *  *  *  *
-# DRAW "bl5 l1 bl1 l1 bl2 l1 bl2 l1 bl3        bd1": '|    *  *  * *
-# DRAW "br3 r1 br5 r2                             ": '|    *     **
-#END SUB
-#
-#SUB SUN (tf$) : DRAW "c0": '------|''''|''''|''^'|''''|''''|
-# DRAW "br10 r5 br10       bd1": '|          *****          '
-# DRAW "bl6 l4 bl5 l4 bl6  bd1": '|      ****     ****      '
-# DRAW "br3 r3 br13 r3 br3 bd1": '|   ***             ***   '
-# DRAW "bl2 l2 bl17 l2 bl2 bd1": '|  **                 **  '
-# DRAW "br1 r2 br19 r2 br1 bd1": '| **                   ** '
-# DRAW "l1 bl23 l1         bd1": '|*                       *'
-# DRAW "r1 br11 r1 br11 r1 bd1": '-*           *           *'
-# DRAW "l1 bl23 l1         bd1": '|*                       *'
-# DRAW "br1 r2 br19 r2 br1 bd1": '| **                   ** '
-# DRAW "bl2 l2 bl17 l2 bl2 bd1": '|  **                 **  '
-# DRAW "br3 r3 br13 r3 br3 bd1": '|   ***             ***   '
-# DRAW "bl6 l4 bl5 l4 bl6  bd1": '|      ****     ****      '
-# DRAW "br10 r5               ": '|          *****          '<[bu 10?]
-# DRAW "bu10": '-------------------
-#IF tf$ <> "1" THEN GOTO TurnedSu
-# i% = 14
-# PAINT STEP(0, 0), i%, 0: '<[cf. MO]
-#TurnedSu:
-#END SUB
-#
-#SUB tau : '----------------tau----|''''|''''|''^'|''''|''''|
-# DRAW "br3 r3 br13 r3 br3 bd1": '|   ***             ***
-# DRAW "bl4 l3 bl11 l3 bl4 bd1": '|    ***           ***
-# DRAW "br5 r3 br9 r3 br5  bd1": '|     ***         ***
-# DRAW "bl6 l3 bl7 l3 bl6  bd1": '|      ***       ***
-# DRAW "br1 r23 br1        bd1": '-  *********************
-# DRAW "bl1 l2 bl19 l2 bl1 bd1": '| **                   **
-# DRAW "r2 br21 r2         bd1": '|**                     **
-# DRAW "bl1 l2 bl19 l2 bl1 bd1": '| **                   **
-# DRAW "br2 r21 br2        bd1": '|  *********************
-#END SUB
-#
-#SUB UR : DRAW "c8": '------------UR-----|''''|''''|''^'|''''|''''|
-# DRAW "br25                     bd1": '|
-# DRAW "bl3 l2 bl15 l2 bl3       bd1": '|   **               **
-# DRAW "br4 r2 br6 r1 br6 r2 br4 bd1": '|    **      *      **
-# DRAW "bl6 l1 bl5 l1 bl5 l1 bl6 bd1": '|      *     *     *
-# DRAW "br7 r11 br7              bd1": '|       ***********
-# DRAW "bl6 l1 bl5 l1 bl5 l1 bl6 bd1": '|      *     *     *
-# DRAW "br4 r2 br6 r1 br6 r2 br4 bd1": '-    **      *      **
-# DRAW "bl3 l2 bl15 l2 bl3       bd1": '|   **       *       **
-# DRAW "br12 r1 br 12            bd1": '|            *
-# DRAW "bl11 l3 bl11             bd1": '|           ***
-# DRAW "br10 r1 br3 r1 br10      bd1": '|          *   *
-# DRAW "bl11 l3 bl11             bd1": '|           ***
-# DRAW "br25                        ": '|
-#END SUB
-#
-#SUB VE : DRAW "c0": '------VE-----|''''|''''|''^'|''''|''''|
-# DRAW "br6 r13 br6 bd1       ": '|      *************
-# DRAW "bl5 l1 bl13 l1 bl5 bd1": '|     *             *
-# DRAW "br4 r1 br15 r1 br4 bd1": '|    *               *
-# DRAW "bl3 l1 bl17 l1 bl3 bd1": '|   *                 *
-# DRAW "br4 r1 br15 r1 br4 bd1": '|    *               *
-# DRAW "bl5 l1 bl13 l1 bl5 bd1": '|     *             *
-# DRAW "br6 r13 br6        bd1": '-      *************
-# DRAW "bl12 l1 bl12       bd1": '|            *
-# DRAW "br12 r1 br12       bd1": '|            *
-# DRAW "bl12 l1 bl12       bd1": '|            *
-# DRAW "br9 r7 br9         bd1": '|         *******
-# DRAW "bl12 l1 bl12       bd1": '|            *
-# DRAW "br12 r1 br12          ": '|            *
-#END SUB
-#
-#SUB vir : '--------------------------------vir----|''''|''''|''^'|''''|''''|
-# DRAW "br2 r5 br1 r9                      bd1": '|   ***** *********
-# DRAW "l1 bl4 l1 bl3 l1 bl3 l1 bl1 l1 bl1 bd1": '|  * *   *   *    *
-# DRAW "r1 br2 r1 br3 r1 br3 r1 br2 r1 br2 bd1": '| *  *   *   *  *
-# DRAW "bl4 l2 bl3 l1 bl3 l1 bl2 l1        bd1": '| *  *   *   **
-# DRAW "r1 br2 r1 br3 r1 br2 r2 br5        bd1": '- *  *   *  **
-# DRAW "bl5 l1 bl1 l1 bl1 l1 bl3 l1 bl3    bd1": '|    *   * * *
-# DRAW "br3 r1 br3 r1 br2 r2                  ": '|    *   *  **
-#END SUB

@@ -7,7 +7,7 @@
 #-------------------------------------------------------------
 """
 
-from pathlib import PurePath
+from pathlib import Path
 import numpy as np
 
 NUM_PLANETS = 10
@@ -61,18 +61,18 @@ def main():
     """Main function"""
     with open('switch.sw0') as infile:
         # Charts (base directory)
-        base_dir = PurePath(infile.readline().strip())
+        base_dir = Path(infile.readline().strip())
         # Temp charts (Charts directory)
-        data_dir = PurePath(infile.readline().strip())
+        data_dir = Path(infile.readline().strip())
         switch = int(infile.readline().strip())
 
     with open('choice.sw0') as infile:
         choice = infile.readline().strip()
 
     print('[Temp]')
-    input_dir = PurePath(data_dir)
-    filename_1 = PurePath('astro-1.txt')
-    filename_2 = PurePath('astro-2.txt')
+    input_dir = data_dir
+    filename_1 = Path('Astro-1.txt')
+    filename_2 = Path('Astro-2.txt')
 
     if choice == 'N':
         print('           ')
@@ -90,7 +90,7 @@ def main():
     print('WAIT...')
 
     # Sniff file to find source program
-    with open(input_dir / filename_1) as infile:
+    with (input_dir / filename_1).open() as infile:
         line = infile.readline()
         if line.startswith('Astrolog 5.34a'):
             source_program = 'astrolog543a'
@@ -100,10 +100,10 @@ def main():
             source_program = 'ZET9'
 
     # ZET9 calculations
-    with open(input_dir / filename_1) as infile:
+    with (input_dir / filename_1).open() as infile:
         for line in infile:
             line = line.strip('\n')  # Remove trailing newline
-            for idx in range(1, num_labels + 1):
+            for idx in range(1, num_labels):
                 if line[:1] == 'X':
                     if line[1] not in ['I', 'V', 'X']:
                         pSTR_ARR[NUM_HIGH_PLANETS + 1] = calczet9(line[-15:])
@@ -113,19 +113,19 @@ def main():
                         pSTR_ARR[NUM_HIGH_PLANETS + 2] = calczet9(line[-15:])
                         break
 
-    with open(input_dir / filename_2) as infile:
+    with (input_dir / filename_2).open() as infile:
         for line in infile:
             line = line.rstrip('\n')  # Remove trailing newline
-            for idx in range(1, num_labels + 1):
+            for idx in range(1, num_labels):
                 if line[:4] == LABELS_ZET9[idx][:4]:
                     line = line[18:27]
                     pSTR_ARR[idx] = line
                     break
 
-    with open(data_dir / 'SWI.SWI', mode='w') as outfile:
+    with (data_dir / 'SWI.SWI').open(mode='w') as outfile:
         outfile.write(source_program + '\n')
 
-    with open(data_dir / 'PDAT.DAT', mode='w') as outfile:
+    with (data_dir / 'PDAT.DAT').open(mode='w') as outfile:
         outfile.writelines(['"RealName"\n',
                             '"Alias name"\n',
                             '"Type"\n',
@@ -139,11 +139,11 @@ def main():
         for idx in range(1, NUM_HIGH_PLANETS + 1):
             outfile.write(pSTR_ARR[idx] + '\n')
 
-    with open(data_dir / 'ANGDAT.DAT', mode='w') as outfile:
+    with (data_dir / 'ANGDAT.DAT').open(mode='w') as outfile:
         for idx in [NUM_HIGH_PLANETS + 1, NUM_HIGH_PLANETS + 2]:
             outfile.write(pSTR_ARR[idx] + '\n')
 
-    with open(data_dir / 'IDENTITY.TIE', mode='w') as outfile:
+    with (data_dir / 'IDENTITY.TIE').open(mode='w') as outfile:
         outfile.write(str(input_dir) + '\n')
         outfile.write(str(filename_1) + '\n')
 

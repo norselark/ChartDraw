@@ -2,14 +2,14 @@ import random
 import tkinter as tk
 import numpy as np
 from transform_canvas import TransformCanvas
-from treeview_panel import TreeviewPanel
+from treeview_panel import TreeviewPanel, ChartSelection
+from aq_functions import coordinates
 
 p = ['', '292.24327', '242.66082', '271.75037', '293.01350', '231.33463',
      '228.76548', '272.72153', ' 24.61269', '342.18475', '289.17087', '135.16396',
      '306.3983', '087.37077']
 
-YZ = 92.62924
-ZY = 267.37077
+YY, YZ, ZY = coordinates(float(p[-1]))
 
 GLYPHS = {
     'sun': u'\u2609',
@@ -23,22 +23,22 @@ GLYPHS = {
     'uranus': u'\u2645',
     'neptune': u'\u2646',
     'pluto': u'\u2647',
-    'ari': u'\u2648',
-    'tau': u'\u2649',
-    'gem': u'\u264a',
-    'cnc': u'\u264b',
-    'leo': u'\u264c',
-    'vir': u'\u264d',
-    'lib': u'\u264e',
-    'sco': u'\u264f',
-    'sag': u'\u2650',
-    'cap': u'\u2651',
-    'aqu': u'\u2652',
-    'pis': u'\u2653'
+    'Ari': u'\u2648',
+    'Tau': u'\u2649',
+    'Gem': u'\u264a',
+    'Can': u'\u264b',
+    'Leo': u'\u264c',
+    'Vir': u'\u264d',
+    'Lib': u'\u264e',
+    'Sco': u'\u264f',
+    'Sag': u'\u2650',
+    'Cap': u'\u2651',
+    'Aqu': u'\u2652',
+    'Psc': u'\u2653'
 }
 
-ZODIAC = ['ari', 'tau', 'gem', 'cnc', 'leo', 'vir',
-          'lib', 'sco', 'sag', 'cap', 'aqu', 'pis']
+ZODIAC = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
+          'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
 PLANETS = ['', 'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
            'saturn', 'uranus', 'neptune', 'pluto']
@@ -47,6 +47,7 @@ PLANETS = ['', 'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.title('ChartDraw')
         frame = tk.Frame(self)
         frame.pack()
         left_frame = tk.Frame(frame)
@@ -56,11 +57,15 @@ class App(tk.Tk):
 
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
-        tl_text = tk.Label(
-            top_bar, text='Tropical Zodiac\nEqual Houses\nQuadrants')
+        tl_text = tk.Label(top_bar,
+                           text='Tropical Zodiac\nEqual Houses\nQuadrants')
         tl_text.pack(side=tk.LEFT)
-        tr_text = tk.Label(top_bar, text='DRAW  1\nzh 2\nZET9')
+        tr_text = tk.Label(top_bar, text='DRAW\nzh 2\nZET9')
+        self.type_string = tk.StringVar(self, value='1')
+        self.chart_type = tk.Label(top_bar, textvariable=self.type_string)
+        self.chart_type.pack(side=tk.RIGHT)
         tr_text.pack(side=tk.RIGHT)
+        
         self.canvas = TransformCanvas(
             left_frame, background="black", width=512, height=512)
         self.canvas.pack(side=tk.TOP)
@@ -72,31 +77,27 @@ class App(tk.Tk):
         br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
         br_text.pack(side=tk.RIGHT)
 
-        self.button = tk.Button(right_frame, text="Dot",
-                                command=self.place_dot)
-        self.button.pack(side=tk.TOP)
-        self.button2 = tk.Button(
-            right_frame, text="Redraw chart", command=self.draw_chart)
-        self.button2.pack(side=tk.TOP)
+        redraw_button = tk.Button(right_frame, text="Redraw chart",
+                                  command=self.redraw_chart)
+        redraw_button.pack(side=tk.TOP)
         self.tv = TreeviewPanel(right_frame)
         self.tv.pack(side=tk.TOP)
 
-        frame.focus_set()
-        frame.bind('<Key>', self.dispatch)
+        self.focus_set()
+        self.bind('<Key>', self.dispatch)
 
         self.draw_chart()
-
-    def place_dot(self):
-        x = random.randrange(0, 640)
-        y = random.randrange(0, 480)
-        self.canvas.create_oval((x, y, x + 5, y + 5),
-                                outline='red', fill="black")
 
     def dispatch(self, event):
         if event.type == tk.EventType.KeyPress and event.char == '=':
             self.tv.toggle_column()
         if event.type == tk.EventType.KeyPress and event.char == '+':
             self.tv.scroll_up()
+
+    def redraw_chart(self):
+        sel = ChartSelection(self)
+        self.type_string.set(str(sel.result))
+        self.draw_chart()
 
     def draw_chart(self):
         canv = self.canvas
@@ -159,7 +160,6 @@ class App(tk.Tk):
             coords = [p1 + 21, 0]
             canv.text(coords, text=glyph, fill='black', font=(None, 18))
 
-        offset = '{},{}'.format(origin[0], origin[1])
         self.draw_asc()
         self.draw_mc()
 
