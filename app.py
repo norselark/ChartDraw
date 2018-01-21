@@ -1,15 +1,10 @@
-import random
+from pathlib import Path
 import tkinter as tk
 import numpy as np
 from transform_canvas import TransformCanvas
 from treeview_panel import TreeviewPanel, ChartSelection
-from aq_functions import coordinates
+from aq_functions import coordinates, truncate_rounding
 
-p = ['', '292.24327', '242.66082', '271.75037', '293.01350', '231.33463',
-     '228.76548', '272.72153', ' 24.61269', '342.18475', '289.17087', '135.16396',
-     '306.3983', '087.37077']
-
-YY, YZ, ZY = coordinates(float(p[-1]))
 
 GLYPHS = {
     'sun': u'\u2609',
@@ -40,8 +35,32 @@ GLYPHS = {
 ZODIAC = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
           'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
-PLANETS = ['', 'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
+PLANETS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
            'saturn', 'uranus', 'neptune', 'pluto']
+
+
+def load_data():
+    data_dir = Path('aqCHARTS/aq_temp')
+    angles = [None] * 13
+    truncated_angles = [None] * 13
+    with (data_dir / 'PDAT.DAT').open() as infile:
+        # Discard first 10 lines for now
+        for _ in range(10):
+            infile.readline()
+        for idx in range(11):
+            line = infile.readline().rstrip('\n')
+            angles[idx] = float(line)
+            truncated_angles[idx] = truncate_rounding(line)
+
+    with (data_dir / 'ANGDAT.DAT').open() as infile:
+        for idx in range(11, 13):
+            line = infile.readline().rstrip('\n')
+            angles[idx] = float(line)
+            truncated_angles[idx] = truncate_rounding(line)
+
+    return {"letters": ['S', 'L', 'H', 'V', 'M', 'J', 'D', 'U', 'N', 'P', 'X', 'C', 'A'],
+            "angles": angles,
+            "truncated_angles": truncated_angles}
 
 
 class App(tk.Tk):
@@ -55,6 +74,8 @@ class App(tk.Tk):
         right_frame = tk.Frame(frame)
         right_frame.pack(side=tk.RIGHT)
 
+        self.data = load_data()
+
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
         tl_text = tk.Label(top_bar,
@@ -65,22 +86,22 @@ class App(tk.Tk):
         self.chart_type = tk.Label(top_bar, textvariable=self.type_string)
         self.chart_type.pack(side=tk.RIGHT)
         tr_text.pack(side=tk.RIGHT)
-        
-        self.canvas = TransformCanvas(
-            left_frame, background="black", width=512, height=512)
+
+        self.canvas = TransformCanvas(left_frame, background="black",
+                                      width=512, height=512)
         self.canvas.pack(side=tk.TOP)
         bottom_bar = tk.Frame(left_frame, borderwidth=5)
         bottom_bar.pack(side=tk.TOP, fill=tk.X)
-        bl_text = tk.Label(
-            bottom_bar, text='2-D Radix\nHorizon view\nOrigo: Tropos')
+        bl_text = tk.Label(bottom_bar,
+                           text='2-D Radix\nHorizon view\nOrigo: Tropos')
         bl_text.pack(side=tk.LEFT)
         br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
         br_text.pack(side=tk.RIGHT)
 
-        redraw_button = tk.Button(right_frame, text="Redraw chart",
+        redraw_button = tk.Button(bottom_bar, text="Redraw chart",
                                   command=self.redraw_chart)
         redraw_button.pack(side=tk.TOP)
-        self.tv = TreeviewPanel(right_frame)
+        self.tv = TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
 
         self.focus_set()
@@ -100,6 +121,7 @@ class App(tk.Tk):
         self.draw_chart()
 
     def draw_chart(self):
+        yy, yz, zy = coordinates(self.data['angles'][-1])
         canv = self.canvas
         canv.delete(tk.ALL)
         x = 256
@@ -129,25 +151,25 @@ class App(tk.Tk):
         # Delineating the regions of the zodiac
         coords = [[p3 + 12, 0], [p3 + 45, 0]]
         for degrees in range(0, 360, 30):
-            canv.set_rotation(degrees + YZ)
+            canv.set_rotation(degrees + yz)
             canv.line(coords, fill='#00aaaa')
 
         # Zodiac symbols
         coords = [p3 + 26, 0]
         for sign, degrees in zip(ZODIAC, range(0, 360, 30)):
-            canv.set_rotation(degrees + 15 + YZ)
+            canv.set_rotation(degrees + 15 + yz)
             glyph = GLYPHS[sign]
             canv.text(coords, text=glyph, fill='#00aaaa', font=(None, 18))
 
         # Sectors of 5 degrees along the rim
         coords = [[p2, 0], [p3, 0]]
         for degrees in range(0, 360, 5):
-            canv.set_rotation(degrees + YZ)
+            canv.set_rotation(degrees + yz)
             canv.line(coords, fill='white')
 
         # Planet symbols with circle markers
-        for angle, planet in zip(p[1:], PLANETS[1:]):
-            canv.set_rotation(float(angle) - ZY)
+        for angle, planet in zip(self.data['angles'], PLANETS):
+            canv.set_rotation(float(angle) - zy)
 
             coords = [p1 - 5, 0]
             canv.circle(coords, 3, fill='', outline='white')
@@ -160,34 +182,34 @@ class App(tk.Tk):
             coords = [p1 + 21, 0]
             canv.text(coords, text=glyph, fill='black', font=(None, 18))
 
-        self.draw_asc()
-        self.draw_mc()
+        self.draw_asc(self.data['angles'][-1] - zy)
+        self.draw_mc(self.data['angles'][-2] - zy)
 
-    def draw_asc(self):
+    def draw_asc(self, angle):
         canv = self.canvas
 
         # depends on sv$
         i, il, l = 1, 9, 3
 
-        canv.set_rotation(float(p[-1]) - ZY)
+        canv.set_rotation(angle)
         canv.line([[-57, 0], [-179, 0]], fill='white')
         canv.line([[57, 0], [179, 0]], fill='white')
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
         canv.polygon((229, 0), [[0, -3], [5, -3],
                                 [15, 0], [5, 3], [0, 3]], fill='white')
 
-    def draw_mc(self):
+    def draw_mc(self, angle):
         canv = self.canvas
 
         # depends on sv$
         i, il, l = 1, 9, 3
 
-        canv.set_rotation(float(p[-2]) - ZY)
+        canv.set_rotation(angle)
         canv.line([[-57, 0], [-179, 0]], fill='white')
         canv.line([[57, 0], [179, 0]], fill='white')
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
-        canv.polygon((229, 0), [[0, -3], [5, -3], [15, 0],
-                                [5, 3], [0, 3]], outline='white', fill='black')
+        canv.polygon((229, 0), [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]],
+                     outline='white', fill='black')
 
 
 if __name__ == '__main__':
