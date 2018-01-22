@@ -15,7 +15,7 @@ class TreeviewPanel(tk.Frame):
         self.tv.heading('trunc', text='Trunc')
 
         self.tv.column('letter', anchor='center',
-                       minwidth=20, width=20, stretch=False)
+                       minwidth=40, width=40, stretch=False)
         self.tv.column('angle', anchor='center',
                        minwidth=120, width=120, stretch=False)
         self.tv.column('trunc', anchor='center',
@@ -79,8 +79,31 @@ class ChartSelection(tk.Toplevel):
         self.parent.focus_set()
         self.destroy()
 
+class HarmonicSelection(tk.Toplevel):
+    def __init__(self, parent, *args):
+        super().__init__(parent, *args)
+        self.transient(parent)
+        self.parent = parent
+        self.result = None
+
+        body = tk.Frame(self)
+        body.pack()
+
+        self.spinbox = tk.Spinbox(body, from_=1, to=300)
+        self.spinbox.pack()
+        self.spinbox.focus_set()
+
+        tk.Button(body, text='Ok', command=self.apply).pack()
+
+        self.wait_window(self)
+
+    def apply(self):
+        self.result = int(self.spinbox.get())
+        self.parent.focus_set()
+        self.destroy()
+
 
 if __name__ == '__main__':
-    app = TreeviewPanel()
+    app = TreeviewPanel(None, {})
     app.pack()
     app.mainloop()

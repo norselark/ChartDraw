@@ -2,22 +2,23 @@ from pathlib import Path
 import tkinter as tk
 import numpy as np
 from transform_canvas import TransformCanvas
-from treeview_panel import TreeviewPanel, ChartSelection
+from widgets import TreeviewPanel, ChartSelection, HarmonicSelection
 from aq_functions import coordinates, truncate_rounding
 
 
 GLYPHS = {
-    'sun': u'\u2609',
-    'moon': u'\u263d',
-    'mercury': u'\u263f',
-    'venus': u'\u2640',
-    'earth': u'\u2295',
-    'mars': u'\u2642',
-    'jupiter': u'\u2643',
-    'saturn': u'\u2644',
-    'uranus': u'\u2645',
-    'neptune': u'\u2646',
-    'pluto': u'\u2647',
+    'Sun': u'\u2609',
+    'Moon': u'\u263d',
+    'Mercury': u'\u263f',
+    'Venus': u'\u2640',
+    'Earth': u'\u2295',
+    'Mars': u'\u2642',
+    'Jupiter': u'\u2643',
+    'Saturn': u'\u2644',
+    'Uranus': u'\u2645',
+    'Neptune': u'\u2646',
+    'Pluto': u'\u2647',
+    'Node': u'\u260a',
     'Ari': u'\u2648',
     'Tau': u'\u2649',
     'Gem': u'\u264a',
@@ -35,15 +36,15 @@ GLYPHS = {
 ZODIAC = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
           'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
-PLANETS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
-           'saturn', 'uranus', 'neptune', 'pluto']
+PLANETS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter',
+           'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Node']
 
 
 def load_data():
     data_dir = Path('aqCHARTS/aq_temp')
     angles = [None] * 13
     truncated_angles = [None] * 13
-    with (data_dir / 'PDAT.DAT').open() as infile:
+    with (data_dir / 'PDAT.DAT').open() as infile: #pylint: disable=E1101
         # Discard first 10 lines for now
         for _ in range(10):
             infile.readline()
@@ -52,13 +53,13 @@ def load_data():
             angles[idx] = float(line)
             truncated_angles[idx] = truncate_rounding(line)
 
-    with (data_dir / 'ANGDAT.DAT').open() as infile:
+    with (data_dir / 'ANGDAT.DAT').open() as infile: #pylint: disable=E1101
         for idx in range(11, 13):
             line = infile.readline().rstrip('\n')
             angles[idx] = float(line)
             truncated_angles[idx] = truncate_rounding(line)
 
-    return {"letters": ['S', 'L', 'H', 'V', 'M', 'J', 'D', 'U', 'N', 'P', 'X', 'C', 'A'],
+    return {"letters": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
             "angles": angles,
             "truncated_angles": truncated_angles}
 
@@ -101,13 +102,18 @@ class App(tk.Tk):
         redraw_button = tk.Button(bottom_bar, text="Redraw chart",
                                   command=self.redraw_chart)
         redraw_button.pack(side=tk.TOP)
+
+        harmonic_button = tk.Button(right_frame, text='Harmonics', command=self.harmonic)
+        harmonic_button.pack(side=tk.TOP)
+        turned_axes_button = tk.Button(right_frame, text='Turned axes')
+        turned_axes_button.pack(side=tk.TOP)
         self.tv = TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
 
         self.focus_set()
         self.bind('<Key>', self.dispatch)
 
-        self.draw_chart()
+        self.draw_chart(self.data['angles'])
 
     def dispatch(self, event):
         if event.type == tk.EventType.KeyPress and event.char == '=':
@@ -118,10 +124,10 @@ class App(tk.Tk):
     def redraw_chart(self):
         sel = ChartSelection(self)
         self.type_string.set(str(sel.result))
-        self.draw_chart()
-
-    def draw_chart(self):
-        yy, yz, zy = coordinates(self.data['angles'][-1])
+        self.draw_chart(self.data['angles'])
+    
+    def draw_chart(self, angles):
+        yy, yz, zy = coordinates(angles[-1])
         canv = self.canvas
         canv.delete(tk.ALL)
         x = 256
@@ -137,7 +143,7 @@ class App(tk.Tk):
         canv.create_arc([x - p1, y - p1, x + p1, y + p1], fill='#0000aa',
                         outline='white', start=180, extent=180)
         canv.circle((0, 0), p3, fill='', outline='white')
-        canv.circle((0, 0), pa, fill='#55ffff', outline='black')
+        canv.circle((0, 0), pa, fill='#55ffff', outline='black', tags='hei')
         canv.circle((0, 0), 1, fill='black', outline='')
         canv.circle((0, 0), p3 + 12, fill='', outline='#00aaaa')
         canv.circle((0, 0), 267, fill='', outline='#00aaaa')
@@ -168,7 +174,7 @@ class App(tk.Tk):
             canv.line(coords, fill='white')
 
         # Planet symbols with circle markers
-        for angle, planet in zip(self.data['angles'], PLANETS):
+        for angle, planet in zip(angles, PLANETS):
             canv.set_rotation(float(angle) - zy)
 
             coords = [p1 - 5, 0]
@@ -182,8 +188,8 @@ class App(tk.Tk):
             coords = [p1 + 21, 0]
             canv.text(coords, text=glyph, fill='black', font=(None, 18))
 
-        self.draw_asc(self.data['angles'][-1] - zy)
-        self.draw_mc(self.data['angles'][-2] - zy)
+        self.draw_asc(angles[-1] - zy)
+        self.draw_mc(angles[-2] - zy)
 
     def draw_asc(self, angle):
         canv = self.canvas
@@ -210,6 +216,13 @@ class App(tk.Tk):
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
         canv.polygon((229, 0), [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]],
                      outline='white', fill='black')
+        
+    def harmonic(self):
+        har = HarmonicSelection(self).result
+        harmonic_angles = [(har * ang) % 360 for ang in self.data['angles']]
+        self.draw_chart(harmonic_angles)
+
+
 
 
 if __name__ == '__main__':
