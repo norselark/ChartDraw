@@ -2,9 +2,10 @@ from pathlib import Path
 import tkinter as tk
 import numpy as np
 from transform_canvas import TransformCanvas
-from widgets import TreeviewPanel, ChartSelection, HarmonicSelection
+import widgets
 from aq_functions import coordinates, truncate_rounding
 
+ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
 
 GLYPHS = {
     'Sun': u'\u2609',
@@ -99,15 +100,15 @@ class App(tk.Tk):
         br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
         br_text.pack(side=tk.RIGHT)
 
-        redraw_button = tk.Button(bottom_bar, text="Redraw chart",
-                                  command=self.redraw_chart)
-        redraw_button.pack(side=tk.TOP)
+        reset_button = tk.Button(bottom_bar, text="Reset chart",
+                                 command=self.reset_chart)
+        reset_button.pack(side=tk.TOP)
 
         harmonic_button = tk.Button(right_frame, text='Harmonics', command=self.harmonic)
         harmonic_button.pack(side=tk.TOP)
-        turned_axes_button = tk.Button(right_frame, text='Turned axes')
+        turned_axes_button = tk.Button(right_frame, text='Turned axes', command=self.turned)
         turned_axes_button.pack(side=tk.TOP)
-        self.tv = TreeviewPanel(right_frame, self.data)
+        self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
 
         self.focus_set()
@@ -116,18 +117,20 @@ class App(tk.Tk):
         self.draw_chart(self.data['angles'])
 
     def dispatch(self, event):
-        if event.type == tk.EventType.KeyPress and event.char == '=':
+        if event.char == '=':
             self.tv.toggle_column()
-        if event.type == tk.EventType.KeyPress and event.char == '+':
+        elif event.char == '+':
             self.tv.scroll_up()
 
-    def redraw_chart(self):
-        sel = ChartSelection(self)
-        self.type_string.set(str(sel.result))
+    def reset_chart(self):
         self.draw_chart(self.data['angles'])
     
-    def draw_chart(self, angles):
-        yy, yz, zy = coordinates(angles[-1])
+    def draw_chart(self, angles, superimposed=None, cycle=1):
+        yz, zy = coordinates(angles[-1])
+        cycleoffset = 30 * (cycle - 1)
+        if cycle != 1:
+            yz -= cycleoffset
+            zy += cycleoffset
         canv = self.canvas
         canv.delete(tk.ALL)
         x = 256
@@ -141,9 +144,9 @@ class App(tk.Tk):
         canv.circle((0, 0), p2, fill='#55ffff', outline='white')
         canv.circle((0, 0), p1, fill='#5555ff', outline='white')
         canv.create_arc([x - p1, y - p1, x + p1, y + p1], fill='#0000aa',
-                        outline='white', start=180, extent=180)
+                        outline='white', start=180 - cycleoffset, extent=180)
         canv.circle((0, 0), p3, fill='', outline='white')
-        canv.circle((0, 0), pa, fill='#55ffff', outline='black', tags='hei')
+        canv.circle((0, 0), pa, fill='#55ffff', outline='black')
         canv.circle((0, 0), 1, fill='black', outline='')
         canv.circle((0, 0), p3 + 12, fill='', outline='#00aaaa')
         canv.circle((0, 0), 267, fill='', outline='#00aaaa')
@@ -187,11 +190,45 @@ class App(tk.Tk):
             glyph = GLYPHS[planet]
             coords = [p1 + 21, 0]
             canv.text(coords, text=glyph, fill='black', font=(None, 18))
+        
+        if superimposed:
+            for angle, planet in zip(superimposed, PLANETS):
+                canv.set_rotation(float(angle) - zy)
 
-        self.draw_asc(angles[-1] - zy)
-        self.draw_mc(angles[-2] - zy)
+                coords = [p1 - 5, 0]
+                canv.circle(coords, 3, fill='', outline='red')
 
-    def draw_asc(self, angle):
+                coords = [p1 + 51, 0]
+                for r in [1, 2, 3]:
+                    canv.circle(coords, r, fill='', outline='red')
+
+                glyph = GLYPHS[planet]
+                coords = [p1 + 21, 0]
+                canv.text(coords, text=glyph, fill='red', font=(None, 18))
+
+        self.draw_asc(angles[-1] - zy, cycle)
+        self.draw_mc(angles[-2] - zy, cycle)
+
+        if cycle != 1:
+            canv.circle((0, 0), pa, fill='#5555ff', outline='white')
+            canv.create_arc([x - pa, y - pa, x + pa, y + pa], fill='#0000aa',
+                            outline='white', start=180, extent=180)
+            canv.set_rotation(angles[-1] - zy + cycleoffset)
+            canv.line([[-pa, 0], [pa, 0]], fill='white')
+            canv.polygon([pa, 0], ARROW_COORDS, fill='white')
+            canv.set_rotation(angles[-2] - zy + cycleoffset)
+            canv.line([[-pa, 0], [pa, 0]], fill='white')
+            canv.polygon([pa, 0], ARROW_COORDS, fill='', outline='white')
+            canv.set_rotation(angles[0] - zy + cycleoffset)
+            canv.circle([pa - 8, 0], 2.5, fill='yellow', outline='black')
+            canv.set_rotation(angles[1] - zy + cycleoffset)
+            canv.circle([pa - 8, 0], 2.5, fill='grey', outline='black')
+            canv.circle((0, 0), 5, fill='#55ffff', outline='black')
+            canv.circle((0, 0), 1, fill='black')
+            
+            
+
+    def draw_asc(self, angle, cycle):
         canv = self.canvas
 
         # depends on sv$
@@ -201,26 +238,38 @@ class App(tk.Tk):
         canv.line([[-57, 0], [-179, 0]], fill='white')
         canv.line([[57, 0], [179, 0]], fill='white')
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
-        canv.polygon((229, 0), [[0, -3], [5, -3],
-                                [15, 0], [5, 3], [0, 3]], fill='white')
+        canv.polygon((229, 0), ARROW_COORDS, fill='white')
+        if cycle != 1:
+            canv.circle([234, 0], 3, fill='#5555ff', outline='')
 
-    def draw_mc(self, angle):
+    def draw_mc(self, angle, cycle):
         canv = self.canvas
 
         # depends on sv$
         i, il, l = 1, 9, 3
+        fill = 'black' if cycle == 1 else '#5555ff'
 
         canv.set_rotation(angle)
         canv.line([[-57, 0], [-179, 0]], fill='white')
         canv.line([[57, 0], [179, 0]], fill='white')
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
-        canv.polygon((229, 0), [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]],
-                     outline='white', fill='black')
+        canv.polygon((229, 0), ARROW_COORDS,
+                     outline='white', fill=fill)
         
     def harmonic(self):
-        har = HarmonicSelection(self).result
+        result = widgets.HarmonicSelection(self).result
+        if not result:
+            return
+        har = result['harmonic']
         harmonic_angles = [(har * ang) % 360 for ang in self.data['angles']]
-        self.draw_chart(harmonic_angles)
+        if result['superimposed']:
+            self.draw_chart(self.data['angles'], superimposed=harmonic_angles)
+        else:
+            self.draw_chart(harmonic_angles)
+
+    def turned(self):
+        result = widgets.CycleSelection(self).result
+        self.draw_chart(self.data['angles'], cycle=result)
 
 
 

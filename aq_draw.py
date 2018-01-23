@@ -112,11 +112,11 @@ with open('switch.sw0') as infile:
 if sINT <= 0:
     raise SystemExit('Irregular')
 
-with (sxSTR / 'SWI.SWI').open() as infile:
+with (sxSTR / 'SWI.SWI').open() as infile: #pylint: disable=E1101
     prSTR = infile.readline().rstrip('\n')
 prSTR = prSTR + "        "
 
-with (sxSTR / 'IDENTITY.TIE').open() as infile:
+with (sxSTR / 'IDENTITY.TIE').open() as infile: #pylint: disable=E1101
     fSTR = Path(infile.readline().rstrip('\n'))
 
 with open('choice.sw0') as infile:
@@ -308,7 +308,7 @@ if cgSTR == 'z':
     TB.locate(xlocINT, 3)
     TB.print('           ')
 
-with (fSTR / 'PDAT.DAT').open() as infile:
+with (fSTR / 'PDAT.DAT').open() as infile: #pylint: disable=E1101
     mSTR_ARR[1, 0] = infile.readline().rstrip('\n')
     f1STR = infile.readline().rstrip('\n')
     n1STR = infile.readline().rstrip('\n')
@@ -335,7 +335,7 @@ with (fSTR / 'PDAT.DAT').open() as infile:
         line = truncate_rounding(line)
         nSTR_ARR[1, idx] = line
 
-with (fSTR / 'ANGDAT.DAT').open() as infile:
+with (fSTR / 'ANGDAT.DAT').open() as infile: #pylint: disable=E1101
     syINT = 1 # What is this variable
     for m in [1, 2]:
         zSTR = infile.readline().rstrip('\n')

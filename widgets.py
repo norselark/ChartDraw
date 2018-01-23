@@ -3,6 +3,71 @@ from tkinter.ttk import Treeview
 from aq_functions import truncate_rounding
 
 
+class Dialog(tk.Toplevel):
+    def __init__(self, parent, title=None):
+        super().__init__(parent)
+        self.transient(parent)
+
+        if title:
+            self.title(title)
+
+        self.parent = parent
+        self.result = None
+
+        body = tk.Frame(self)
+        self.initial_focus = self.body(body)
+        body.pack(padx=5, pady=5)
+
+        self.buttonbox()
+        self.grab_set()
+
+        if not self.initial_focus:
+            self.initial_focus = self
+
+        self.protocol('WM_DELETE_WINDOW', self.cancel)
+        self.geometry('+{}+{}'.format(parent.winfo_rootx() + 50,
+                                      parent.winfo_rooty() + 50))
+        self.initial_focus.focus_set()
+        self.wait_window(self)
+
+    def body(self, master):
+        pass
+
+    def buttonbox(self):
+        box = tk.Frame(self)
+        w = tk.Button(box, text='Ok', width=10,
+                      command=self.ok, default=tk.ACTIVE)
+        w.pack(side=tk.LEFT, padx=5, pady=5)
+        w = tk.Button(box, text='Cancel', width=10, command=self.cancel)
+        w.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.cancel)
+
+        box.pack()
+
+    def ok(self, event=None):
+        if not self.validate():
+            self.initial_focus.focus_set()
+            return
+
+        self.withdraw()
+        self.update_idletasks()
+
+        self.apply()
+        self.cancel()
+
+    def cancel(self, event=None):
+        self.parent.focus_set()
+        self.destroy()
+
+    def validate(self):
+        return True
+
+    def apply(self):
+        pass
+
+
 class TreeviewPanel(tk.Frame):
     def __init__(self, parent, data, *args):
         super().__init__(parent, *args)
@@ -30,13 +95,13 @@ class TreeviewPanel(tk.Frame):
         self.button_panel.pack(side=tk.BOTTOM)
 
         self.up = tk.Button(self.button_panel,
-                            text=u'\u2bc5', command=self.scroll_up)
+                            text=u'\u25b2', command=self.scroll_up)
         self.up.pack(side=tk.LEFT)
         self.toggle = tk.Button(self.button_panel,
                                 text='Toggle', command=self.toggle_column)
         self.toggle.pack(side=tk.LEFT)
         self.down = tk.Button(self.button_panel,
-                              text=u'\u2bc6', command=self.scroll_down)
+                              text=u'\u25bc', command=self.scroll_down)
         self.down.pack(side=tk.LEFT)
 
     def toggle_column(self):
@@ -55,52 +120,59 @@ class TreeviewPanel(tk.Frame):
         self.tv.move(first_item, '', tk.END)
 
 
-class ChartSelection(tk.Toplevel):
-    def __init__(self, parent, *args):
-        super().__init__(parent, *args)
-        self.transient(parent)
-        self.parent = parent
-        self.result = None
-        self.val = tk.IntVar()
+class HarmonicSelection(Dialog):
+    def body(self, parent):
+        w = tk.Frame(self)
+        w.pack()
 
-        body = tk.Frame(self)
-        body.pack()
+        self.su = tk.IntVar()
 
-        tk.Radiobutton(body, text='1', variable=self.val, value=1).pack()
-        tk.Radiobutton(body, text='2', variable=self.val, value=2).pack()
-        tk.Radiobutton(body, text='3', variable=self.val, value=3).pack()
-
-        tk.Button(body, text='Ok', command=self.apply).pack()
-
-        self.wait_window(self)
-
-    def apply(self):
-        self.result = self.val.get()
-        self.parent.focus_set()
-        self.destroy()
-
-class HarmonicSelection(tk.Toplevel):
-    def __init__(self, parent, *args):
-        super().__init__(parent, *args)
-        self.transient(parent)
-        self.parent = parent
-        self.result = None
-
-        body = tk.Frame(self)
-        body.pack()
-
-        self.spinbox = tk.Spinbox(body, from_=1, to=300)
+        self.spinbox = tk.Spinbox(w, from_=1, to=300)
         self.spinbox.pack()
         self.spinbox.focus_set()
 
-        tk.Button(body, text='Ok', command=self.apply).pack()
+        checkbox = tk.Checkbutton(w, text='Superimposed', variable=self.su)
+        checkbox.pack()
+        return w
 
-        self.wait_window(self)
+    def apply(self):
+        self.result = {'harmonic': int(self.spinbox.get()),
+                       'superimposed': True if self.su.get() else False}
+    
+    def validate(self):
+        val = self.spinbox.get()
+        try:
+            val = int(val)
+            if val >= 1:
+                return True
+        except Exception:
+            pass
+        return False
+
+
+class CycleSelection(Dialog):
+    def body(self, parent):
+        w = tk.Frame(self)
+        w.pack()
+
+        self.spinbox = tk.Spinbox(w, from_=1, to=12)
+        self.spinbox.pack()
+        self.spinbox.focus_set()
+
+        return w
 
     def apply(self):
         self.result = int(self.spinbox.get())
-        self.parent.focus_set()
-        self.destroy()
+
+    def validate(self):
+        val = self.spinbox.get()
+        try:
+            val = int(val)
+            if val >= 1:
+                return True
+        except Exception:
+            pass
+        return False
 
 
 if __name__ == '__main__':

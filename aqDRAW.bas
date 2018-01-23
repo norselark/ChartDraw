@@ -776,107 +776,99 @@ RETURN
 
 '[Label]
 MainDraw:
- '' // --['c15'=default]-- 
- FOR x = 0 TO 360 STEP 30: '' // [float! obs!x/x%] <-(use vars!)]
- PSET (x%, y%)
- u$ = STR$(x): u$ = MID$(u$, 2)
-    '' //# ZZ=VAL(P$(H%,1))
-    '' //# FOR K=1 TO (360/WA%): '' // [1=asc]!
-    '' //# ZZ%=INT(ZZ):U$=STR$(ZZ%):U$=MID$(U$,2)
-    '' //# PSET(X%,Y%): '[el. circle 0]? [draw "bm240,100"]["x"+var$]
- '' // DRAW "TA" + u$: DRAW "br180 c3 r41": '["BR44 R12"][use vars!] <-[check! <(alternative)]
- DRAW "TA" + u$: DRAW "br181 c15 r40": '' // ["BR44 R12"][use vars!]    <-['c15' redun=default]
-    '' //# ZZ=ZZ+WA%:IF ZZ > 360 THEN ZZ=ZZ-360
-    '' //# NEXT K
- NEXT x
- :
- ZZ% = YZ: '' // [Zodiac division]['c3']
- FOR K = 1 TO (360 / WA%)
- u$ = STR$(ZZ%): u$ = MID$(u$, 2)
- PSET (x%, y%)
- DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r33": '' // [+var!]
-    '' //# GOSUB Zodiac::->[20278!]
- ZZ% = ZZ% + WA%: IF ZZ% > 360 THEN ZZ% = ZZ% - 360
- NEXT K
- :
- ZZ% = YZ + WB%: '' // [Signs]['c3']
- FOR K = 1 TO (360 / WA%)
- PSET (x%, y%)
- IF ZZ% > 360 THEN ZZ% = ZZ% - 360
- u$ = STR$(ZZ%): u$ = MID$(u$, 2)
- v = VAL(u$) - 90: v$ = STR$(v): IF v >= 0 THEN v$ = MID$(v$, 2)
- DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r3 br4": DRAW "ta" + v$: DRAW "bu9 bl9": '' // <-([3+4]! (=7 !] <---
- IF SU$ <> "y" THEN GOSUB Zodiac: '' // <------------->'if g$ <> "t"]<->[M]!
-  '' // ---- [Here can be inserted div. choices/options]-[Variants]
-  '' // ---- [zodiacal signs/divisions around circle (+subcycles etc.) --[?]-[!]
- ZZ% = ZZ% + WA%: '' // <-[if > ...?]
- NEXT K
- :
- ZZ = YZ
- FOR K = 1 TO (360 / WC%)
- ZZ% = INT(ZZ): u$ = STR$(ZZ%): u$ = MID$(u$, 2)
- PSET (x%, y%)
- DRAW "TA" + u$: DRAW "BR" + p2$: DRAW "r" + PX$: '' // [px$:cf1062:mov->here?] <*
- ZZ = ZZ + WC%: IF ZZ > 360 THEN ZZ = ZZ - 360
- NEXT K
- '' // ['double' 5-degrees subdivs by g$='t'/[M] <-(due Trunc ?)-[!]
+  '' // --['c15'=default]-- 
+  FOR x = 0 TO 360 STEP 30: '' // [float! obs!x/x%] <-(use vars!)]
+    PSET (x%, y%)
+    u$ = STR$(x): u$ = MID$(u$, 2)
+        '' //# ZZ=VAL(P$(H%,1))
+        '' //# FOR K=1 TO (360/WA%): '' // [1=asc]!
+        '' //# ZZ%=INT(ZZ):U$=STR$(ZZ%):U$=MID$(U$,2)
+        '' //# PSET(X%,Y%): '[el. circle 0]? [draw "bm240,100"]["x"+var$]
+    '' // DRAW "TA" + u$: DRAW "br180 c3 r41": '["BR44 R12"][use vars!] <-[check! <(alternative)]
+    DRAW "TA" + u$: DRAW "br181 c15 r40": '' // ["BR44 R12"][use vars!]    <-['c15' redun=default]
+        '' //# ZZ=ZZ+WA%:IF ZZ > 360 THEN ZZ=ZZ-360
+        '' //# NEXT K
+  NEXT x
+  :
+  ZZ% = YZ: '' // [Zodiac division]['c3']
+  FOR K = 1 TO (360 / WA%)
+    u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    PSET (x%, y%)
+    DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r33": '' // [+var!]
+        '' //# GOSUB Zodiac::->[20278!]
+    ZZ% = ZZ% + WA%: IF ZZ% > 360 THEN ZZ% = ZZ% - 360
+  NEXT K
+  :
+  ZZ% = YZ + WB%: '' // [Signs]['c3']
+  FOR K = 1 TO (360 / WA%)
+    PSET (x%, y%)
+    IF ZZ% > 360 THEN ZZ% = ZZ% - 360
+    u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    v = VAL(u$) - 90: v$ = STR$(v): IF v >= 0 THEN v$ = MID$(v$, 2)
+    DRAW "ta" + u$: DRAW "br" + P3$: DRAW "c3 r3 br4": DRAW "ta" + v$: DRAW "bu9 bl9": '' // <-([3+4]! (=7 !] <---
+    IF SU$ <> "y" THEN GOSUB Zodiac: '' // <------------->'if g$ <> "t"]<->[M]!
+      '' // ---- [Here can be inserted div. choices/options]-[Variants]
+      '' // ---- [zodiacal signs/divisions around circle (+subcycles etc.) --[?]-[!]
+    ZZ% = ZZ% + WA%: '' // <-[if > ...?]
+  NEXT K
+  :
+  ZZ = YZ
+  FOR K = 1 TO (360 / WC%)
+    ZZ% = INT(ZZ): u$ = STR$(ZZ%): u$ = MID$(u$, 2)
+    PSET (x%, y%)
+    DRAW "TA" + u$: DRAW "BR" + p2$: DRAW "r" + PX$: '' // [px$:cf1062:mov->here?] <*
+    ZZ = ZZ + WC%: IF ZZ > 360 THEN ZZ = ZZ - 360
+  NEXT K
+  '' // ['double' 5-degrees subdivs by g$='t'/[M] <-(due Trunc ?)-[!]
 
-'##------
-IF KK$ <> "2" THEN GOTO InMainDraw: '[<1><2><3>]
-'##------
-
- z = (ZC / 360) * (2 * PI):                             ' <-[movup?][float,x/x%!]
- FOR x = 0 TO 360 - (2 * WC%) STEP (2 * WC%)
- z = z + ((2 * PI) / (360 / WC%))                       ' [IF Z > (2*PI) THEN Z=Z-(2*PI)]
- FOR K = (p2% + 1) TO (P3% - 1)
- CIRCLE (x%, y%), K, , z, z + ((2 * PI) / (360 / WC%))
- NEXT K
- z = z + ((2 * PI) / (360 / WC%))                       ' [ej v/ w%=15 ?]  <[[[ <* missing ':' <-^^ yields err?? ]]]^^ <*
- NEXT x
- '      '#  CIRCLE (X%,Y%),(P3%+2),,Z,Z+((2*PI)/(360)): '[PI-test !?] <<-<*
- '
+  if KK$ = "2" then  
+    z = (ZC / 360) * (2 * PI):                             ' <-[movup?][float,x/x%!]
+    FOR x = 0 TO 360 - (2 * WC%) STEP (2 * WC%)
+      z = z + ((2 * PI) / (360 / WC%))                       ' [IF Z > (2*PI) THEN Z=Z-(2*PI)]
+      FOR K = (p2% + 1) TO (P3% - 1)
+        CIRCLE (x%, y%), K, , z, z + ((2 * PI) / (360 / WC%))
+      NEXT K
+      z = z + ((2 * PI) / (360 / WC%))                       ' [ej v/ w%=15 ?]  <[[[ <* missing ':' <-^^ yields err?? ]]]^^ <*
+    NEXT x
+  end if
+  '      '#  CIRCLE (X%,Y%),(P3%+2),,Z,Z+((2*PI)/(360)): '[PI-test !?] <<-<*
+  '
 
 '--#--
 '[Label]
 InMainDraw:
- IF g$ = "t" OR EH$ = "A" THEN P$(mm%, hp% + 2) = P$(0, 0): '' //[MM%=0: <-OBS!] <[cf19600+]-> w h y  mm% ?]
-  :
+  IF g$ = "t" OR EH$ = "A" THEN P$(mm%, hp% + 2) = P$(0, 0): '' //[MM%=0: <-OBS!] <[cf19600+]-> w h y  mm% ?]
   IF tt$ = "i" THEN m = 1: GOSUB TurnAngle: sv$ = v$
   '' // <[Sun's pos vs. horizon (Desc <- 'ta0')]<-[cf. 'PlanetSymbols:(MO)' + cf. 'Axes:(MC)]
-  :
   FOR m = (hp% + 2) TO (hp% + 1) STEP -1: '' // [Reverse hp%+ (Asc/Mc)]:?:[cf. 'Axes:']
-  GOSUB axes
+    GOSUB axes
   NEXT m
-  :
   FOR m = 1 TO (NP% + 1): '' //   :: [^^EH$=""/chr$(13)?]
-  GOSUB TurnAngle
-  GOSUB PlanetSymbols
+    GOSUB TurnAngle
+    GOSUB PlanetSymbols
   NEXT m
-    '' //# [if a%<>0/=2 then ret][<=her?]<-[cf39001]!
-GOSUB Tropos
+      '' //# [if a%<>0/=2 then ret][<=her?]<-[cf39001]!
+  GOSUB Tropos
 RETURN: '>[CHART] >(goto Menu)
  '' // [Debug-Search gosub maindraw]
  
 '[Label]
 Tropos: '' // <-[ z% value assigned in 'DrawASC:[Outer:]' or 'InnerCircleLines:' (via 'PlusAspLines:')]
  '      ' //# <-[check out a%! (if a% <> 0)??] <-[cf. SUB LegendPrgSpecs(Misc)]
- :
-IF ln% = 1 THEN CIRCLE (x%, y%), 168, 7: '' // [,0] [,15 ?] '' // <[remove (brown) paint border]-[Ctrl-F comment 'brown']
- '  ' // & <[cleanup imprecisions in aspect lines drawn (i.e. length)]
- '  ' // & <[give a nice look to border between white and blue]
- :
- IF tf$ = "1" THEN L% = 0: '' // <['free' l% ?]
- IF tf$ <> "1" THEN L% = 15
- CIRCLE (x%, y%), z%, L%: '' // <[diameter inner circle (pa% or 7)]
- PSET (x%, y%), 0: '' // <-^[Tropos point set'd in Origo <(color=DawnDusk-circle!)] <[use var!]
- :
- IF z% <> pa% THEN GOTO InTroposData: '' // <--[UNFINISHED !!]-[!]
- :
- IF tf$ = "1" THEN CIRCLE (x%, y%), 1, 0
- :
+  IF ln% = 1 THEN CIRCLE (x%, y%), 168, 7: '' // [,0] [,15 ?] '' // <[remove (brown) paint border]-[Ctrl-F comment 'brown']
+  '  ' // & <[cleanup imprecisions in aspect lines drawn (i.e. length)]
+  '  ' // & <[give a nice look to border between white and blue]
+  IF tf$ = "1" THEN L% = 0: '' // <['free' l% ?]
+  IF tf$ <> "1" THEN L% = 15
+  CIRCLE (x%, y%), z%, L%: '' // <[diameter inner circle (pa% or 7)]
+  PSET (x%, y%), 0: '' // <-^[Tropos point set'd in Origo <(color=DawnDusk-circle!)] <[use var!]
+  :
+  IF z% <> pa% THEN GOTO InTroposData: '' // <--[UNFINISHED !!]-[!]
+  IF tf$ = "1" THEN CIRCLE (x%, y%), 1, 0
+
 InTroposData: '' // [name>[xBoxes]?
- GOSUB DataColumn
- GOSUB DiffStatus
+  GOSUB DataColumn
+  GOSUB DiffStatus
 RETURN: '>[InMainDraw & MinusLines]
 
 
