@@ -45,7 +45,7 @@ def load_data():
     data_dir = Path('aqCHARTS/aq_temp')
     angles = [None] * 13
     truncated_angles = [None] * 13
-    with (data_dir / 'PDAT.DAT').open() as infile: #pylint: disable=E1101
+    with (data_dir / 'PDAT.DAT').open() as infile:  # pylint: disable=E1101
         # Discard first 10 lines for now
         for _ in range(10):
             infile.readline()
@@ -54,7 +54,7 @@ def load_data():
             angles[idx] = float(line)
             truncated_angles[idx] = truncate_rounding(line)
 
-    with (data_dir / 'ANGDAT.DAT').open() as infile: #pylint: disable=E1101
+    with (data_dir / 'ANGDAT.DAT').open() as infile:  # pylint: disable=E1101
         for idx in range(11, 13):
             line = infile.readline().rstrip('\n')
             angles[idx] = float(line)
@@ -104,9 +104,11 @@ class App(tk.Tk):
                                  command=self.reset_chart)
         reset_button.pack(side=tk.TOP)
 
-        harmonic_button = tk.Button(right_frame, text='Harmonics', command=self.harmonic)
+        harmonic_button = tk.Button(
+            right_frame, text='Harmonics', command=self.harmonic)
         harmonic_button.pack(side=tk.TOP)
-        turned_axes_button = tk.Button(right_frame, text='Turned axes', command=self.turned)
+        turned_axes_button = tk.Button(
+            right_frame, text='Turned axes', command=self.turned)
         turned_axes_button.pack(side=tk.TOP)
         self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
@@ -124,7 +126,7 @@ class App(tk.Tk):
 
     def reset_chart(self):
         self.draw_chart(self.data['angles'])
-    
+
     def draw_chart(self, angles, superimposed=None, cycle=1):
         yz, zy = coordinates(angles[-1])
         cycleoffset = 30 * (cycle - 1)
@@ -190,7 +192,7 @@ class App(tk.Tk):
             glyph = GLYPHS[planet]
             coords = [p1 + 21, 0]
             canv.text(coords, text=glyph, fill='black', font=(None, 18))
-        
+
         if superimposed:
             for angle, planet in zip(superimposed, PLANETS):
                 canv.set_rotation(float(angle) - zy)
@@ -225,8 +227,6 @@ class App(tk.Tk):
             canv.circle([pa - 8, 0], 2.5, fill='grey', outline='black')
             canv.circle((0, 0), 5, fill='#55ffff', outline='black')
             canv.circle((0, 0), 1, fill='black')
-            
-            
 
     def draw_asc(self, angle, cycle):
         canv = self.canvas
@@ -255,7 +255,7 @@ class App(tk.Tk):
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
         canv.polygon((229, 0), ARROW_COORDS,
                      outline='white', fill=fill)
-        
+
     def harmonic(self):
         result = widgets.HarmonicSelection(self).result
         if not result:
@@ -270,8 +270,6 @@ class App(tk.Tk):
     def turned(self):
         result = widgets.CycleSelection(self).result
         self.draw_chart(self.data['angles'], cycle=result)
-
-
 
 
 if __name__ == '__main__':
