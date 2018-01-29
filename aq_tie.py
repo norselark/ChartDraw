@@ -122,10 +122,10 @@ def main():
                     pSTR_ARR[idx] = line
                     break
 
-    with (data_dir / 'SWI.SWI').open(mode='w') as outfile:
+    with (data_dir / 'SWI.SWI').open(mode='w') as outfile: # pylint: disable=E1101
         outfile.write(source_program + '\n')
 
-    with (data_dir / 'PDAT.DAT').open(mode='w') as outfile:
+    with (data_dir / 'PDAT.DAT').open(mode='w') as outfile: # pylint: disable=E1101
         outfile.writelines(['"RealName"\n',
                             '"Alias name"\n',
                             '"Type"\n',
@@ -139,11 +139,11 @@ def main():
         for idx in range(1, NUM_HIGH_PLANETS + 1):
             outfile.write(pSTR_ARR[idx] + '\n')
 
-    with (data_dir / 'ANGDAT.DAT').open(mode='w') as outfile:
+    with (data_dir / 'ANGDAT.DAT').open(mode='w') as outfile: # pylint: disable=E1101
         for idx in [NUM_HIGH_PLANETS + 1, NUM_HIGH_PLANETS + 2]:
             outfile.write(pSTR_ARR[idx] + '\n')
 
-    with (data_dir / 'IDENTITY.TIE').open(mode='w') as outfile:
+    with (data_dir / 'IDENTITY.TIE').open(mode='w') as outfile: # pylint: disable=E1101
         outfile.write(str(input_dir) + '\n')
         outfile.write(str(filename_1) + '\n')
 

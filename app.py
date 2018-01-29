@@ -78,6 +78,7 @@ class App(tk.Tk):
         right_frame.pack(side=tk.RIGHT)
 
         self.data = load_data()
+        self.axes_legend_text = ['S', 'E']
 
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
@@ -94,8 +95,6 @@ class App(tk.Tk):
         self.cycle_status = tk.StringVar(self, value=CYCLE_TEXTS[0])
         bl_text = tk.Label(bottom_bar, textvariable=self.cycle_status) 
         bl_text.pack(side=tk.LEFT)
-        br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
-        br_text.pack(side=tk.RIGHT)
 
         reset_button = tk.Button(bottom_bar, text="Reset chart",
                                  command=self.reset_chart)
@@ -120,8 +119,13 @@ class App(tk.Tk):
             self.tv.toggle_column()
         elif event.char == '+':
             self.tv.scroll_up()
+        elif event.char == 'h':
+            self.harmonic()
+        elif event.char == 't':
+            self.turned()
 
     def reset_chart(self):
+        self.axes_legend_text = ['S', 'E']
         self.draw_chart(self.data['angles'])
 
     def draw_chart(self, angles, superimposed=None, cycle=1):
@@ -205,7 +209,7 @@ class App(tk.Tk):
 
         self.draw_asc(angles[-1] + yz, cycle)
         self.draw_mc(angles[-2] + yz, cycle)
-        self.axes_legend()
+        self.axes_legend(cycle)
 
         if cycle != 1:
             self.cycle_status.set(CYCLE_TEXTS[1])
@@ -238,7 +242,7 @@ class App(tk.Tk):
         canv.line([[-57, 0], [-179, 0]], fill='white')
         canv.line([[57, 0], [179, 0]], fill='white')
         canv.line([[179 + 41, 0], [179 + 50, 0]], fill='white')
-        canv.polygon((229, 0), ARROW_COORDS, fill='white')
+        canv.polygon((229, 0), ARROW_COORDS, fill='white', outline='white')
         if cycle != 1:
             canv.circle([234, 0], 3, fill='#5555ff', outline='')
 
@@ -261,6 +265,10 @@ class App(tk.Tk):
         if not result:
             return
         har = result['harmonic']
+        if har != 1:
+            self.axes_legend_text = ['HAR', 'HAR']
+        else:
+            self.axes_legend_text = ['S', 'E']
         harmonic_angles = [(har * ang) % 360 for ang in self.data['angles']]
         if result['superimposed']:
             self.draw_chart(self.data['angles'], superimposed=harmonic_angles)
@@ -269,17 +277,26 @@ class App(tk.Tk):
 
     def turned(self):
         result = widgets.CycleSelection(self).result
+        if result != 1:
+            self.axes_legend_text = ['Turned', 'Turned']
+        else:
+            self.axes_legend_text = ['S', 'E']
         self.draw_chart(self.data['angles'], cycle=result)
     
-    def axes_legend(self):
+    def axes_legend(self, cycle):
         canv = self.canvas
         
-        canv.create_text([420, 483], text='MC', fill='white', anchor='nw')
-        canv.create_text([420, 498], text='ASC', fill='white', anchor='nw')
-        canv.create_polygon([[x + 450, y + 489] for x, y in ARROW_COORDS], outline='white', fill='')
-        canv.create_polygon([[x + 450, y + 506] for x, y in ARROW_COORDS], fill='white')
-        canv.create_text([480, 483], text='S', fill='white', anchor='nw')
-        canv.create_text([480, 498], text='E', fill='white', anchor='nw')
+        canv.create_text([416, 483], text='MC', fill='white', anchor='nw')
+        canv.create_text([416, 498], text='ASC', fill='white', anchor='nw')
+        if cycle == 1:
+            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS], outline='white', fill='black')
+            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS], outline='white', fill='white')
+        else:
+            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS], outline='white', fill='#5555ff')
+            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS], outline='white', fill='white')
+            canv.create_oval([448, 503, 454, 509], fill='#5555ff', outline='')
+        canv.create_text([470, 483], text=self.axes_legend_text[0], fill='white', anchor='nw')
+        canv.create_text([470, 498], text=self.axes_legend_text[1], fill='white', anchor='nw')
 
 
 if __name__ == '__main__':

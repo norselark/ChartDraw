@@ -9,6 +9,9 @@ class TreeviewPanel(tk.Frame):
     def __init__(self, parent, data, *args):
         super().__init__(parent, *args)
         self.display = 'trunc'
+        self.harmonic = tk.StringVar(self, value='Current harmonic: 1')
+        harmonic_label = tk.Label(self, textvariable=self.harmonic)
+        harmonic_label.pack(side=tk.TOP)
         self.tv = Treeview(self, columns=('letter', 'angle', 'trunc'),
                            show=[],
                            height=13, displaycolumn=['letter', self.display])
