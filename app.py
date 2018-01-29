@@ -1,11 +1,12 @@
 from pathlib import Path
 import tkinter as tk
-import numpy as np
 from transform_canvas import TransformCanvas
 import widgets
 from aq_functions import coordinates, truncate_rounding
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
+CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
+               '2-D Turned\nDerived houses\nRadix Quadrants']
 
 GLYPHS = {
     'Sun': u'\u2609',
@@ -80,13 +81,9 @@ class App(tk.Tk):
 
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
-        tl_text = tk.Label(top_bar,
-                           text='Tropical Zodiac\nEqual Houses\nQuadrants')
+        tl_text = tk.Label(top_bar, text='Tropical Zodiac\nEqual Houses\nQuadrants')
         tl_text.pack(side=tk.LEFT)
         tr_text = tk.Label(top_bar, text='DRAW\nzh 2\nZET9')
-        self.type_string = tk.StringVar(self, value='1')
-        self.chart_type = tk.Label(top_bar, textvariable=self.type_string)
-        self.chart_type.pack(side=tk.RIGHT)
         tr_text.pack(side=tk.RIGHT)
 
         self.canvas = TransformCanvas(left_frame, background="black",
@@ -94,8 +91,8 @@ class App(tk.Tk):
         self.canvas.pack(side=tk.TOP)
         bottom_bar = tk.Frame(left_frame, borderwidth=5)
         bottom_bar.pack(side=tk.TOP, fill=tk.X)
-        bl_text = tk.Label(bottom_bar,
-                           text='2-D Radix\nHorizon view\nOrigo: Tropos')
+        self.cycle_status = tk.StringVar(self, value=CYCLE_TEXTS[0])
+        bl_text = tk.Label(bottom_bar, textvariable=self.cycle_status) 
         bl_text.pack(side=tk.LEFT)
         br_text = tk.Label(bottom_bar, text=u'MC \u25b7 S\nASC \u25b6 E')
         br_text.pack(side=tk.RIGHT)
@@ -128,17 +125,15 @@ class App(tk.Tk):
         self.draw_chart(self.data['angles'])
 
     def draw_chart(self, angles, superimposed=None, cycle=1):
-        yz, zy = coordinates(angles[-1])
+        yz = coordinates(angles[-1])
         cycleoffset = 30 * (cycle - 1)
         if cycle != 1:
             yz -= cycleoffset
-            zy += cycleoffset
         canv = self.canvas
         canv.delete(tk.ALL)
         x = 256
         y = 256
-        origin = np.array([x, y])
-        canv.set_center(origin)
+        canv.set_center(complex(x, y))
         p1 = 180
         p2 = 221
         p3 = 226
@@ -180,7 +175,7 @@ class App(tk.Tk):
 
         # Planet symbols with circle markers
         for angle, planet in zip(angles, PLANETS):
-            canv.set_rotation(float(angle) - zy)
+            canv.set_rotation(float(angle) + yz)
 
             coords = [p1 - 5, 0]
             canv.circle(coords, 3, fill='', outline='white')
@@ -195,7 +190,7 @@ class App(tk.Tk):
 
         if superimposed:
             for angle, planet in zip(superimposed, PLANETS):
-                canv.set_rotation(float(angle) - zy)
+                canv.set_rotation(float(angle) + yz)
 
                 coords = [p1 - 5, 0]
                 canv.circle(coords, 3, fill='', outline='red')
@@ -208,25 +203,30 @@ class App(tk.Tk):
                 coords = [p1 + 21, 0]
                 canv.text(coords, text=glyph, fill='red', font=(None, 18))
 
-        self.draw_asc(angles[-1] - zy, cycle)
-        self.draw_mc(angles[-2] - zy, cycle)
+        self.draw_asc(angles[-1] + yz, cycle)
+        self.draw_mc(angles[-2] + yz, cycle)
+        self.axes_legend()
 
         if cycle != 1:
+            self.cycle_status.set(CYCLE_TEXTS[1])
+            # Draw miniature chart in the center
             canv.circle((0, 0), pa, fill='#5555ff', outline='white')
             canv.create_arc([x - pa, y - pa, x + pa, y + pa], fill='#0000aa',
                             outline='white', start=180, extent=180)
-            canv.set_rotation(angles[-1] - zy + cycleoffset)
+            canv.set_rotation(angles[-1] + yz + cycleoffset)
             canv.line([[-pa, 0], [pa, 0]], fill='white')
             canv.polygon([pa, 0], ARROW_COORDS, fill='white')
-            canv.set_rotation(angles[-2] - zy + cycleoffset)
+            canv.set_rotation(angles[-2] + yz + cycleoffset)
             canv.line([[-pa, 0], [pa, 0]], fill='white')
             canv.polygon([pa, 0], ARROW_COORDS, fill='', outline='white')
-            canv.set_rotation(angles[0] - zy + cycleoffset)
+            canv.set_rotation(angles[0] + yz + cycleoffset)
             canv.circle([pa - 8, 0], 2.5, fill='yellow', outline='black')
-            canv.set_rotation(angles[1] - zy + cycleoffset)
+            canv.set_rotation(angles[1] + yz + cycleoffset)
             canv.circle([pa - 8, 0], 2.5, fill='grey', outline='black')
             canv.circle((0, 0), 5, fill='#55ffff', outline='black')
             canv.circle((0, 0), 1, fill='black')
+        else:
+            self.cycle_status.set(CYCLE_TEXTS[0])
 
     def draw_asc(self, angle, cycle):
         canv = self.canvas
@@ -270,6 +270,16 @@ class App(tk.Tk):
     def turned(self):
         result = widgets.CycleSelection(self).result
         self.draw_chart(self.data['angles'], cycle=result)
+    
+    def axes_legend(self):
+        canv = self.canvas
+        
+        canv.create_text([420, 483], text='MC', fill='white', anchor='nw')
+        canv.create_text([420, 498], text='ASC', fill='white', anchor='nw')
+        canv.create_polygon([[x + 450, y + 489] for x, y in ARROW_COORDS], outline='white', fill='')
+        canv.create_polygon([[x + 450, y + 506] for x, y in ARROW_COORDS], fill='white')
+        canv.create_text([480, 483], text='S', fill='white', anchor='nw')
+        canv.create_text([480, 498], text='E', fill='white', anchor='nw')
 
 
 if __name__ == '__main__':

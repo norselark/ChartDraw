@@ -1,40 +1,51 @@
 from tkinter import Canvas
-import numpy as np
+from math import cos, sin, radians
 
 
 class TransformCanvas(Canvas):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.rotation_matrix = np.identity(2)
-        self.center = np.array([0, 0])
+        self.rotation = 1 + 0j
+        self.center = 0 + 0j
 
-    def set_center(self, new_center):
+    def set_center(self, new_center: complex):
         self.center = new_center
 
     def set_rotation(self, angle, mode='degrees'):
         if mode == 'degrees':
-            angle = np.radians(angle)
-        self.rotation_matrix = np.array([[np.cos(angle), -np.sin(angle)],
-                                         [np.sin(angle), np.cos(angle)]])
+            angle = radians(angle)
+        self.rotation = complex(cos(angle), -sin(angle))
+
+    def apply_transform(self, coords):
+        return [self.center + self.rotation * complex(x, y)
+                for x, y in coords]
+
+    @staticmethod
+    def complex_to_coords(coords):
+        res = []
+        for c in coords:
+            res.append(c.real)
+            res.append(c.imag)
+        return res
 
     def line(self, coords, **kwargs):
-        coords = np.array(coords).reshape((2, 2))
-        new_coords = np.dot(coords, self.rotation_matrix) + self.center
-        new_coords = list(new_coords.flatten())
+        new_coords = self.apply_transform(coords)
+        new_coords = TransformCanvas.complex_to_coords(new_coords)
         self.create_line(new_coords, **kwargs)
 
     def circle(self, center, radius, **kwargs):
-        x, y = np.dot(center, self.rotation_matrix) + self.center
+        center = self.apply_transform([center])[0]
+        x, y = center.real, center.imag
         coords = (x - radius, y - radius, x + radius, y + radius)
         self.create_oval(coords, **kwargs)
 
     def text(self, coords, **kwargs):
-        new_coords = np.dot(coords, self.rotation_matrix) + self.center
-        new_coords = list(new_coords.flatten())
+        new_coords = self.apply_transform([coords])
+        new_coords = TransformCanvas.complex_to_coords(new_coords)
         self.create_text(new_coords, **kwargs)
 
     def polygon(self, origin, coords, **kwargs):
-        transposed = origin + np.array(coords)
-        new_coords = np.dot(transposed, self.rotation_matrix) + self.center
-        new_coords = list(new_coords.flatten())
+        transposed = [[x + origin[0], y + origin[1]] for x, y in coords]
+        new_coords = self.apply_transform(transposed)
+        new_coords = TransformCanvas.complex_to_coords(new_coords)
         self.create_polygon(new_coords, **kwargs)

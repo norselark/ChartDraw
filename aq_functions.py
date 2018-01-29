@@ -22,9 +22,7 @@ def truncate_rounding(angle):
 
 def coordinates(angle):
     """Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"""
-    yz = (180 - angle) % 360
-    zy = 360 - yz
-    return yz, zy
+    return (180 - angle) % 360
 
 
 def preAspectCalc(target, source, ch):

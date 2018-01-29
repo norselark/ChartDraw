@@ -13,8 +13,6 @@ import qb_utils
 
 from aq_functions import *
 
-TB = qb_utils.TextBuffer()
-
 NPINT = 10
 HPINT = 11
 PPINT = 13
@@ -76,26 +74,14 @@ def in_boxes():
 
 def boxes():
     if gSTR not in ['t', 'h']:
-        return in_boxes()
-    TB.locate(8, 67)
-    TB.print('|-----------|')
-    for l in range(9, 14):
-        TB.locate(l, 67)
-        TB.print('|           |')
-    TB.locate(14, 67)
-    TB.print('|-----------|')
-    TB.locate(19 + PPINT, 68)
-    TB.print('           ')
+        in_boxes()
+    print('|-----------|')
     in_boxes()
 
 spSTR = 'DRAW'
 xlocINT = 6
 
 #'' // Use right-left high corner at circle for visuals/hints/alerts/signals etc. --[?}
-TB.locate(2, 58)
-TB.print(spSTR)
-TB.locate(3, 58)
-TB.print('INIT')
 
 wsSTR = 'z'
 
@@ -129,26 +115,8 @@ if any([cgSTR == 'i',
     raise SystemExit('Irregular')
 
 print('SCREEN 12') # '<[auto cls]
-TB.locate(2, 58)
-TB.print(spSTR)
-TB.locate(3, 58)
-TB.print('INIT')
-TB.locate(4, 58)
-TB.print('{:3}{}'.format(cgSTR, sINT))
-TB.locate(5, 58)
-TB.print(prSTR[:8])
 
 # MAIN
-
-if cgSTR == 'N':
-    TB.locate(1, 52)
-    TB.print('   xx     a')
-    TB.locate(2, 52)
-    TB.print('   xx     a')
-    TB.locate(3, 52)
-    TB.print('   xx     a')
-    TB.locate(xlocINT, 3)
-    TB.print(spSTR)
 
 ysINT = 2
 
@@ -247,19 +215,6 @@ ltINT = PPINT
 xxSTR = ''
 
 #locate 3, 58: print "        ";
-TB.locate(3, 58)
-TB.print('        ')
-
-TB.locate(5, 58)
-TB.print('        ')
-TB.locate(2, 58)
-TB.print(spSTR)
-TB.locate(3, 58)
-TB.print(cgSTR)
-TB.locate(3, 61)
-TB.print(str(sINT))
-TB.locate(4, 58)
-TB.print(prSTR[:8])
 
 #L2200: '' // O-B-S----!! ##  (w/ [A]
 #IF cg$ = "N" THEN GOSUB L6010: IF SU$ = "y" THEN GOTO L2230
@@ -271,20 +226,11 @@ if cgSTR == 'N':
 if cgSTR != 'z':
     raise SystemExit('GOTO L2210')
 
-TB.locate(xlocINT + 4, 3)
-TB.print("ASC  / Aries")
-TB.locate(xlocINT + 6, 3)
-TB.print('<CR> / <y>')
-TB.locate(30 + PPINT, 72)
-TB.print('[i]')
-
 #gosub Boxes
 boxes()
 
 #L2210: ' [prg:L2210=L2230]
 # LOCATE 13, 68: PRINT "[A] <y><CR>"; : '' // [A] --(even more varia!?)
-TB.locate(13, 68)
-TB.print('[A] <y><CR>')
 #L2222: EH$ = INKEY$: IF EH$ <> CHR$(13) AND EH$ <> "y" THEN GOTO L2222
 # Wait for input here
 ehSTR = 'y'
@@ -294,8 +240,6 @@ if ehSTR == 'y':
 else:
     ehSTR = ' '
 # LOCATE (34 + PP%), 72: PRINT "[" + EH$ + "]"; : '' // --cfMenuInternAndExternGoto] [L7000]
-TB.locate(34 + PPINT, 72)
-TB.print('[' + ehSTR + ']')
 
 #L2230:
 # xx$ = "[disk]   ": GOSUB WAITx
@@ -304,9 +248,6 @@ waitx()
 # GOSUB Boxes
 boxes()
 # if cg$ = "z" then locate xloc%, 3: print "           ";: '' // [??} ##
-if cgSTR == 'z':
-    TB.locate(xlocINT, 3)
-    TB.print('           ')
 
 with (fSTR / 'PDAT.DAT').open() as infile: #pylint: disable=E1101
     mSTR_ARR[1, 0] = infile.readline().rstrip('\n')

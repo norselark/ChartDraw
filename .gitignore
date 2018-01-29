@@ -17,3 +17,4 @@ __pycache__/
 bufferdisplay.txt
 env/
 *.pyc
+variables.txt
