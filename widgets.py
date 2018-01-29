@@ -61,6 +61,7 @@ class HarmonicSelection(Dialog):
     def body(self, parent):
         w = tk.Frame(self)
         w.pack()
+        tk.Label(w, text='Enter harmonic number in interval [1, 300]').pack()
 
         self.su = tk.IntVar()
 
@@ -92,6 +93,7 @@ class CycleSelection(Dialog):
     def body(self, parent):
         w = tk.Frame(self)
         w.pack()
+        tk.Label(w, text='Enter cycle number in interval [1, 12]').pack()
 
         self.spinbox = tk.Spinbox(w, from_=1, to=12)
         self.spinbox.pack()
