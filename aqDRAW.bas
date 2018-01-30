@@ -1203,15 +1203,20 @@ END:
 '[Label]
 AspLines:
   '' // # [xx$ = "+ALines": GOSUB WAITx] #
- GOSUB Boxes
- LOCATE 11, 68: PRINT "<2-10>"; " "; : '' // <[8,68 ?] ' [<>. ?]
- GOSUB TypeChoice: y$ = u$: IF VAL(u$) < 2 OR VAL(u$) > 10 THEN GOTO AspLines
- il% = VAL(y$)
- xx$ = "[+Alines]" + STR$(il%): GOSUB WAITx:  '' // [DO: improve text!!]
-GOSUB Boxes 
-GOSUB TempCirc: '' // --[y$]--
- GOSUB PlusAspLines
-RETURN: '[menu--]
+  DO
+    GOSUB Boxes
+    LOCATE 11, 68
+    PRINT "<2-10> "; '' // <[8,68 ?] ' [<>. ?]
+    GOSUB TypeChoice
+    y$ = u$
+  LOOP WHILE VAL(u$) < 2 OR VAL(u$) > 10
+  il% = VAL(y$)
+  xx$ = "[+Alines]" + STR$(il%)
+  GOSUB WAITx  '' // [DO: improve text!!]
+  GOSUB Boxes 
+  GOSUB TempCirc: '' // --[y$]--
+  GOSUB PlusAspLines
+RETURN '[menu--]
 
 
 '[Label]
@@ -1227,7 +1232,7 @@ RETURN: '[menu]--
 
 '[Label]
 TempCirc:
- : ' ' ' if mi$ ...
+ ' ' ' if mi$ ...
  CIRCLE (x%, y%), 168, 6: '<[paint border] <[removed in 'Tropos:'!]
      '-------' [blw! cf. DawnDusk]>
     '# <[circle e. 'next m' pga unoy 110-->mc/ic]?
@@ -1237,68 +1242,95 @@ TempCirc:
     '# NEXT M:
   '''# CIRCLE (x%, y%), pa%, 8: '--<[reinforcement redun]?--< [cf.'MinusLines:']
  PAINT (x%, y% + 4), 15, 6: '<[pset'd  ?][+4=dum (+1 leaks?)]
-RETURN: '>[AspLines & DomLines][+ InSuorNot/L19862+]
+RETURN '>[AspLines & DomLines][+ InSuorNot/L19862+]
 
 
 '[Label]
 PlusAspLines: ' /// [+varia!]
  ' [mayhap orb-asp overlap![ego:P->H=S->P][cint/int?]]
- :
- FOR z = 1 TO il%:  '<[NP% + 1:] '<[(9+1)][b%=val() ?!] [z?]<->[float?]
-  v = VAL(P$(CH%, z)) - ZY: IF v < 0 THEN v = v + 360: '' // [sub:cfInMainDraw+]
-   ' IF RIGHT$ > 30 THEN V+1: '' // [p$=p$() <-free choice of h% ?]
-  b% = v: v$ = STR$(b%): v$ = MID$(v$, 2)
-   ' [vz=p$() [vx=]:*?]
-  :
-  z$ = "168":
-  IF MI$ = "y" THEN z$ = "108": ' [->CHART+ [vars!] [+swi.swi]]
-  :
-: IF g$ = "d" THEN z$ = "140": i$ = tf$: i% = 0: '<-(t e m p t r y !!) <*
-  :
- FOR x = 1 TO il%:  '[NP% + 1:] '[obs! np%][float,x/x%!]
-  dr$ = "": LOCATE 11, 69
-  w$ = w$(HC%, z, x)
-  : IF g$ = "a" THEN GOSUB Asp: '<[DR$]
-  : IF g$ = "d" THEN GOSUB Dom: '<[DR$]
-  : IF dr$ = "" THEN GOTO L23970: '<[next x]
-  :
-  PSET (x%, y%): DRAW "ta" + v$: DRAW "br" + z$: '[draw rpt (redun) ?]
-  PZ% = POINT(0): PZ$ = STR$(PZ%): PZ$ = MID$(PZ$, 2)
-  PY% = POINT(1): PY$ = STR$(PY%): PY$ = MID$(PY$, 2):
-  XY$ = PZ$ + "," + PY$
-  v = VAL(P$(CH%, x)) - ZY: IF v < 0 THEN v = v + 360: '' // [gosub:cfInMainDraw+]
-  D% = v
-  PSET (x%, y%): '[^^pz$/px$:cf1062!^^]
-  :
-  IF dr$ = "d" THEN GOSUB DLines: i% = 0
-  IF dr$ = ":" THEN GOSUB L24100: GOTO L23970: '[nil] <next
-  IF dr$ = "-" THEN GOSUB L24150: GOTO L23970: '[nil] <next
-  IF dr$ = "*" THEN GOSUB L24200: i% = 2: '<[varptr$ ?]
-  IF dr$ = "k" THEN GOSUB L24250: i% = 4: '<[check gwAmap for 'goto' or likes.. (all!)]
-  IF dr$ = "t" THEN GOSUB L24300: i% = 2: '  -'-
-  IF dr$ = "o" THEN GOSUB L24350: i% = 4
-  ' <[noasp<=orb]! <-<* [?]
-  :
-  : : IF D% > 359 THEN D% = D% - 360: '[redun?] <*---
-  : : IF D% < 0 THEN D% = D% + 360: '[redun?] <*---
-  :
-  D$ = STR$(D%): D$ = MID$(D$, 2)
-  : : : : : ' [if g$='a'/'d' then d$=] ::::: <-no! erase! <* <*
-  :
-  DRAW "ta" + D$: DRAW "br" + z$
-  DRAW "c" + STR$(i%): DRAW "m" + XY$: '[cmp 'LINE']
-: IF g$ = "d" THEN CALL ArrowASC(i$, i%): '<-[t e m p !] <*
-  '# ^^math(equilattrekant)^[radianer..]
-  '# ex:for-next V$+/-1 fmbothpos->broadlines*!? [float!]
-  '# IF Z=5 AND X=7 THEN STOP
+  FOR z = 1 TO il%:  '<[NP% + 1:] '<[(9+1)][b%=val() ?!] [z?]<->[float?]
+    v = VAL(P$(CH%, z)) - ZY
+    IF v < 0 THEN v = v + 360 '' // [sub:cfInMainDraw+]
+    ' IF RIGHT$ > 30 THEN V+1: '' // [p$=p$() <-free choice of h% ?]
+    b% = v
+    v$ = MID$(STR$(b%), 2)
+    ' [vz=p$() [vx=]:*?]
+    z$ = "168":
+    IF MI$ = "y" THEN z$ = "108" ' [->CHART+ [vars!] [+swi.swi]]
+    IF g$ = "d" THEN z$ = "140"
+    i$ = tf$
+    i% = 0 '<-(t e m p t r y !!) <*
+    
+    FOR x = 1 TO il%:  '[NP% + 1:] '[obs! np%][float,x/x%!]
+      dr$ = ""
+      LOCATE 11, 69
+      w$ = w$(HC%, z, x)
+      IF g$ = "a" THEN GOSUB Asp '<[DR$]
+      IF g$ = "d" THEN GOSUB Dom '<[DR$]
+      IF dr$ = "" THEN GOTO L23970 '<[next x]
+      sleep 1
+      
+      PSET (x%, y%)
+      DRAW "ta" + v$
+      DRAW "br" + z$ '[draw rpt (redun) ?]
+      PZ% = POINT(0)
+      PZ$ = STR$(PZ%)
+      PZ$ = MID$(PZ$, 2)
+      PY% = POINT(1)
+      PY$ = STR$(PY%)
+      PY$ = MID$(PY$, 2)
+      XY$ = PZ$ + "," + PY$
+      v = VAL(P$(CH%, x)) - ZY
+      IF v < 0 THEN v = v + 360 '' // [gosub:cfInMainDraw+]
+      D% = v
+      PSET (x%, y%) '[^^pz$/px$:cf1062!^^]
+      
+      SELECT CASE dr$
+        CASE "d"
+          GOSUB DLines
+          i% = 0
+        CASE ":"
+          GOSUB L24100
+          GOTO L23970 '[nil] <next
+        CASE "-"
+          GOSUB L24150
+          GOTO L23970 '[nil] <next
+        CASE "*"
+          GOSUB L24200
+          i% = 2 '<[varptr$ ?]
+        CASE "k"
+          GOSUB L24250
+          i% = 4 '<[check gwAmap for 'goto' or likes.. (all!)]
+        CASE "t"
+          GOSUB L24300
+          i% = 2: '  -'-
+        CASE "o"
+          GOSUB L24350
+          i% = 4
+      END SELECT
+      ' <[noasp<=orb]! <-<* [?]
+      
+      IF D% > 359 THEN D% = D% - 360 '[redun?] <*---
+      IF D% < 0 THEN D% = D% + 360 '[redun?] <*---
+      
+      ' [if g$='a'/'d' then d$=] ::::: <-no! erase! <* <*
+      
+      DRAW "ta" + STR$(D%)
+      DRAW "br" + z$
+      DRAW "c" + STR$(i%)
+      DRAW "m" + XY$ '[cmp 'LINE']
+      IF g$ = "d" THEN CALL ArrowASC(i$, i%) '<-[t e m p !] <*
+      '# ^^math(equilattrekant)^[radianer..]
+      '# ex:for-next V$+/-1 fmbothpos->broadlines*!? [float!]
+      '# IF Z=5 AND X=7 THEN STOP
 L23970:
- NEXT x
- NEXT z
- GOSUB InnerCircleLines
- PAINT (x%, y% - 4), L%, 6: '<-(see comm 'DrawAsc:[Outer:'] !!) [4=dum]
- CIRCLE (x%, y%), z%, 15
- GOSUB DawnDusk
- GOSUB Tropos
+    NEXT x
+  NEXT z
+  GOSUB InnerCircleLines
+  PAINT (x%, y% - 4), L%, 6: '<-(see comm 'DrawAsc:[Outer:'] !!) [4=dum]
+  CIRCLE (x%, y%), z%, 15
+  GOSUB DawnDusk
+  GOSUB Tropos
 RETURN: '>[menu (fm g$='a'/'d']'''# [GOTO Menu: '[L39050 ?] [vars:+swi.swi]]
 
 
@@ -1369,21 +1401,33 @@ DLines:
 
 '[Label]
 Asp:
- XL$ = LEFT$(w$, 3): ZL$ = RIGHT$(w$, 2): '[float?]<->[rounded!!]
- XZ$ = XL$ + "." + ZL$:
- E = VAL(XZ$): '--[w$(0,0) & (0,x)?]--
- AO% = OA%:           IF E <= 0 + AO% THEN GOTO L43100
-     '' // [[IF Z=5 AND X=7 THEN STOP]] ----
- AO% = (OA% / 4):     IF E >= 30 - AO% AND E <= 30 + AO% THEN GOTO L43150
- AO% = (OA% / 4) * 3: IF E >= 60 - AO% AND E <= 60 + AO% THEN GOTO L43200
- AO% = OA%:           IF E >= 90 - AO% AND E <= 90 + AO% THEN GOTO L43250
- AO% = OA%:           IF E >= 120 - AO% AND E <= 120 + AO% THEN GOTO L43300
- AO% = OA%:           IF E >= 180 - AO% AND E <= 180 + AO% THEN GOTO L43350
- ' [^^ abs(val) & if 359-60 ++ etc.][int/cint] [only >&< (not=)]?
- ' [value-360 etc. and +/- aspect <-decide in aspcalc]!?
- ' [ownsymbol(+/-)for asp in/ex temperament]!?ex:[*+]
- ' [<- overlappende aspekter? <-kun ett blir oppdaget]!??
- RETURN: '>[plusasplines]
+  XL$ = LEFT$(w$, 3)
+  ZL$ = RIGHT$(w$, 2) '[float?]<->[rounded!!]
+  XZ$ = XL$ + "." + ZL$
+  locate 11, 68
+  print "w$: "; w$
+  E = VAL(XZ$): '--[w$(0,0) & (0,x)?]--
+  locate 12, 68
+  print "e:  "; e 
+  locate 13, 68
+  AO% = OA%
+  IF E <= 0 + AO% THEN GOTO L43100
+      '' // [[IF Z=5 AND X=7 THEN STOP]] ----
+  AO% = (OA% / 4)
+  IF E >= 30 - AO% AND E <= 30 + AO% THEN GOTO L43150
+  AO% = (OA% / 4) * 3
+  IF E >= 60 - AO% AND E <= 60 + AO% THEN GOTO L43200
+  AO% = OA%
+  IF E >= 90 - AO% AND E <= 90 + AO% THEN GOTO L43250
+  AO% = OA%
+  IF E >= 120 - AO% AND E <= 120 + AO% THEN GOTO L43300
+  AO% = OA%
+  IF E >= 180 - AO% AND E <= 180 + AO% THEN GOTO L43350
+  ' [^^ abs(val) & if 359-60 ++ etc.][int/cint] [only >&< (not=)]?
+  ' [value-360 etc. and +/- aspect <-decide in aspcalc]!?
+  ' [ownsymbol(+/-)for asp in/ex temperament]!?ex:[*+]
+  ' [<- overlappende aspekter? <-kun ett blir oppdaget]!??
+RETURN: '>[plusasplines]
 
 L43100: PRINT ":"; : dr$ = ":": RETURN: '[dr$: >PlusAspLines+]
 L43150: PRINT "-"; : dr$ = "-": RETURN: '[TecCompu:compare 'loose' for-next]
@@ -1713,166 +1757,191 @@ RETURN
 
 '[Label]
 axes:
- '' // '# [Unprecise axes! (trunc vals)] ###
- '' // <[Asc or MC first (hp% + ?] <[coord!] :?: [cf. 'InMainDraw:'] [asc=asc]?
- i$ = tf$: '' // <[best placement in prg ?] <--
- SELECT CASE m
-  CASE hp% + 2: '[ASC]
-   GOSUB TurnAngle
-   GOSUB DrawASC
-  CASE hp% + 1: '[MC]
-   GOSUB TurnAngle
-   IF tt$ = "i" THEN mcv$ = v$: '' // <[MC's pos vs. horizon (Desc <- 'ta0')] <-[cf. 'InMainDraw:'<(m=1=Sun) + cf. MO]
-   GOSUB DrawMC
- END SELECT
- i$ = tf$
- IF m = (hp% + 1) THEN GOTO RETimd: '' // <[if hp%+2 ?]<->[Asc/MC +1/+2 ?] <-(which 1st ?)
- : DRAW "ta0"
- '' // IF tf$ <> "1" THEN DRAW "c" + STR$(i%): '<[color lost by Gosub, Pset, etc. (not by Call)]
- LOCATE 59, 51: PRINT "MC";: PSET (440, 465): CALL ArrowMC(i$, i%)
- LOCATE 60, 51: PRINT "ASC";: PSET (440, 475): CALL ArrowASC(i$, i%): '' // <['asc'; nocurs]^
- '' // IF tf$ <> "1" THEN DRAW "bu3": PAINT STEP(0, 0), i%, 15 --[?]
- LOCATE 59, 59: '' // ['mc =    spaces]-[??]
- IF tf$ = "1" and CH% = 1 THEN PRINT " S";
- IF tf$ <> "1" THEN PRINT "Turned  ";
- if CH% <> 1 then print "HAR     ";
- LOCATE 60, 59: '' // ['asc =      ' ?] <-[backgrcolor problem !?]
- IF tf$ = "1" and CH% = 1 THEN PRINT " E";
- IF tf$ <> "1" THEN PRINT "Turned  ";
- if CH% <> 1 then print "HAR     ";: '' // [What if SU etc]. --[?]
-RETimd: RETURN: '>[InMainDraw & MinusLines]
+  '' // '# [Unprecise axes! (trunc vals)] ###
+  '' // <[Asc or MC first (hp% + ?] <[coord!] :?: [cf. 'InMainDraw:'] [asc=asc]?
+  i$ = tf$ '' // <[best placement in prg ?] <--
+  SELECT CASE m
+    CASE hp% + 2: '[ASC]
+      GOSUB TurnAngle
+      GOSUB DrawASC
+    CASE hp% + 1: '[MC]
+      GOSUB TurnAngle
+    IF tt$ = "i" THEN mcv$ = v$ '' // <[MC's pos vs. horizon (Desc <- 'ta0')] <-[cf. 'InMainDraw:'<(m=1=Sun) + cf. MO]
+    GOSUB DrawMC
+  END SELECT
+  i$ = tf$
+  IF m = (hp% + 1) THEN GOTO RETimd '' // <[if hp%+2 ?]<->[Asc/MC +1/+2 ?] <-(which 1st ?)
+  DRAW "ta0"
+  '' // IF tf$ <> "1" THEN DRAW "c" + STR$(i%): '<[color lost by Gosub, Pset, etc. (not by Call)]
+  LOCATE 59, 51
+  PRINT "MC";
+  PSET (440, 465)
+  CALL ArrowMC(i$, i%)
+  LOCATE 60, 51
+  PRINT "ASC";
+  PSET (440, 475)
+  CALL ArrowASC(i$, i%) '' // <['asc'; nocurs]^
+  '' // IF tf$ <> "1" THEN DRAW "bu3": PAINT STEP(0, 0), i%, 15 --[?]
+  LOCATE 59, 59 '' // ['mc =    spaces]-[??]
+  IF tf$ = "1" and CH% = 1 THEN PRINT " S";
+  IF tf$ <> "1" THEN PRINT "Turned  ";
+  if CH% <> 1 then print "HAR     ";
+  LOCATE 60, 59: '' // ['asc =      ' ?] <-[backgrcolor problem !?]
+  IF tf$ = "1" and CH% = 1 THEN PRINT " E";
+  IF tf$ <> "1" THEN PRINT "Turned  ";
+  if CH% <> 1 then print "HAR     "; '' // [What if SU etc]. --[?]
+RETimd:
+RETURN '>[InMainDraw & MinusLines]
 
 
 PlanetSymbols: ' /// 'planet's
- '  node/arab..!?
- '  axes/lines..draw1stdue'luft'tilsymboler!!
-'# L60030:
- : IF MI$ = CHR$(13) THEN GOTO L60050
- DRAW "br163": FOR L% = 1 TO 3: CIRCLE STEP(0, 0), L%: NEXT L%: '[br/blxx]?
- DRAW "bl49": CIRCLE STEP(0, 0), 3: '[48]?
- DRAW "br2": '<[br <-place 'planet' symb]!
- GOTO L60052
-L60050: : DRAW "br" + p1$: CIRCLE STEP(0, 0), 3
- : DRAW "br56": FOR L% = 1 TO 3: CIRCLE STEP(0, 0), L%: NEXT L%: DRAW "bl56"
-L60052: DRAW "br" + O$: DRAW "ta0": DRAW "bu6 bl12"
+  '  node/arab..!?
+  '  axes/lines..draw1stdue'luft'tilsymboler!!
+  '# L60030:
+  IF MI$ = CHR$(13) THEN GOTO L60050
+  DRAW "br163"
+  FOR L% = 1 TO 3
+    CIRCLE STEP(0, 0), L%
+  NEXT L%: '[br/blxx]?
+  DRAW "bl49"
+  CIRCLE STEP(0, 0), 3 '[48]?
+  DRAW "br2" '<[br <-place 'planet' symb]!
+  GOTO L60052
+L60050:
+  DRAW "br" + p1$
+  CIRCLE STEP(0, 0), 3
+  DRAW "br56"
+  FOR L% = 1 TO 3
+    CIRCLE STEP(0, 0), L%
+  NEXT L%
+  DRAW "bl56"
+L60052:
+  DRAW "br" + O$
+  DRAW "ta0"
+  DRAW "bu6 bl12"
  ' IF tf$ <> "1" THEN STOP
-
 
  '' // [ON m gosub SUN,MO >- -> case 3] <[alternative]-[?]
 
- SELECT CASE m
- CASE 1
-  CALL SUN(tf$)
- CASE 2
-  GOSUB MO
-   IF tt$ = "i" THEN mv$ = v$: '' // <[MO's pos vs. horizon (Desc <- 'ta0')] <-[cf. 'InMainDraw:'<(m=1=Sun) + cf. 'Axes:(MC)]
- CASE 3
-  CALL ME
- CASE 4
-  CALL VE
- CASE 5
-  CALL MA
- CASE 6
-  CALL JU
- CASE 7
-  CALL SA
- CASE 8
-  CALL UR
- CASE 9
-  CALL NE
- CASE 10
-  CALL PL
- END SELECT
-RETURN: '>[InMainDraw] '[<=Select Case ??]
-'---------
+  SELECT CASE m
+  CASE 1
+    CALL SUN(tf$)
+  CASE 2
+    GOSUB MO
+    IF tt$ = "i" THEN mv$ = v$ '' // <[MO's pos vs. horizon (Desc <- 'ta0')] <-[cf. 'InMainDraw:'<(m=1=Sun) + cf. 'Axes:(MC)]
+  CASE 3
+    CALL ME
+  CASE 4
+    CALL VE
+  CASE 5
+    CALL MA
+  CASE 6
+    CALL JU
+  CASE 7
+    CALL SA
+  CASE 8
+    CALL UR
+  CASE 9
+    CALL NE
+  CASE 10
+    CALL PL
+  END SELECT
+RETURN '>[InMainDraw] '[<=Select Case ??]
 
 
 '[Label]
 DrawASC: ' /// '<[56/57 ??] [cf DawnDusk!] # ['ta0'=Desc !!]  ['right'<->'left' (on screen!)]  ['up'<->'down'] <-!!!
-   ' [l%=color horiz plane day/night (Tropos/inner circle): '<['free' l%/i%/il% ??] '[redun pset etc. ?]
-   ' [i%/il%=sky color above/below horizon]
-   '# FOR l%=1 TO 10
-   '# CIRCLE (X%,Y%),P1%-l%,,V,V+((2*PI)/360)
-   '# CIRCLE (X%,Y%),P1%-l%,,(V-PI),(V-PI)+((2*PI)/360) <<-<*
-   '# NEXT l%
+  ' [l%=color horiz plane day/night (Tropos/inner circle): '<['free' l%/i%/il% ??] '[redun pset etc. ?]
+  ' [i%/il%=sky color above/below horizon]
+  '# FOR l%=1 TO 10
+  '# CIRCLE (X%,Y%),P1%-l%,,V,V+((2*PI)/360)
+  '# CIRCLE (X%,Y%),P1%-l%,,(V-PI),(V-PI)+((2*PI)/360) <<-<*
+  '# NEXT l%
 
- '[Hemispheres]: '[cf. 'DawnDusk:'] '>[Drawasc & Innercirclelines]
- IF VAL(sv$) > 180 THEN i% = 1: il% = 9: L% = 3:      '<-blw![check v$!]
- IF VAL(sv$) < 180 THEN i% = 9: il% = 1: L% = 11
+  '[Hemispheres]: '[cf. 'DawnDusk:'] '>[Drawasc & Innercirclelines]
+  IF VAL(sv$) > 180 THEN
+    i% = 1
+    il% = 9
+    L% = 3      '<-blw![check v$!]
+  END IF
+  IF VAL(sv$) < 180 THEN
+    i% = 9
+    il% = 1
+    L% = 11
+  END IF
   ' IF VAL(sv$) > 170 AND VAL(sv$) < 190 THEN i% = 1: '[dawn]
   ' IF VAL(sv$) > 350 AND VAL(sv$) < 10 THEN i% = 1:  '[dusk]
- :
- IF MI$ <> CHR$(13) THEN GOTO Middle
- :
-Outer:
- ' '// # [DRAW "r" + PA$: DRAW "br"+Q$:DRAW "br"+O$:DRAW "ta0":DRAW "bu6 bl12"[+mc]]
- DRAW "bl57 l110 l12": '<[where pre-pset'd ?][cf TurnAngle]<-[left/right mirrored!] <* [bl57/br57]<->[cf. PAINT 'DawnDusk']
- PSET (x%, y%): DRAW "br57 r110 r12 br41 r9": '' // [drawn axes inside main circle]
- ' ' IF tf$ <> "1" THEN DRAW "c" + STR$(i%):  '<[color as above radix horizon]
- CALL ArrowASC(i$, i%): '' // [cf. 'DrawMC:']
- PAINT STEP(0, 0), i%, 15: ' <-[use vars! <-pa%+dum] [turnangle'd ??]
- DRAW "bu20": '<[dum]<[cf. comments in 'ArrowASC:']
- PAINT STEP(0, 0), il%, 15
- PAINT (x%, y% - 10), L%, 15:  ' [,,defaultborder <(var) ?] <-[Tropos default] <[pset'd ?]
-  ' [10=dum]      '[magenta/light magenta? (shades/sunrise/set?)] ^^ [init inner circle = horizon plane (symbolic!)]
-  '' // [is painted (first) even if ='t' !? <(also A&D Lines!?)]
- z% = pa%
- GOSUB DawnDusk
- GOTO RETaxes
- :
-Middle: '' // [UNFINISHED!]
- DRAW "bl57 l110": PSET (x%, y%): DRAW "br57 r110": '' // <[where pre-pset'd ?]
- CALL ArrowASC(i$, i%): PSET (x%, y%): '' // >pset? ::[i$=?? (tf$?)
- :
-RETaxes: RETURN
-
-
-
+ 
+  IF MI$ <> CHR$(13) THEN
+    DRAW "bl57 l110"
+    PSET (x%, y%)
+    DRAW "br57 r110" '' // <[where pre-pset'd ?]
+    CALL ArrowASC(i$, i%)
+    PSET (x%, y%) '' // >pset? ::[i$=?? (tf$?)
+  ELSE
+    '// # [DRAW "r" + PA$: DRAW "br"+Q$:DRAW "br"+O$:DRAW "ta0":DRAW "bu6 bl12"[+mc]]
+    DRAW "bl57 l110 l12" '<[where pre-pset'd ?][cf TurnAngle]<-[left/right mirrored!] <* [bl57/br57]<->[cf. PAINT 'DawnDusk']
+    PSET (x%, y%): DRAW "br57 r110 r12 br41 r9" '' // [drawn axes inside main circle]
+    ' ' IF tf$ <> "1" THEN DRAW "c" + STR$(i%):  '<[color as above radix horizon]
+    CALL ArrowASC(i$, i%) '' // [cf. 'DrawMC:']
+    PAINT STEP(0, 0), i%, 15 ' <-[use vars! <-pa%+dum] [turnangle'd ??]
+    DRAW "bu20" '<[dum]<[cf. comments in 'ArrowASC:']
+    PAINT STEP(0, 0), il%, 15
+    PAINT (x%, y% - 10), L%, 15  ' [,,defaultborder <(var) ?] <-[Tropos default] <[pset'd ?]
+      ' [10=dum]      '[magenta/light magenta? (shades/sunrise/set?)] ^^ [init inner circle = horizon plane (symbolic!)]
+      '' // [is painted (first) even if ='t' !? <(also A&D Lines!?)]
+    z% = pa%
+    GOSUB DawnDusk
+  END IF
+RETURN
+  
 '[Label]
 DawnDusk:
- '' // <[inner circle hemispheres <(center)] '<[55/56/57]<?>[5/6/7]['t': br 1/2/3 ?]  <#['taX'/pset reduns?]#
- '' // <[spare (free) var l% ?]        ^^[cf DrawASC] ^[less black night]<?>[seasons/latitudes][dawn/dusk][moonlight?]
- '' //                                               ' [polar regions/polar Sun] <*
- IF tf$ <> "1" OR ln% = 1 THEN GOTO t: '' // --[make switch? - e.g. necessary only 1st time turned]
- GOTO RETdrawasc
- :
+  '' // <[inner circle hemispheres <(center)] '<[55/56/57]<?>[5/6/7]['t': br 1/2/3 ?]  <#['taX'/pset reduns?]#
+  '' // <[spare (free) var l% ?]        ^^[cf DrawASC] ^[less black night]<?>[seasons/latitudes][dawn/dusk][moonlight?]
+  '' //                                               ' [polar regions/polar Sun] <*
+  IF tf$ <> "1" OR ln% = 1 THEN GOTO t: '' // --[make switch? - e.g. necessary only 1st time turned]
+RETURN
 t:
- '' // [i$='0' redun (2x) here (Asc&MC), but 'HorizDiagonal:' may be used in later prg development!?]
- '' // l% = 11: '<[cf. 'Tropos:'] <-[remove this line ...!!]
- DRAW "ta180": '<['normal' Asc] <[pset'd ?]
- GOSUB HorizDiagonal
- PAINT (x%, y% - 4), i%, 15
- PAINT (x%, y% + 4), il%, 15
- :
-IF ln% = 1 THEN GOTO IfLinesDrawn: '' // --[1st -> --??--label for MC]! <-temp!!: <-^[cf. SUB LEGENDprgSPECS]
- :
- GOSUB HorizDiagonal: '' // --[horizon=ArrowASC / paint->pset?] ' <-^&blw![where go(es) the color(s) ??] <-['pset' yields default !]
- i$ = "0": CALL ArrowASC(i$, i%): '' // --[g$ ??] [+ draw 'br2'?]
- PSET (x%, y%): DRAW "ta0": '' // --[pset=c15 !??] --['ta0'<-not 180]!
- DRAW "ta" + mcv$
- GOSUB HorizDiagonal
- i$ = "0": CALL ArrowMC(i$, i%)
- :
- CIRCLE (x%, y%), 6, 0: '' // --[radius=6 ?] --['fractal' Tropos]
- PAINT (x%, y% + 3), L%, 0
- GOSUB CenterSunMoon
- GOTO RETdrawasc
- :
- :   '' // &blw![use color-var!] <-[Resizing]
- :
+  '' // [i$='0' redun (2x) here (Asc&MC), but 'HorizDiagonal:' may be used in later prg development!?]
+  '' // l% = 11: '<[cf. 'Tropos:'] <-[remove this line ...!!]
+  DRAW "ta180": '<['normal' Asc] <[pset'd ?]
+  GOSUB HorizDiagonal
+  PAINT (x%, y% - 4), i%, 15
+  PAINT (x%, y% + 4), il%, 15
+IF ln% <> 1 THEN '' // --[1st -> --??--label for MC]! <-temp!!: <-^[cf. SUB LEGENDprgSPECS]
+  GOSUB HorizDiagonal: '' // --[horizon=ArrowASC / paint->pset?] ' <-^&blw![where go(es) the color(s) ??] <-['pset' yields default !]
+  i$ = "0": CALL ArrowASC(i$, i%): '' // --[g$ ??] [+ draw 'br2'?]
+  PSET (x%, y%): DRAW "ta0": '' // --[pset=c15 !??] --['ta0'<-not 180]!
+  DRAW "ta" + mcv$
+  GOSUB HorizDiagonal
+  i$ = "0": CALL ArrowMC(i$, i%)
+  :
+  CIRCLE (x%, y%), 6, 0: '' // --[radius=6 ?] --['fractal' Tropos]
+  PAINT (x%, y% + 3), L%, 0
+  GOSUB CenterSunMoon
+RETURN
+END IF
+      '' // &blw![use color-var!] <-[Resizing]
 '[Label]
 IfLinesDrawn:
- PSET (x%, y%): DRAW "ta0": '' // --[pset=c15 !??] <-['ta0'<-not 180]!
- DRAW "ta" + mcv$
- GOSUB HorizDiagonal
- IF tf$ <> "1" THEN PSET (x%, y%): DRAW "c0": DRAW "bl3 l3": '' // --[Asc] ' --['pset' redun after 'paint' ??]
- IF tf$ <> "1" THEN PSET (x%, y%): DRAW "ta0": DRAW "ta" + mcv$: DRAW "br3 r3"
- CIRCLE (x%, y%), 2, L%
- PAINT (x%, y%), L%, L%
+  PSET (x%, y%)
+  DRAW "ta0": '' // --[pset=c15 !??] <-['ta0'<-not 180]!
+  DRAW "ta" + mcv$
+  GOSUB HorizDiagonal
+  IF tf$ <> "1" THEN
+    PSET (x%, y%)
+    DRAW "c0"
+    DRAW "bl3 l3"'' // --[Asc] ' --['pset' redun after 'paint' ??]
+    PSET (x%, y%)
+    DRAW "ta0"
+    DRAW "ta" + mcv$
+    DRAW "br3 r3"
+  END IF
+  CIRCLE (x%, y%), 2, L%
+  PAINT (x%, y%), L%, L%
 RETplusasplines:
 RETURN
-:
-RETdrawasc: RETURN:
 '' // Tropos: ['Tropos:' drawn last (just before Menu)]
 '' // ''''''' [due to color leaks <(?)]--[cf. 'MainDraw:']
 '' // ''''''''[imperfect circles <(?)]

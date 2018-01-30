@@ -1,3 +1,5 @@
+"""A selection of widgets for use in the GUI"""
+
 import tkinter as tk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog

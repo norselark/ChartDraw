@@ -1,4 +1,5 @@
 """Functions used by aq_draw"""
+
 ZODIAC_SIGNS = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
                 'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
@@ -54,3 +55,31 @@ def aspectCalc(w, p, ch, hc):
                 i = abs(360 - (i + 1))
             w[hc, m, y] = '{:03}-{:02}'.format(i, r)
     return w
+
+
+def asp(wSTR, oaINT):
+    xlSTR = wSTR[:3]
+    zlSTR = wSTR[-2:]
+    e = float(xlSTR + '.' + zlSTR)
+    aoINT = oaINT
+    if e <= 0 + aoINT:
+        print(':')
+        return ':'
+    aoINT = oaINT // 4
+    if e >= 30 - aoINT and e <= 30 + aoINT:
+        print('-')
+        return '-'
+    aoINT = (oaINT // 4) * 3
+    if e >= 60 - aoINT and e <= 60 + aoINT:
+        print('*')
+        return '*'
+    aoINT = oaINT
+    if e >= 90 - aoINT and e <= 90 + aoINT:
+        print('k')
+        return 'k'
+    if e >= 120 - aoINT and e <= 120 + aoINT:
+        print('t')
+        return 't'
+    if e >= 180 - aoINT and e <= 180 + aoINT:
+        print('o')
+        return 'o'

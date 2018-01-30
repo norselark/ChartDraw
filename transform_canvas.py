@@ -1,3 +1,5 @@
+"""A subclass of Canvas to make it easier to work with polar coordinates"""
+
 from tkinter import Canvas
 from math import cos, sin, radians
 
