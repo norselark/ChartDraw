@@ -1248,6 +1248,9 @@ RETURN '>[AspLines & DomLines][+ InSuorNot/L19862+]
 '[Label]
 PlusAspLines: ' /// [+varia!]
  ' [mayhap orb-asp overlap![ego:P->H=S->P][cint/int?]]
+  z$ = "168":
+  IF MI$ = "y" THEN z$ = "108" ' [->CHART+ [vars!] [+swi.swi]]
+  IF g$ = "d" THEN z$ = "140"
   FOR z = 1 TO il%:  '<[NP% + 1:] '<[(9+1)][b%=val() ?!] [z?]<->[float?]
     v = VAL(P$(CH%, z)) - ZY
     IF v < 0 THEN v = v + 360 '' // [sub:cfInMainDraw+]
@@ -1255,9 +1258,6 @@ PlusAspLines: ' /// [+varia!]
     b% = v
     v$ = MID$(STR$(b%), 2)
     ' [vz=p$() [vx=]:*?]
-    z$ = "168":
-    IF MI$ = "y" THEN z$ = "108" ' [->CHART+ [vars!] [+swi.swi]]
-    IF g$ = "d" THEN z$ = "140"
     i$ = tf$
     i% = 0 '<-(t e m p t r y !!) <*
     
@@ -1268,17 +1268,12 @@ PlusAspLines: ' /// [+varia!]
       IF g$ = "a" THEN GOSUB Asp '<[DR$]
       IF g$ = "d" THEN GOSUB Dom '<[DR$]
       IF dr$ = "" THEN GOTO L23970 '<[next x]
-      sleep 1
       
       PSET (x%, y%)
       DRAW "ta" + v$
       DRAW "br" + z$ '[draw rpt (redun) ?]
-      PZ% = POINT(0)
-      PZ$ = STR$(PZ%)
-      PZ$ = MID$(PZ$, 2)
-      PY% = POINT(1)
-      PY$ = STR$(PY%)
-      PY$ = MID$(PY$, 2)
+      PZ$ = MID$(STR$(POINT(0)), 2)
+      PY$ = MID$(STR$(POINT(1)), 2)
       XY$ = PZ$ + "," + PY$
       v = VAL(P$(CH%, x)) - ZY
       IF v < 0 THEN v = v + 360 '' // [gosub:cfInMainDraw+]

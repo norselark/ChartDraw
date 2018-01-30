@@ -94,6 +94,8 @@ class App(tk.Tk):
             self.harmonic()
         elif event.char == 't':
             self.turned()
+        elif event.char == 'a':
+            self.aspects()
 
     def reset_chart(self):
         self.chart.draw_chart(self.data['angles'])
@@ -120,6 +122,9 @@ class App(tk.Tk):
         else:
             self.cycle_status.set(CYCLE_TEXTS[0])
             self.chart.draw_chart(self.data['angles'], cycle=result)
+
+    def aspects(self):
+        self.chart.aspects(self.data['angles'])
     
 
 if __name__ == '__main__':

@@ -32,18 +32,19 @@ def preAspectCalc(target, source, ch):
     return target
 
 
-def aspectCalc(w, p, ch, hc):
+def aspectCalc(p):
     """Mutates as well as returns w
     Is it supposed to turn spaces at the end into a zero?"""
     r = 0
-    for m in range(1, HPINT + 1):
-        dec_str = w[0, 0, m]
-        k1 = int(dec_str[:3])
-        u1 = int(dec_str[-2:]) if dec_str[-2:].strip() else 0
-        for y in range(1, HPINT + 1):
-            dec_str = p[ch, y]
-            k2 = int(dec_str[:3])
-            u2 = int(dec_str[-2:]) if dec_str[-2:].strip() else 0
+    out = [['' for _ in range(HPINT)] for __ in range(HPINT)]
+    for m in range(HPINT):
+        dec_str = float(p[m])
+        k1 = int(dec_str)
+        u1 = 0
+        for y in range(HPINT):
+            dec_str = float(p[y])
+            k2 = int(dec_str)
+            u2 = 0
             if u2 > u1:
                 k1 = k1 - 1
                 u1 = u1 + 60
@@ -53,11 +54,12 @@ def aspectCalc(w, p, ch, hc):
             if i > 180:
                 r = abs(60 - r)
                 i = abs(360 - (i + 1))
-            w[hc, m, y] = '{:03}-{:02}'.format(i, r)
-    return w
+            out[m][y] = '{:03}-{:02}'.format(i, r)
+    return out
 
 
 def asp(wSTR, oaINT):
+    """Second argument is size of orbis"""
     xlSTR = wSTR[:3]
     zlSTR = wSTR[-2:]
     e = float(xlSTR + '.' + zlSTR)
@@ -83,3 +85,4 @@ def asp(wSTR, oaINT):
     if e >= 180 - aoINT and e <= 180 + aoINT:
         print('o')
         return 'o'
+    return ''

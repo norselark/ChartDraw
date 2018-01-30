@@ -1,4 +1,4 @@
-from aq_functions import coordinates
+from aq_functions import coordinates, aspectCalc, asp
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
 
@@ -178,4 +178,41 @@ class Chart():
             canv.create_oval([448, 503, 454, 509], fill='#5555ff', outline='')
         canv.create_text([470, 483], text=text[0], fill='white', anchor='nw')
         canv.create_text([470, 498], text=text[1], fill='white', anchor='nw')
+
+    def aspects(self, angles):
+        print(angles)
+        w = aspectCalc(angles)
+        print(len(w))
+        r = 168
+        xx = 256
+        y = 256
+        self.canvas.circle((0, 0), r, fill='white', outline='')
+        zy = -coordinates(angles[-1])
+        for z in range(len(angles) - 3):
+            v = (angles[z] - zy) % 360
+            for x in range(len(angles) - 3):
+                ww = w[z][x]
+                dr = asp(ww, 8)
+                if dr == '':
+                    continue
+                if dr in ':-':
+                    continue
+                self.canvas.set_rotation(v)
+                col = '#00aa00'
+                if dr in 'ko':
+                    col = '#aa0000'
+                v2 = (angles[x] - zy) % 360
+                self.canvas.create_arc([xx - r, y - r, xx + r, y + r], style='chord', fill='',
+                                       outline=col, start=v, extent=v2 - v)
+        pa = 10
+        self.canvas.circle((0, 0), pa, fill='#5555ff', outline='')
+        self.canvas.create_arc([xx - pa, y - pa, xx + pa, y + pa], fill='#0000aa',
+                               outline='', start=180, extent=180)
+        self.canvas.circle((0, 0), pa, fill='', outline='black')
+        self.canvas.set_rotation(angles[-1] - zy)
+        self.canvas.line([[-pa, 0], [pa, 0]], fill='white')
+        self.canvas.set_rotation(angles[-2] - zy)
+        self.canvas.line([[-pa, 0], [pa, 0]], fill='white')
+        self.canvas.circle((0, 0), 3, fill='#55ffff', outline='')
+        self.canvas.circle((0, 0), 1, fill='black')
 
