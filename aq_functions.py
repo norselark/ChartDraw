@@ -65,24 +65,18 @@ def asp(wSTR, oaINT):
     e = float(xlSTR + '.' + zlSTR)
     aoINT = oaINT
     if e <= 0 + aoINT:
-        print(':')
         return ':'
     aoINT = oaINT // 4
     if e >= 30 - aoINT and e <= 30 + aoINT:
-        print('-')
         return '-'
     aoINT = (oaINT // 4) * 3
     if e >= 60 - aoINT and e <= 60 + aoINT:
-        print('*')
         return '*'
     aoINT = oaINT
     if e >= 90 - aoINT and e <= 90 + aoINT:
-        print('k')
         return 'k'
     if e >= 120 - aoINT and e <= 120 + aoINT:
-        print('t')
         return 't'
     if e >= 180 - aoINT and e <= 180 + aoINT:
-        print('o')
         return 'o'
     return ''
