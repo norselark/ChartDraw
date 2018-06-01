@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Module to manage the user interface"""
 
+import json
 from pathlib import Path
 import tkinter as tk
 from lib.transform_canvas import TransformCanvas
@@ -11,29 +12,15 @@ from drawings import Chart, GLYPHS, PLANETS
 CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
                '2-D Turned\nDerived houses\nRadix Quadrants']
 
+DATA_DIR = Path('aqCHARTS/aq_temp')
 
 def load_data():
-    data_dir = Path('aqCHARTS/aq_temp')
-    angles = [None] * 13
-    truncated_angles = [None] * 13
-    with (data_dir / 'PDAT.DAT').open() as infile:  # pylint: disable=E1101
-        # Discard first 10 lines for now
-        for _ in range(10):
-            infile.readline()
-        for idx in range(11):
-            line = infile.readline().rstrip('\n')
-            angles[idx] = float(line)
-            truncated_angles[idx] = truncate_rounding(line)
-
-    with (data_dir / 'ANGDAT.DAT').open() as infile:  # pylint: disable=E1101
-        for idx in range(11, 13):
-            line = infile.readline().rstrip('\n')
-            angles[idx] = float(line)
-            truncated_angles[idx] = truncate_rounding(line)
-
+    data = json.load(open(DATA_DIR / 'data.json'))
+    angles = data['angles']
     return {"letters": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
             "angles": angles,
-            "truncated_angles": truncated_angles}
+            "actual_angles": angles,
+            "truncated_angles": list(map(truncate_rounding, angles))}
 
 
 class App(tk.Tk):
@@ -57,7 +44,7 @@ class App(tk.Tk):
         tr_text = tk.Label(top_bar, text='DRAW\nzh 2\nZET9')
         tr_text.pack(side=tk.RIGHT)
 
-        canvas = TransformCanvas(left_frame, background="black",
+        canvas = TransformCanvas(left_frame, background="#1D1F21",
                                  width=512, height=512)
         canvas.pack(side=tk.TOP)
         self.chart = Chart(canvas)
@@ -98,6 +85,7 @@ class App(tk.Tk):
             self.aspects()
 
     def reset_chart(self):
+        self.data['actual_angles'] = self.data['angles']
         self.chart.draw_chart(self.data['angles'])
 
     def harmonic(self):
@@ -109,6 +97,7 @@ class App(tk.Tk):
         if har != 1:
             options['axes_text'] = ['HAR', 'HAR']
         harmonic_angles = [(har * ang) % 360 for ang in self.data['angles']]
+        self.data['actual_angles'] = harmonic_angles
         if result['superimposed']:
             self.chart.draw_chart(self.data['angles'],
                                   superimposed=harmonic_angles, **options)
@@ -126,7 +115,7 @@ class App(tk.Tk):
             self.chart.draw_chart(self.data['angles'], cycle=result)
 
     def aspects(self):
-        self.chart.aspects(self.data['angles'])
+        self.chart.aspects(self.data['actual_angles'])
 
 
 if __name__ == '__main__':

@@ -59,26 +59,23 @@ def aspectCalc(p):
     return out
 
 
-def asp(wSTR, oaINT):
+def asp(angle, orbis):
     "Second argument is size of orbis"
-    xlSTR = wSTR[:3]
-    zlSTR = wSTR[-2:]
-    e = float(xlSTR + '.' + zlSTR)
-    aoINT = oaINT
-    if e <= 0 + aoINT:
+    aoINT = orbis
+    if angle <= aoINT:
         return ':'
-    aoINT = oaINT // 4
-    if e >= 30 - aoINT and e <= 30 + aoINT:
+    aoINT = orbis // 4
+    if abs(30 - angle) <= aoINT:
         return '-'
-    aoINT = (oaINT // 4) * 3
-    if e >= 60 - aoINT and e <= 60 + aoINT:
+    aoINT = (orbis // 4) * 3
+    if abs(60 - angle) <= aoINT:
         return '*'
-    aoINT = oaINT
-    if e >= 90 - aoINT and e <= 90 + aoINT:
+    aoINT = orbis
+    if abs(90 - angle) <= aoINT:
         return 'k'
-    if e >= 120 - aoINT and e <= 120 + aoINT:
+    if abs(120 - angle) <= aoINT:
         return 't'
-    if e >= 180 - aoINT and e <= 180 + aoINT:
+    if abs(180 - angle) <= aoINT:
         return 'o'
     return ''
 

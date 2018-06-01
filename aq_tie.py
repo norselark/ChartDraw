@@ -7,6 +7,7 @@
 #-------------------------------------------------------------
 """
 
+import json
 from pathlib import Path
 import numpy as np
 
@@ -32,26 +33,21 @@ LABELS_ZET9 = get_labels()
 
 
 def calczet9(input_line):
-    """Convert DMS to decimal degrees and pad with zeros"""
-    degrees = int(input_line[:2])
-    minutes = int(input_line[3:5])
-    seconds = float(input_line[6:11])
-    zodiac_sign = input_line[-3:]
+    "Convert DMS to decimal degrees and pad with zeros"
+    try:
+        degrees = int(input_line[:2])
+        minutes = int(input_line[3:5])
+        seconds = float(input_line[6:11])
+        zodiac_sign = input_line[-3:]
+    except ValueError:
+        raise ValueError(input_line)
+        
     decimal_part = (minutes * 60 + seconds) / 3600
 
     # Add 30 * [place in zodiac] to degrees
-    degrees += 30 * ZODIAC_ZET9.index(zodiac_sign)
-    # degrees should be < 360, but just in case
-    while degrees > 360:
-        degrees -= 360
+    degrees += 30 * ZODIAC_ZET9.index(zodiac_sign) % 360
 
-    result_string = str(degrees + decimal_part)
-    # Pad left with zeros
-    if degrees < 100:
-        result_string = '0' + result_string
-    if degrees < 10:
-        result_string = '0' + result_string
-    return result_string
+    return degrees + decimal_part
 
 
 PROGRAM_NAME = "TIE"
@@ -84,7 +80,7 @@ def main():
 
     num_labels = len(LABELS_ZET9)
 
-    pSTR_ARR = np.empty((num_labels + 1), dtype=str).astype(object)
+    pSTR_ARR = np.empty((num_labels + 1), dtype=float)
 
     print('x')
     print('WAIT...')
@@ -100,7 +96,7 @@ def main():
             source_program = 'ZET9'
 
     # ZET9 calculations
-    with (input_dir / filename_1).open() as infile:
+    with open(input_dir / filename_1, encoding='utf-8') as infile:
         for line in infile:
             line = line.strip('\n')  # Remove trailing newline
             for idx in range(1, num_labels):
@@ -113,13 +109,13 @@ def main():
                         pSTR_ARR[NUM_HIGH_PLANETS + 2] = calczet9(line[-15:])
                         break
 
-    with (input_dir / filename_2).open() as infile:
+    with open(input_dir / filename_2, encoding='utf-8') as infile:
         for line in infile:
             line = line.rstrip('\n')  # Remove trailing newline
             for idx in range(1, num_labels):
                 if line[:4] == LABELS_ZET9[idx][:4]:
                     line = line[18:27]
-                    pSTR_ARR[idx] = line
+                    pSTR_ARR[idx] = float(line)
                     break
 
     with (data_dir / 'SWI.SWI').open(mode='w') as outfile: # pylint: disable=E1101
@@ -137,15 +133,18 @@ def main():
                             '"test3"\n',
                             '"test4"\n'])
         for idx in range(1, NUM_HIGH_PLANETS + 1):
-            outfile.write(pSTR_ARR[idx] + '\n')
+            outfile.write(str(pSTR_ARR[idx]) + '\n')
 
     with (data_dir / 'ANGDAT.DAT').open(mode='w') as outfile: # pylint: disable=E1101
         for idx in [NUM_HIGH_PLANETS + 1, NUM_HIGH_PLANETS + 2]:
-            outfile.write(pSTR_ARR[idx] + '\n')
+            outfile.write(str(pSTR_ARR[idx]) + '\n')
 
     with (data_dir / 'IDENTITY.TIE').open(mode='w') as outfile: # pylint: disable=E1101
         outfile.write(str(input_dir) + '\n')
         outfile.write(str(filename_1) + '\n')
+    
+    data = {"angles": list(pSTR_ARR[1:NUM_HIGH_PLANETS + 3])}
+    json.dump(data, open(data_dir / 'data.json', 'w'))
 
     if choice == 'i':
         switch = 2
