@@ -1,4 +1,4 @@
-from aq_functions import coordinates, aspectCalc, asp
+from lib.utils import coordinates, aspectCalc, asp
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
 
@@ -170,19 +170,21 @@ class Chart():
         canv.create_text([416, 483], text='MC', fill='white', anchor='nw')
         canv.create_text([416, 498], text='ASC', fill='white', anchor='nw')
         if cycle == 1:
-            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS], outline='white', fill='black')
-            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS], outline='white', fill='white')
+            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS],
+                                outline='white', fill='black')
+            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS],
+                                outline='white', fill='white')
         else:
-            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS], outline='white', fill='#5555ff')
-            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS], outline='white', fill='white')
+            canv.create_polygon([[x + 445, y + 489] for x, y in ARROW_COORDS],
+                                outline='white', fill='#5555ff')
+            canv.create_polygon([[x + 445, y + 506] for x, y in ARROW_COORDS],
+                                outline='white', fill='white')
             canv.create_oval([448, 503, 454, 509], fill='#5555ff', outline='')
         canv.create_text([470, 483], text=text[0], fill='white', anchor='nw')
         canv.create_text([470, 498], text=text[1], fill='white', anchor='nw')
 
     def aspects(self, angles):
-        print(angles)
         w = aspectCalc(angles)
-        print(len(w))
         r = 168
         xx = 256
         y = 256
@@ -202,11 +204,13 @@ class Chart():
                 if dr in 'ko':
                     col = '#aa0000'
                 v2 = (angles[x] - zy) % 360
-                self.canvas.create_arc([xx - r, y - r, xx + r, y + r], style='chord', fill='',
+                self.canvas.create_arc([xx - r, y - r, xx + r, y + r],
+                                       style='chord', fill='',
                                        outline=col, start=v, extent=v2 - v)
         pa = 10
         self.canvas.circle((0, 0), pa, fill='#5555ff', outline='')
-        self.canvas.create_arc([xx - pa, y - pa, xx + pa, y + pa], fill='#0000aa',
+        self.canvas.create_arc([xx - pa, y - pa, xx + pa, y + pa],
+                               fill='#0000aa',
                                outline='', start=180, extent=180)
         self.canvas.circle((0, 0), pa, fill='', outline='black')
         self.canvas.set_rotation(angles[-1] - zy)

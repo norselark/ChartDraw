@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from tkinter.ttk import Treeview
-from aq_functions import truncate_rounding
+from .utils import truncate_rounding
 
 
 class TreeviewPanel(tk.Frame):

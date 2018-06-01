@@ -2,7 +2,7 @@
 
 from tkinter import Canvas
 from math import cos, sin, radians
-
+from .utils import complex_to_coords
 
 class TransformCanvas(Canvas):
     def __init__(self, *args, **kwargs):
@@ -19,20 +19,11 @@ class TransformCanvas(Canvas):
         self.rotation = complex(cos(angle), -sin(angle))
 
     def apply_transform(self, coords):
-        return [self.center + self.rotation * complex(x, y)
-                for x, y in coords]
-
-    @staticmethod
-    def complex_to_coords(coords):
-        res = []
-        for c in coords:
-            res.append(c.real)
-            res.append(c.imag)
-        return res
+        return [self.center + self.rotation * complex(x, y) for x, y in coords]
 
     def line(self, coords, **kwargs):
         new_coords = self.apply_transform(coords)
-        new_coords = TransformCanvas.complex_to_coords(new_coords)
+        new_coords = complex_to_coords(new_coords)
         self.create_line(new_coords, **kwargs)
 
     def circle(self, center, radius, **kwargs):
@@ -43,11 +34,11 @@ class TransformCanvas(Canvas):
 
     def text(self, coords, **kwargs):
         new_coords = self.apply_transform([coords])
-        new_coords = TransformCanvas.complex_to_coords(new_coords)
+        new_coords = complex_to_coords(new_coords)
         self.create_text(new_coords, **kwargs)
 
     def polygon(self, origin, coords, **kwargs):
         transposed = [[x + origin[0], y + origin[1]] for x, y in coords]
         new_coords = self.apply_transform(transposed)
-        new_coords = TransformCanvas.complex_to_coords(new_coords)
+        new_coords = complex_to_coords(new_coords)
         self.create_polygon(new_coords, **kwargs)

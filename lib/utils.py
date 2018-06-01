@@ -6,6 +6,7 @@ ZODIAC_SIGNS = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
 PPINT = 13
 HPINT = 12
 
+
 def truncate_rounding(angle):
     """Sub TruncateRounding"""
     if type(angle) == str:
@@ -22,12 +23,12 @@ def truncate_rounding(angle):
 
 
 def coordinates(angle):
-    """Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"""
+    "Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"
     return (180 - angle) % 360
 
 
 def preAspectCalc(target, source, ch):
-    """Mutates as well as returns target"""
+    "Mutates as well as returns target"
     target[0, 0, 1:PPINT + 1] = source[ch, 1:PPINT + 1]
     return target
 
@@ -59,7 +60,7 @@ def aspectCalc(p):
 
 
 def asp(wSTR, oaINT):
-    """Second argument is size of orbis"""
+    "Second argument is size of orbis"
     xlSTR = wSTR[:3]
     zlSTR = wSTR[-2:]
     e = float(xlSTR + '.' + zlSTR)
@@ -80,3 +81,12 @@ def asp(wSTR, oaINT):
     if e >= 180 - aoINT and e <= 180 + aoINT:
         return 'o'
     return ''
+
+
+def complex_to_coords(coords):
+    "Maps a list of complex numbers to coordinates suitable for Tkinter"
+    res = []
+    for c in coords:
+        res.append(c.real)
+        res.append(c.imag)
+    return res

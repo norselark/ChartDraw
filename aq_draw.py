@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import qb_utils
 
-from aq_functions import *
+from lib.utils import *
 
 NPINT = 10
 HPINT = 11
