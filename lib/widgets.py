@@ -59,25 +59,28 @@ class TreeviewPanel(tk.Frame):
         self.tv.move(first_item, '', tk.END)
 
 
-class HarmonicSelection(Dialog):
-    def body(self, parent):
-        w = tk.Frame(self)
-        w.pack()
-        tk.Label(w, text='Enter harmonic number in interval [1, 300]').pack()
+class HarmonicSelection(tk.Frame):
+    def __init__(self, parent, apply_command, spinbox_command, *args):
+        super().__init__(parent, *args)
+        tk.Label(self, text='Harmonic:').pack()
 
-        self.su = tk.IntVar()
+        box_frame = tk.Frame(self)
+        box_frame.pack()
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, command=spinbox_command)
+        self.spinbox.pack(side='left')
 
-        self.spinbox = tk.Spinbox(w, from_=1, to=300)
-        self.spinbox.pack()
-        self.spinbox.focus_set()
+        self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
+        self.ok_button.pack(side='left')
 
-        checkbox = tk.Checkbutton(w, text='Superimposed', variable=self.su)
-        checkbox.pack()
-        return w
+    def get(self):
+        if self.validate():
+            return int(self.spinbox.get())
+        else:
+            return None
 
-    def apply(self):
-        self.result = {'harmonic': int(self.spinbox.get()),
-                       'superimposed': True if self.su.get() else False}
+    def reset(self):
+        self.spinbox.delete(0, 'end')
+        self.spinbox.insert(0, '1')
 
     def validate(self):
         val = self.spinbox.get()
@@ -91,7 +94,40 @@ class HarmonicSelection(Dialog):
         return False
 
 
-class CycleSelection(Dialog):
+class CycleSelection(tk.Frame):
+    def __init__(self, parent, apply_command, spinbox_command, *args):
+        super().__init__(parent, *args)
+        tk.Label(self, text='Turned axis:').pack()
+
+        box_frame = tk.Frame(self)
+        box_frame.pack()
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, command=spinbox_command)
+        self.spinbox.pack(side='left')
+
+        self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
+        self.ok_button.pack(side='left')
+
+    def get(self):
+        if self.validate():
+            return int(self.spinbox.get())
+        else:
+            return None
+
+    def reset(self):
+        self.spinbox.delete(0, 'end')
+        self.spinbox.insert(0, '1')
+
+    def validate(self):
+        val = self.spinbox.get()
+        try:
+            val = int(val)
+            if val >= 1:
+                return True
+        except Exception:
+            pass
+        messagebox.showwarning('Cycle', 'The cycle number must be a positive integer')
+        return False
+
     def body(self, parent):
         w = tk.Frame(self)
         w.pack()
@@ -105,18 +141,6 @@ class CycleSelection(Dialog):
 
     def apply(self):
         self.result = int(self.spinbox.get())
-
-    def validate(self):
-        val = self.spinbox.get()
-        try:
-            val = int(val)
-            if val >= 1:
-                return True
-        except Exception:
-            pass
-        messagebox.showwarning('Cycle', 'The cycle number must be a positive integer')
-        return False
-
 
 if __name__ == '__main__':
     app = TreeviewPanel(None, {})

@@ -1,7 +1,7 @@
 from itertools import combinations
-from lib.utils import coordinates, asp
-from lib.constants import GLYPHS, PLANETS, ZODIAC
-from lib.constants import white, black, blue, lightblue, teal, lightteal, red, green
+from .utils import mirror_angle, asp
+from .constants import GLYPHS, PLANETS, ZODIAC
+from .constants import white, black, blue, lightblue, teal, lightteal, red, green
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
 
@@ -11,10 +11,10 @@ class Chart():
     
     def draw_chart(self, angles, superimposed=None,
                    cycle=1, axes_text=['S', 'E']):
-        yz = coordinates(angles[-1])
+        start_of_zodiac = mirror_angle(angles[-1])
         cycleoffset = 30 * (cycle - 1)
         if cycle != 1:
-            yz -= cycleoffset
+            start_of_zodiac -= cycleoffset
         canv = self.canvas
         canv.delete('all')
         x = 256
@@ -43,25 +43,25 @@ class Chart():
         # Delineating the regions of the zodiac
         coords = [[p3 + 12, 0], [p3 + 45, 0]]
         for degrees in range(0, 360, 30):
-            canv.set_rotation(degrees + yz)
+            canv.set_rotation(start_of_zodiac + degrees)
             canv.line(coords, fill=teal)
-
+        
         # Zodiac symbols
         coords = [p3 + 26, 0]
         for sign, degrees in zip(ZODIAC, range(0, 360, 30)):
-            canv.set_rotation(degrees + 15 + yz)
+            canv.set_rotation(degrees + 15 + start_of_zodiac)
             glyph = GLYPHS[sign]
             canv.text(coords, text=glyph, fill=teal, font=(None, 18))
 
         # Sectors of 5 degrees along the rim
         coords = [[p2, 0], [p3, 0]]
         for degrees in range(0, 360, 5):
-            canv.set_rotation(degrees + yz)
+            canv.set_rotation(degrees + start_of_zodiac)
             canv.line(coords, fill=white)
 
         # Planet symbols with circle markers
         for angle, planet in zip(angles, PLANETS):
-            canv.set_rotation(float(angle) + yz)
+            canv.set_rotation(float(angle) + start_of_zodiac)
 
             coords = [p1 - 5, 0]
             canv.circle(coords, 3, fill='', outline=white)
@@ -76,7 +76,7 @@ class Chart():
 
         if superimposed:
             for angle, planet in zip(superimposed, PLANETS):
-                canv.set_rotation(float(angle) + yz)
+                canv.set_rotation(float(angle) + start_of_zodiac)
 
                 coords = [p1 - 5, 0]
                 canv.circle(coords, 3, fill='', outline=red)
@@ -89,27 +89,12 @@ class Chart():
                 coords = [p1 + 21, 0]
                 canv.text(coords, text=glyph, fill=red, font=(None, 18))
 
-        self.draw_asc(angles[-1] + yz, cycle)
-        self.draw_mc(angles[-2] + yz, cycle)
+        self.draw_asc(angles[-1] + start_of_zodiac, cycle)
+        self.draw_mc(angles[-2] + start_of_zodiac, cycle)
         self.axes_legend(cycle, text=axes_text)
 
         if cycle != 1:
-            # Draw miniature chart in the center
-            canv.circle((0, 0), pa, fill=lightblue, outline=white)
-            canv.create_arc([x - pa, y - pa, x + pa, y + pa], fill=blue,
-                            outline=white, start=180, extent=180)
-            canv.set_rotation(angles[-1] + yz + cycleoffset)
-            canv.line([[-pa, 0], [pa, 0]], fill=white)
-            canv.polygon([pa, 0], ARROW_COORDS, fill=white)
-            canv.set_rotation(angles[-2] + yz + cycleoffset)
-            canv.line([[-pa, 0], [pa, 0]], fill=white)
-            canv.polygon([pa, 0], ARROW_COORDS, fill='', outline=white)
-            canv.set_rotation(angles[0] + yz + cycleoffset)
-            canv.circle([pa - 8, 0], 2.5, fill='yellow', outline=black)
-            canv.set_rotation(angles[1] + yz + cycleoffset)
-            canv.circle([pa - 8, 0], 2.5, fill='grey', outline=black)
-            canv.circle((0, 0), 5, fill=lightteal, outline=black)
-            canv.circle((0, 0), 1, fill=black)
+            self._minichart(angles, start_of_zodiac, cycleoffset)
 
     def draw_asc(self, angle, cycle):
         canv = self.canvas
@@ -158,7 +143,7 @@ class Chart():
         xx = 256
         y = 256
         self.canvas.circle((0, 0), r, fill=white, outline='')
-        zy = -coordinates(angles[-1])
+        zy = -mirror_angle(angles[-1])
         for a, b in combinations(angles[:-3], 2):
             v = (a - zy) % 360
             self.canvas.set_rotation(v)
@@ -185,4 +170,33 @@ class Chart():
         self.canvas.line([[-pa, 0], [pa, 0]], fill=white)
         self.canvas.circle((0, 0), 3, fill=lightteal, outline='')
         self.canvas.circle((0, 0), 1, fill=black)
+
+
+    def _minichart(self, angles, start_of_zodiac, cycleoffset):
+        "Draw miniature chart in the center"
+        canv = self.canvas
+        x = 256
+        y = 256
+        radius = 56
+        canv.circle((0, 0), radius, fill=lightblue, outline=white)
+        canv.create_arc([x - radius, y - radius, x + radius, y + radius],
+                        fill=blue, outline=white, start=180, extent=180)
+        # ASC
+        canv.set_rotation(angles[-1] + start_of_zodiac + cycleoffset)
+        canv.line([[-radius, 0], [radius, 0]], fill=white)
+        canv.polygon([radius, 0], ARROW_COORDS, fill=white)
+        # MC
+        canv.set_rotation(angles[-2] + start_of_zodiac + cycleoffset)
+        canv.line([[-radius, 0], [radius, 0]], fill=white)
+        canv.polygon([radius, 0], ARROW_COORDS, fill='', outline=white)
+        # Miniature sun
+        canv.set_rotation(angles[0] + start_of_zodiac + cycleoffset)
+        canv.circle([radius - 8, 0], 2.5, fill='yellow', outline=black)
+        # Miniature moon
+        canv.set_rotation(angles[1] + start_of_zodiac + cycleoffset)
+        canv.circle([radius - 8, 0], 2.5, fill='grey', outline=black)
+        # Tiny hub
+        canv.circle((0, 0), 5, fill=lightteal, outline=black)
+        canv.circle((0, 0), 1, fill=black)
+
 

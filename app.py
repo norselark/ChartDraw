@@ -7,7 +7,7 @@ import tkinter as tk
 from lib.transform_canvas import TransformCanvas
 from lib import widgets
 from lib.utils import truncate_rounding
-from drawings import Chart
+from lib.drawings import Chart
 from lib.constants import GLYPHS, PLANETS
 
 CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
@@ -59,12 +59,17 @@ class App(tk.Tk):
                                  command=self.reset_chart)
         reset_button.pack(side=tk.TOP)
 
-        harmonic_button = tk.Button(
-            right_frame, text='Harmonics', command=self.harmonic)
-        harmonic_button.pack(side=tk.TOP)
-        turned_axes_button = tk.Button(
-            right_frame, text='Turned axes', command=self.turned)
-        turned_axes_button.pack(side=tk.TOP)
+        self.harmonic_frame = widgets.HarmonicSelection(
+            right_frame,
+            apply_command=self.harmonic,
+            spinbox_command=self.turned_axes_frame_reset)
+        self.harmonic_frame.pack(side=tk.TOP)
+        self.turned_axes_frame = widgets.CycleSelection(
+            right_frame,
+            apply_command=self.turned,
+            spinbox_command=self.harmonic_frame.reset)
+        self.turned_axes_frame.pack(side=tk.TOP)
+
         self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
 
@@ -84,29 +89,31 @@ class App(tk.Tk):
             self.turned()
         elif event.char == 'a':
             self.aspects()
+    
+    def turned_axes_frame_reset(self):
+        self.turned_axes_frame.reset()
 
     def reset_chart(self):
+        self.harmonic_frame.reset()
+        self.turned_axes_frame.reset()
         self.data['chart_angles'] = self.data['base_angles']
         self.chart.draw_chart(self.data['base_angles'])
 
     def harmonic(self):
-        result = widgets.HarmonicSelection(self).result
+        result = self.harmonic_frame.get()
+        self.turned_axes_frame.reset()
         if not result:
             return
-        har = result['harmonic']
         options = {}
-        if har != 1:
+        if result != 1:
             options['axes_text'] = ['HAR', 'HAR']
-        harmonic_angles = [(har * ang) % 360 for ang in self.data['base_angles']]
+        harmonic_angles = [(result * ang) % 360 for ang in self.data['base_angles']]
         self.data['chart_angles'] = harmonic_angles
-        if result['superimposed']:
-            self.chart.draw_chart(self.data['base_angles'],
-                                  superimposed=harmonic_angles, **options)
-        else:
-            self.chart.draw_chart(harmonic_angles, **options)
+        self.chart.draw_chart(harmonic_angles, **options)
 
     def turned(self):
-        result = widgets.CycleSelection(self).result
+        result = self.turned_axes_frame.get()
+        self.harmonic_frame.reset()
         if result != 1:
             self.cycle_status.set(CYCLE_TEXTS[1])
             self.chart.draw_chart(self.data['base_angles'], cycle=result,

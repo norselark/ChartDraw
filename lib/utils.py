@@ -22,8 +22,8 @@ def truncate_rounding(angle):
     return '{:02}-{:02} {}'.format(int_part, i, zodiac_sign)
 
 
-def coordinates(angle):
-    "Coord relative to QBasic's intrinsic coordinates]<->['ta0' yields DESC (Cyc 1!)]"
+def mirror_angle(angle):
+    "Mirrors the angle: 0 deg to the left, going clockwise"
     return (180 - angle) % 360
 
 
