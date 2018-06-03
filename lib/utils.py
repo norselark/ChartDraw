@@ -27,57 +27,22 @@ def coordinates(angle):
     return (180 - angle) % 360
 
 
-def preAspectCalc(target, source, ch):
-    "Mutates as well as returns target"
-    target[0, 0, 1:PPINT + 1] = source[ch, 1:PPINT + 1]
-    return target
-
-
-def aspectCalc(p):
-    """Mutates as well as returns w
-    Is it supposed to turn spaces at the end into a zero?"""
-    r = 0
-    out = [['' for _ in range(HPINT)] for __ in range(HPINT)]
-    for m in range(HPINT):
-        dec_str = float(p[m])
-        k1 = int(dec_str)
-        u1 = 0
-        for y in range(HPINT):
-            dec_str = float(p[y])
-            k2 = int(dec_str)
-            u2 = 0
-            if u2 > u1:
-                k1 = k1 - 1
-                u1 = u1 + 60
-            if k2 > k1:
-                k1 = k1 + 360
-            i = k1 - k2
-            if i > 180:
-                r = abs(60 - r)
-                i = abs(360 - (i + 1))
-            out[m][y] = '{:03}-{:02}'.format(i, r)
-    return out
-
-
-def asp(angle, orbis):
+def asp(a, b, orbis=8):
     "Second argument is size of orbis"
-    aoINT = orbis
-    if angle <= aoINT:
-        return ':'
-    aoINT = orbis // 4
-    if abs(30 - angle) <= aoINT:
-        return '-'
-    aoINT = (orbis // 4) * 3
-    if abs(60 - angle) <= aoINT:
-        return '*'
-    aoINT = orbis
-    if abs(90 - angle) <= aoINT:
-        return 'k'
-    if abs(120 - angle) <= aoINT:
-        return 't'
-    if abs(180 - angle) <= aoINT:
-        return 'o'
-    return ''
+    angle = min(abs(a - b), 360 - abs(a - b)) 
+    if angle <= orbis:
+        return 0
+    if abs(30 - angle) <= orbis * 0.25:
+        return 30
+    if abs(60 - angle) <= orbis * 0.75:
+        return 60
+    if abs(90 - angle) <= orbis:
+        return 90
+    if abs(120 - angle) <= orbis:
+        return 120
+    if abs(180 - angle) <= orbis:
+        return 180
+    return None
 
 
 def complex_to_coords(coords):

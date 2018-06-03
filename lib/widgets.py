@@ -25,7 +25,7 @@ class TreeviewPanel(tk.Frame):
         self.tv.column('trunc', anchor='center',
                        minwidth=120, width=120, stretch=False)
 
-        for row in zip(data['letters'], data['angles'], data['truncated_angles']):
+        for row in zip(data['letters'], data['base_angles'], data['truncated_angles']):
             self.tv.insert('', tk.END, values=row)
 
         self.tv.pack(side=tk.TOP)

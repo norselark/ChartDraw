@@ -6,8 +6,9 @@ from pathlib import Path
 import tkinter as tk
 from lib.transform_canvas import TransformCanvas
 from lib import widgets
-from lib.utils import coordinates, truncate_rounding
-from drawings import Chart, GLYPHS, PLANETS
+from lib.utils import truncate_rounding
+from drawings import Chart
+from lib.constants import GLYPHS, PLANETS
 
 CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
                '2-D Turned\nDerived houses\nRadix Quadrants']
@@ -18,8 +19,8 @@ def load_data():
     data = json.load(open(DATA_DIR / 'data.json'))
     angles = data['angles']
     return {"letters": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
-            "angles": angles,
-            "actual_angles": angles,
+            "base_angles": angles,
+            "chart_angles": angles,
             "truncated_angles": list(map(truncate_rounding, angles))}
 
 
@@ -70,7 +71,7 @@ class App(tk.Tk):
         self.focus_set()
         self.bind('<Key>', self.dispatch)
 
-        self.chart.draw_chart(self.data['angles'])
+        self.chart.draw_chart(self.data['base_angles'])
 
     def dispatch(self, event):
         if event.char == '=':
@@ -85,8 +86,8 @@ class App(tk.Tk):
             self.aspects()
 
     def reset_chart(self):
-        self.data['actual_angles'] = self.data['angles']
-        self.chart.draw_chart(self.data['angles'])
+        self.data['chart_angles'] = self.data['base_angles']
+        self.chart.draw_chart(self.data['base_angles'])
 
     def harmonic(self):
         result = widgets.HarmonicSelection(self).result
@@ -96,10 +97,10 @@ class App(tk.Tk):
         options = {}
         if har != 1:
             options['axes_text'] = ['HAR', 'HAR']
-        harmonic_angles = [(har * ang) % 360 for ang in self.data['angles']]
-        self.data['actual_angles'] = harmonic_angles
+        harmonic_angles = [(har * ang) % 360 for ang in self.data['base_angles']]
+        self.data['chart_angles'] = harmonic_angles
         if result['superimposed']:
-            self.chart.draw_chart(self.data['angles'],
+            self.chart.draw_chart(self.data['base_angles'],
                                   superimposed=harmonic_angles, **options)
         else:
             self.chart.draw_chart(harmonic_angles, **options)
@@ -108,14 +109,14 @@ class App(tk.Tk):
         result = widgets.CycleSelection(self).result
         if result != 1:
             self.cycle_status.set(CYCLE_TEXTS[1])
-            self.chart.draw_chart(self.data['angles'], cycle=result,
+            self.chart.draw_chart(self.data['base_angles'], cycle=result,
                                   axes_text=['Turned', 'Turned'])
         else:
             self.cycle_status.set(CYCLE_TEXTS[0])
-            self.chart.draw_chart(self.data['angles'], cycle=result)
+            self.chart.draw_chart(self.data['base_angles'], cycle=result)
 
     def aspects(self):
-        self.chart.aspects(self.data['actual_angles'])
+        self.chart.aspects(self.data['chart_angles'])
 
 
 if __name__ == '__main__':
