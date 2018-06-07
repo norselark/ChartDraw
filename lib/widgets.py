@@ -62,12 +62,15 @@ class TreeviewPanel(tk.Frame):
 class HarmonicSelection(tk.Frame):
     def __init__(self, parent, apply_command, spinbox_command, *args):
         super().__init__(parent, *args)
+        self.spinbox_command = spinbox_command
+        self.apply_command = apply_command
         tk.Label(self, text='Harmonic:').pack()
 
         box_frame = tk.Frame(self)
         box_frame.pack()
-        self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, command=spinbox_command)
-        self.spinbox.pack(side='left')
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, command=spinbox_command, width=5)
+        self.spinbox.pack(side='left', padx=5)
+        self.spinbox.bind('<Key>', self.handler)
 
         self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
@@ -77,6 +80,14 @@ class HarmonicSelection(tk.Frame):
             return int(self.spinbox.get())
         else:
             return None
+        
+    def handler(self, event):
+        if event.keysym == 'Return':
+            self.apply_command()
+        if event.keysym in ['Up', 'Down']:
+            self.spinbox_command()
+        if event.keysym in ['a', 't', 'h']:
+            return "break"
 
     def reset(self):
         self.spinbox.delete(0, 'end')
@@ -97,15 +108,28 @@ class HarmonicSelection(tk.Frame):
 class CycleSelection(tk.Frame):
     def __init__(self, parent, apply_command, spinbox_command, *args):
         super().__init__(parent, *args)
+        self.spinbox_command = spinbox_command
+        self.apply_command = apply_command
+
         tk.Label(self, text='Turned axis:').pack()
 
         box_frame = tk.Frame(self)
         box_frame.pack()
-        self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, command=spinbox_command)
-        self.spinbox.pack(side='left')
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, command=spinbox_command, width=5)
+        self.spinbox.pack(side='left', padx=5)
 
         self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
+
+        self.spinbox.bind('<Key>', self.handler)
+
+    def handler(self, event):
+        if event.keysym == 'Return':
+            self.apply_command()
+        if event.keysym in ['Up', 'Down']:
+            self.spinbox_command()
+        if event.keysym in ['a', 't', 'h']:
+            return "break"
 
     def get(self):
         if self.validate():
@@ -127,20 +151,6 @@ class CycleSelection(tk.Frame):
             pass
         messagebox.showwarning('Cycle', 'The cycle number must be a positive integer')
         return False
-
-    def body(self, parent):
-        w = tk.Frame(self)
-        w.pack()
-        tk.Label(w, text='Enter cycle number in interval [1, 12]').pack()
-
-        self.spinbox = tk.Spinbox(w, from_=1, to=12)
-        self.spinbox.pack()
-        self.spinbox.focus_set()
-
-        return w
-
-    def apply(self):
-        self.result = int(self.spinbox.get())
 
 if __name__ == '__main__':
     app = TreeviewPanel(None, {})

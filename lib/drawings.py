@@ -2,6 +2,7 @@ from itertools import combinations
 from .utils import mirror_angle, asp
 from .constants import GLYPHS, PLANETS, ZODIAC
 from .constants import white, black, blue, lightblue, teal, lightteal, red, green
+from .optimizer import optimize
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
 
@@ -59,7 +60,7 @@ class Chart():
             canv.set_rotation(degrees + start_of_zodiac)
             canv.line(coords, fill=white)
 
-        # Planet symbols with circle markers
+        # Planet circle markers
         for angle, planet in zip(angles, PLANETS):
             canv.set_rotation(float(angle) + start_of_zodiac)
 
@@ -69,6 +70,10 @@ class Chart():
             coords = [p1 + 51, 0]
             for r in [1, 2, 3]:
                 canv.circle(coords, r, fill='', outline=white)
+
+        # Planet symbols
+        for angle, planet in zip(optimize(angles), PLANETS):
+            canv.set_rotation(float(angle) + start_of_zodiac)
 
             glyph = GLYPHS[planet]
             coords = [p1 + 21, 0]

@@ -45,6 +45,16 @@ def asp(a, b, orbis=8):
     return None
 
 
+def dist(a, b):
+    "Closest angular distance between points a and b, in degrees"
+    return min(abs(a - b), 360 - abs(a - b)) 
+
+
+def is_sorted(a, b):
+    "return true if a' is the clockwise-most angle"
+    return (b - a) % 360 == dist(a, b)
+
+
 def complex_to_coords(coords):
     "Maps a list of complex numbers to coordinates suitable for Tkinter"
     res = []
@@ -52,3 +62,7 @@ def complex_to_coords(coords):
         res.append(c.real)
         res.append(c.imag)
     return res
+
+
+def harmonics(angles, harmonic):
+    return [(harmonic * angle) % 360 for angle in angles]

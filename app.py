@@ -89,6 +89,8 @@ class App(tk.Tk):
             self.turned()
         elif event.char == 'a':
             self.aspects()
+        elif event.keysym == 'Escape':
+            self.focus_set()
     
     def turned_axes_frame_reset(self):
         self.turned_axes_frame.reset()
