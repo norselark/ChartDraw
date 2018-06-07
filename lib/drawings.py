@@ -72,7 +72,7 @@ class Chart():
                 canv.circle(coords, r, fill='', outline=white)
 
         # Planet symbols
-        for angle, planet in zip(optimize(angles), PLANETS):
+        for angle, planet in zip(optimize(angles[:len(PLANETS)]), PLANETS):
             canv.set_rotation(float(angle) + start_of_zodiac)
 
             glyph = GLYPHS[planet]
