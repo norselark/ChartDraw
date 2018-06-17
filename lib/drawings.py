@@ -143,12 +143,12 @@ class Chart():
         canv.create_text([470, 483], text=text[0], fill=white, anchor='nw')
         canv.create_text([470, 498], text=text[1], fill=white, anchor='nw')
 
-    def aspects(self, angles):
+    def aspects(self, angles, cycle=1):
         r = 168
         xx = 256
         y = 256
         self.canvas.circle((0, 0), r, fill=white, outline='')
-        zy = -mirror_angle(angles[-1])
+        zy = -mirror_angle(angles[-1]) + 30 * (cycle - 1)
         for a, b in combinations(angles[:-3], 2):
             v = (a - zy) % 360
             self.canvas.set_rotation(v)

@@ -6,7 +6,7 @@ from pathlib import Path
 import tkinter as tk
 from lib.transform_canvas import TransformCanvas
 from lib import widgets
-from lib.utils import truncate_rounding
+from lib.utils import truncate_rounding, harmonics
 from lib.drawings import Chart
 from lib.constants import GLYPHS, PLANETS
 
@@ -28,6 +28,66 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title('ChartDraw')
+        self.build_gui()
+        self.focus_set()
+        self.bind('<Key>', self.dispatch)
+        self.chart.draw_chart(self.data['base_angles'])
+        self.cycle = 1
+
+    def dispatch(self, event):
+        if event.char == '=':
+            self.tv.toggle_column()
+        elif event.char == '+':
+            self.tv.scroll_up()
+        elif event.char == 'h':
+            self.harmonic()
+        elif event.char == 't':
+            self.turned()
+        elif event.char == 'a':
+            self.aspects()
+        elif event.keysym == 'Escape':
+            self.focus_set()
+    
+    def turned_axes_frame_reset(self):
+        self.turned_axes_frame.reset()
+
+    def reset_chart(self):
+        self.harmonic_frame.reset()
+        self.turned_axes_frame.reset()
+        self.data['chart_angles'] = self.data['base_angles']
+        self.chart.draw_chart(self.data['base_angles'])
+
+    def harmonic(self):
+        result = self.harmonic_frame.get()
+        self.turned_axes_frame.reset()
+        self.cycle = 1
+        if not result:
+            return
+        options = {}
+        if result != 1:
+            options['axes_text'] = ['HAR', 'HAR']
+        harmonic_angles = harmonics(self.data['base_angles'], result)
+        self.data['chart_angles'] = harmonic_angles
+        self.chart.draw_chart(harmonic_angles, **options)
+
+    def turned(self):
+        result = self.turned_axes_frame.get()
+        self.harmonic_frame.reset()
+        self.data['chart_angles'] = [(angle - 30 * (result - 1)) % 360
+                                     for angle in self.data['base_angles']]
+        self.cycle = result
+        if result != 1:
+            self.cycle_status.set(CYCLE_TEXTS[1])
+            self.chart.draw_chart(self.data['base_angles'], cycle=result,
+                                  axes_text=['Turned', 'Turned'])
+        else:
+            self.cycle_status.set(CYCLE_TEXTS[0])
+            self.chart.draw_chart(self.data['base_angles'], cycle=result)
+
+    def aspects(self):
+        self.chart.aspects(self.data['chart_angles'], self.cycle)
+    
+    def build_gui(self):
         frame = tk.Frame(self)
         frame.pack()
         left_frame = tk.Frame(frame)
@@ -72,60 +132,6 @@ class App(tk.Tk):
 
         self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
-
-        self.focus_set()
-        self.bind('<Key>', self.dispatch)
-
-        self.chart.draw_chart(self.data['base_angles'])
-
-    def dispatch(self, event):
-        if event.char == '=':
-            self.tv.toggle_column()
-        elif event.char == '+':
-            self.tv.scroll_up()
-        elif event.char == 'h':
-            self.harmonic()
-        elif event.char == 't':
-            self.turned()
-        elif event.char == 'a':
-            self.aspects()
-        elif event.keysym == 'Escape':
-            self.focus_set()
-    
-    def turned_axes_frame_reset(self):
-        self.turned_axes_frame.reset()
-
-    def reset_chart(self):
-        self.harmonic_frame.reset()
-        self.turned_axes_frame.reset()
-        self.data['chart_angles'] = self.data['base_angles']
-        self.chart.draw_chart(self.data['base_angles'])
-
-    def harmonic(self):
-        result = self.harmonic_frame.get()
-        self.turned_axes_frame.reset()
-        if not result:
-            return
-        options = {}
-        if result != 1:
-            options['axes_text'] = ['HAR', 'HAR']
-        harmonic_angles = [(result * ang) % 360 for ang in self.data['base_angles']]
-        self.data['chart_angles'] = harmonic_angles
-        self.chart.draw_chart(harmonic_angles, **options)
-
-    def turned(self):
-        result = self.turned_axes_frame.get()
-        self.harmonic_frame.reset()
-        if result != 1:
-            self.cycle_status.set(CYCLE_TEXTS[1])
-            self.chart.draw_chart(self.data['base_angles'], cycle=result,
-                                  axes_text=['Turned', 'Turned'])
-        else:
-            self.cycle_status.set(CYCLE_TEXTS[0])
-            self.chart.draw_chart(self.data['base_angles'], cycle=result)
-
-    def aspects(self):
-        self.chart.aspects(self.data['chart_angles'])
 
 
 if __name__ == '__main__':

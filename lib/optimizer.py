@@ -10,19 +10,19 @@ DIST_WEIGHT = 0.3
 OVERLAP_WEIGHT = 1 - DIST_WEIGHT
 OVERLAP_DIST = 6
 
-def get_overlap_loss(angles):
+def overlap_loss(angles):
     return sum(max(0, OVERLAP_DIST - dist(a, b))
                for a, b in combinations(angles, 2))
 
 
-def get_deviation_loss(angles, targets):
+def deviation_loss(angles, targets):
     return (DIST_WEIGHT
             * sum((target - angle) ** 2
                   for target, angle in zip(targets, angles))
             / (2 * len(angles)))
 
 
-def get_deviation_gradient(angle, target):
+def deviation_gradient(angle, target):
     "Gradient for a single angle"
     if is_sorted(angle, target):
         return -dist(angle, target)
@@ -30,8 +30,8 @@ def get_deviation_gradient(angle, target):
         return dist(angle, target)
 
 
-def get_total_loss(angles, targets):
-    return get_overlap_loss(angles) + get_deviation_loss(angles, targets)
+def total_loss(angles, targets):
+    return overlap_loss(angles) + deviation_loss(angles, targets)
 
 
 def optimize(angles):
@@ -50,9 +50,9 @@ def optimize(angles):
                     deltas[i] += OVERLAP_WEIGHT
                     deltas[j] -= OVERLAP_WEIGHT
         # Compute deviation gradient
-        deviation_gradient = [DIST_WEIGHT * get_deviation_gradient(ang, tgt)
+        dev_gradient = [DIST_WEIGHT * deviation_gradient(ang, tgt)
                               for ang, tgt in zip(candidate, angles)]
-        deltas = map(add, deltas, deviation_gradient)
+        deltas = map(add, deltas, dev_gradient)
         # Perform update
         candidate = [(ang + LEARN_RATE * delta) % 360
                      for ang, delta in zip(candidate, deltas)]
