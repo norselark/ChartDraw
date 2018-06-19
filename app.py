@@ -18,7 +18,7 @@ DATA_DIR = Path('aqCHARTS/aq_temp')
 def load_data():
     data = json.load(open(DATA_DIR / 'data.json'))
     angles = data['angles']
-    return {"letters": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
+    return {"glyphs": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
             "base_angles": angles,
             "chart_angles": angles,
             "truncated_angles": list(map(truncate_rounding, angles))}
@@ -27,12 +27,14 @@ def load_data():
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.cycle = 1
         self.title('ChartDraw')
-        self.build_gui()
-        self.focus_set()
+        self._build_gui()
+        self._connect_widgets()
         self.bind('<Key>', self.dispatch)
         self.chart.draw_chart(self.data['base_angles'])
-        self.cycle = 1
+        self.focus_set()
+        self.aspects_on = False
 
     def dispatch(self, event):
         if event.char == '=':
@@ -85,9 +87,13 @@ class App(tk.Tk):
             self.chart.draw_chart(self.data['base_angles'], cycle=result)
 
     def aspects(self):
-        self.chart.aspects(self.data['chart_angles'], self.cycle)
+        if self.aspects_on:
+            self.chart.canvas.delete('asp')
+        else:
+            self.chart.aspects(self.data['chart_angles'], self.cycle)
+        self.aspects_on = not self.aspects_on
     
-    def build_gui(self):
+    def _build_gui(self):
         frame = tk.Frame(self)
         frame.pack()
         left_frame = tk.Frame(frame)
@@ -121,17 +127,19 @@ class App(tk.Tk):
 
         self.harmonic_frame = widgets.HarmonicSelection(
             right_frame,
-            apply_command=self.harmonic,
-            spinbox_command=self.turned_axes_frame_reset)
+            apply_command=self.harmonic)
         self.harmonic_frame.pack(side=tk.TOP)
         self.turned_axes_frame = widgets.CycleSelection(
             right_frame,
-            apply_command=self.turned,
-            spinbox_command=self.harmonic_frame.reset)
+            apply_command=self.turned)
         self.turned_axes_frame.pack(side=tk.TOP)
 
         self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
+    
+    def _connect_widgets(self):
+        self.harmonic_frame.set_spinbox_command(self.turned_axes_frame.reset)
+        self.turned_axes_frame.set_spinbox_command(self.harmonic_frame.reset)
 
 
 if __name__ == '__main__':

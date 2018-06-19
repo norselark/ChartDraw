@@ -14,18 +14,19 @@ class TreeviewPanel(tk.Frame):
         self.harmonic = tk.StringVar(self, value='Current harmonic: 1')
         harmonic_label = tk.Label(self, textvariable=self.harmonic)
         harmonic_label.pack(side=tk.TOP)
-        self.tv = Treeview(self, columns=('letter', 'angle', 'trunc'),
+        self.tv = Treeview(self, columns=('glyph', 'angle', 'trunc'),
                            show=[],
-                           height=13, displaycolumn=['letter', self.display])
+                           height=13, displaycolumn=['glyph', self.display])
 
-        self.tv.column('letter', anchor='center',
+        rounded_angles = map(lambda x: '%.2f°' % x, data['base_angles'])
+        self.tv.column('glyph', anchor='center',
                        minwidth=40, width=40, stretch=False)
         self.tv.column('angle', anchor='center',
                        minwidth=120, width=120, stretch=False)
         self.tv.column('trunc', anchor='center',
                        minwidth=120, width=120, stretch=False)
 
-        for row in zip(data['letters'], data['base_angles'], data['truncated_angles']):
+        for row in zip(data['glyphs'], rounded_angles, data['truncated_angles']):
             self.tv.insert('', tk.END, values=row)
 
         self.tv.pack(side=tk.TOP)
@@ -48,7 +49,7 @@ class TreeviewPanel(tk.Frame):
             self.display = 'trunc'
         else:
             self.display = 'angle'
-        self.tv.configure(displaycolumn=['letter', self.display])
+        self.tv.configure(displaycolumn=['glyph', self.display])
 
     def scroll_down(self):
         last_item = self.tv.get_children()[-1]
@@ -60,20 +61,23 @@ class TreeviewPanel(tk.Frame):
 
 
 class HarmonicSelection(tk.Frame):
-    def __init__(self, parent, apply_command, spinbox_command, *args):
+    def __init__(self, parent, apply_command, *args):
         super().__init__(parent, *args)
-        self.spinbox_command = spinbox_command
         self.apply_command = apply_command
         tk.Label(self, text='Harmonic:').pack()
 
         box_frame = tk.Frame(self)
         box_frame.pack()
-        self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, command=spinbox_command, width=5)
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, width=5)
         self.spinbox.pack(side='left', padx=5)
         self.spinbox.bind('<Key>', self.handler)
 
         self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
+
+    def set_spinbox_command(self, command):
+        self.spinbox.configure(command=command)
+        self.spinbox_command = command
 
     def get(self):
         if self.validate():
@@ -106,22 +110,25 @@ class HarmonicSelection(tk.Frame):
 
 
 class CycleSelection(tk.Frame):
-    def __init__(self, parent, apply_command, spinbox_command, *args):
+    def __init__(self, parent, apply_command, *args):
         super().__init__(parent, *args)
-        self.spinbox_command = spinbox_command
         self.apply_command = apply_command
 
         tk.Label(self, text='Turned axis:').pack()
 
         box_frame = tk.Frame(self)
         box_frame.pack()
-        self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, command=spinbox_command, width=5)
+        self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, width=5)
         self.spinbox.pack(side='left', padx=5)
 
         self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
 
         self.spinbox.bind('<Key>', self.handler)
+
+    def set_spinbox_command(self, command):
+        self.spinbox.configure(command=command)
+        self.spinbox_command = command
 
     def handler(self, event):
         if event.keysym == 'Return':

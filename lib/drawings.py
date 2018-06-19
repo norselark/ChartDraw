@@ -147,34 +147,44 @@ class Chart():
         r = 168
         xx = 256
         y = 256
-        self.canvas.circle((0, 0), r, fill=white, outline='')
+        self.canvas.circle((0, 0), r, fill=white, outline='', tags='asp')
         zy = -mirror_angle(angles[-1]) + 30 * (cycle - 1)
         for a, b in combinations(angles[:-3], 2):
             v = (a - zy) % 360
             self.canvas.set_rotation(v)
-            dr = asp(a, b, orbis=8)
-            if dr is None or dr in [0, 30]:
+            aspect, degree = asp(a, b, orbis=8)
+            if aspect is None or aspect in [0, 30]:
                 continue
             col = green
-            if dr in [90, 180]:
+            if aspect in [90, 180]:
                 col = red
             v2 = (b - zy) % 360
             extent = (v2 - v) % 360
+
+            width = 1
+            dash = None
+            if degree <= 1 / 3:
+                dash = [2, 2]
+            elif degree >= 2 / 3:
+                width = 2.2
+
             self.canvas.create_arc([xx - r, y - r, xx + r, y + r],
-                                    style='chord', fill='',
-                                    outline=col, start=v, extent=extent)
+                                   style='chord', fill='',
+                                   dash=dash, width=width,
+                                   outline=col, start=v, extent=extent,
+                                   tags='asp')
         pa = 10
-        self.canvas.circle((0, 0), pa, fill=lightblue, outline='')
+        self.canvas.circle((0, 0), pa, fill=lightblue, outline='', tags='asp')
         self.canvas.create_arc([xx - pa, y - pa, xx + pa, y + pa],
                                fill=blue,
-                               outline='', start=180, extent=180)
-        self.canvas.circle((0, 0), pa, fill='', outline=black)
+                               outline='', start=180, extent=180, tags='asp')
+        self.canvas.circle((0, 0), pa, fill='', outline=black, tags='asp')
         self.canvas.set_rotation(angles[-1] - zy)
-        self.canvas.line([[-pa, 0], [pa, 0]], fill=white)
+        self.canvas.line([[-pa, 0], [pa, 0]], fill=white, tags='asp')
         self.canvas.set_rotation(angles[-2] - zy)
-        self.canvas.line([[-pa, 0], [pa, 0]], fill=white)
-        self.canvas.circle((0, 0), 3, fill=lightteal, outline='')
-        self.canvas.circle((0, 0), 1, fill=black)
+        self.canvas.line([[-pa, 0], [pa, 0]], fill=white, tags='asp')
+        self.canvas.circle((0, 0), 3, fill=lightteal, outline='', tags='asp')
+        self.canvas.circle((0, 0), 1, fill=black, tags='asp')
 
 
     def _minichart(self, angles, start_of_zodiac, cycleoffset):
