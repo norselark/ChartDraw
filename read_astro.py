@@ -4,8 +4,11 @@ by the main program.
 """
 
 import json
+import re
+import sys
 from pathlib import Path
-import numpy as np
+
+from lib.utils import dms_to_deg
 
 NUM_PLANETS = 10
 NUM_HIGH_PLANETS = 11
@@ -22,15 +25,20 @@ def get_labels():
     return res
 
 
+def match_to_degrees(match):
+    """Turn a regex match into a value in degrees.
+    The match object must have four groups corresponding to
+    degrees, minutes, seconds and sign of the zodiac, respectively
+    """
+    degree, minute, second, sign = match.groups()
+    degree = int(degree) + 30 * ZODIAC_ZET9.index(sign)
+    return dms_to_deg(degree, int(minute), float(second))
+
+
 ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
                'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
 LABELS_ZET9 = get_labels()
-
-
-def dms_to_deg(degrees, minutes, seconds):
-    "Convert a DMS angle to decimal degrees"
-    return degrees + (minutes * 60 + seconds) / 3600
 
 
 def calczet9(input_line):
@@ -49,58 +57,50 @@ def calczet9(input_line):
     return dms_to_deg(degrees, minutes, seconds)
 
 
+def _read_zet9(infile):
+    planet_regexp = '^\\w+\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+).*$'
+    asc_regexp = '^I\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
+    mc_regexp = '^X\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
+
+    planet_angles = []
+    for line in infile:
+        match = re.match(planet_regexp, line)
+        if match:
+            planet_angles.append(match_to_degrees(match))
+        match = re.match(asc_regexp, line)
+        if match:
+            asc = match_to_degrees(match)
+        match = re.match(mc_regexp, line)
+        if match:
+            mc = match_to_degrees(match)
+    return planet_angles[:NUM_HIGH_PLANETS] + [mc, asc]
+
+
+def _read_with_encoding(file, encoding):
+    with open(file, encoding=encoding) as infile:
+        # Sniff file to find source program
+        line = infile.readline()
+        if line.startswith('Sun'):
+            source_program = 'ZET9'
+        else:
+            raise ValueError('Unsupported file format')
+        infile.seek(0)
+
+        if source_program == 'ZET9':
+            return {"source_program": source_program,
+                    "angles": _read_zet9(infile)}
+
+
+def read(file):
+    try:
+        return _read_with_encoding(file, 'utf8')
+    except UnicodeDecodeError:
+        return _read_with_encoding(file, 'cp1252')
+
+
 def main():
     """Main function"""
-    with open('switch.sw0') as infile:
-        # Charts (base directory)
-        infile.readline() # don't need this for now
-        # Temp charts (Charts directory)
-        data_dir = Path(infile.readline().strip())
-
-    input_dir = data_dir
-    filename_1 = 'Astro-1.txt'
-    filename_2 = 'Astro-2.txt'
-
-    num_labels = len(LABELS_ZET9)
-
-    pSTR_ARR = np.empty((num_labels + 1), dtype=float)
-
-    # Sniff file to find source program
-    with open(input_dir / filename_1) as infile:
-        line = infile.readline()
-        if line.startswith('Astrolog 5.34a'):
-            source_program = 'astrolog543a'
-        elif line.startswith('Astrolog 542J') or line[8:].startswith('Astrolog 542J'):
-            source_program = 'astrolog542j07'
-        elif line.startswith('Sun'):
-            source_program = 'ZET9'
-
-    # ZET9 calculations
-    if source_program == 'ZET9':
-        with open(input_dir / filename_1, encoding='utf-8') as infile:
-            for line in infile:
-                line = line.strip('\n')  # Remove trailing newline
-                for idx in range(1, num_labels):
-                    if line[:1] == 'X':
-                        if line[1] not in ['I', 'V', 'X']:
-                            pSTR_ARR[NUM_HIGH_PLANETS + 1] = calczet9(line[-15:])
-                            break
-                    if line[:1] == 'I':
-                        if line[1] not in ['I', 'V', 'X']:
-                            pSTR_ARR[NUM_HIGH_PLANETS + 2] = calczet9(line[-15:])
-                            break
-
-    with open(input_dir / filename_2, encoding='utf-8') as infile:
-        for line in infile:
-            line = line.rstrip('\n')  # Remove trailing newline
-            for idx in range(1, num_labels):
-                if line[:4] == LABELS_ZET9[idx][:4]:
-                    line = line[18:27]
-                    pSTR_ARR[idx] = float(line)
-                    break
-    
-    data = {"angles": list(pSTR_ARR[1:NUM_HIGH_PLANETS + 3])}
-    json.dump(data, open(data_dir / 'data.json', 'w'), indent=2)
+    print(read(sys.argv[1]))
 
 
 if __name__ == '__main__':

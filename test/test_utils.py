@@ -59,3 +59,10 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue(utils.is_sorted(355, 20))
         self.assertFalse(utils.is_sorted(20, 355))
 
+    def test_dms_to_deg(self):
+        self.assertAlmostEqual(utils.dms_to_deg(80, 0, 0), 80)
+        self.assertAlmostEqual(utils.dms_to_deg(70, 30, 0), 70.5)
+        self.assertAlmostEqual(utils.dms_to_deg(8, 20, 0), 8 + 1/3)
+        self.assertRaises(ValueError, utils.dms_to_deg, 80, 80, 80)
+
+

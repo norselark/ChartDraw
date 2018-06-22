@@ -22,6 +22,15 @@ def truncate_rounding(angle):
     return "{:02}° {:02}' {}".format(int_part, i, zodiac_sign)
 
 
+def dms_to_deg(degrees, minutes, seconds):
+    "Convert a DMS angle to decimal degrees"
+    if minutes < 0 or minutes >= 60:
+        raise ValueError('Minutes must be 0 <= m < 60')
+    if seconds < 0 or seconds >= 60:
+        raise ValueError('Seconds must be 0 <= s < 60')
+    return degrees + (minutes * 60 + seconds) / 3600
+
+
 def mirror_angle(angle):
     "Mirrors the angle: 0 deg to the left, going clockwise"
     return (180 - angle) % 360

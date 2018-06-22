@@ -2,8 +2,11 @@
 """Module to manage the user interface"""
 
 import json
-from pathlib import Path
+import sys
 import tkinter as tk
+from pathlib import Path
+
+import read_astro
 from lib.transform_canvas import TransformCanvas
 from lib import widgets
 from lib.utils import truncate_rounding, harmonics
@@ -16,7 +19,11 @@ CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
 DATA_DIR = Path('aqCHARTS/aq_temp')
 
 def load_data():
-    data = json.load(open(DATA_DIR / 'data.json'))
+    try:
+        data = read_astro.read(sys.argv[1])
+    except (FileNotFoundError, IndexError):
+        data = read_astro.read(str(DATA_DIR / 'Astro-1.txt'))
+
     angles = data['angles']
     return {"glyphs": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
             "base_angles": angles,
@@ -105,10 +112,10 @@ class App(tk.Tk):
 
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
-        tl_text = tk.Label(top_bar,
+        tl_text = tk.Label(top_bar, justify=tk.LEFT,
                            text='Tropical Zodiac\nEqual Houses\nQuadrants')
         tl_text.pack(side=tk.LEFT)
-        tr_text = tk.Label(top_bar, text='DRAW\nzh 2\nZET9')
+        tr_text = tk.Label(top_bar, justify=tk.LEFT, text='DRAW\nzh 2\nZET9')
         tr_text.pack(side=tk.RIGHT)
 
         canvas = TransformCanvas(left_frame, background="#1D1F21",
@@ -118,7 +125,8 @@ class App(tk.Tk):
         bottom_bar = tk.Frame(left_frame, borderwidth=5)
         bottom_bar.pack(side=tk.TOP, fill=tk.X)
         self.cycle_status = tk.StringVar(self, value=CYCLE_TEXTS[0])
-        bl_text = tk.Label(bottom_bar, textvariable=self.cycle_status)
+        bl_text = tk.Label(bottom_bar, justify=tk.LEFT,
+                           textvariable=self.cycle_status)
         bl_text.pack(side=tk.LEFT)
 
         reset_button = tk.Button(bottom_bar, text="Reset chart",

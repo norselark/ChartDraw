@@ -161,16 +161,11 @@ class Chart():
             v2 = (b - zy) % 360
             extent = (v2 - v) % 360
 
-            width = 1
-            dash = None
-            if degree <= 1 / 3:
-                dash = [2, 2]
-            elif degree >= 2 / 3:
-                width = 2.2
+            width = 1 + 2.2 * degree
 
             self.canvas.create_arc([xx - r, y - r, xx + r, y + r],
                                    style='chord', fill='',
-                                   dash=dash, width=width,
+                                   width=width,
                                    outline=col, start=v, extent=extent,
                                    tags='asp')
         pa = 10
