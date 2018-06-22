@@ -65,6 +65,9 @@ class App(tk.Tk):
         self.turned_axes_frame.reset()
         self.data['chart_angles'] = self.data['base_angles']
         self.chart.draw_chart(self.data['base_angles'])
+        self.aspects_on = False
+        self.cycle = 1
+        self.cycle_status.set(CYCLE_TEXTS[0])
 
     def harmonic(self):
         result = self.harmonic_frame.get()
