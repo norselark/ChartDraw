@@ -1,28 +1,16 @@
-"""
-Reads the files Astro-1.txt and Astro-2.txt and outputs data in JSON for use
-by the main program.
+"""Reads tables from ZET9
 """
 
-import json
 import re
 import sys
 from pathlib import Path
 
 from lib.utils import dms_to_deg
 
-NUM_PLANETS = 10
 NUM_HIGH_PLANETS = 11
 PP = 13
-
-
-def get_labels():
-    """Return a list of labels"""
-    res = [''] * 33
-    res[0:12] = ['Earth  ', 'Sun    ', 'Moon   ', 'Mercury', 'Venus  ',
-                 'Mars   ', 'Jupiter', 'Saturn ', 'Uranus ', 'Neptune', 'Pluto ', 'Node']
-    res[22:34] = ['I', 'II', 'III', 'IV', 'V',
-                  'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
-    return res
+ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
+               'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
 
 def match_to_degrees(match):
@@ -33,28 +21,6 @@ def match_to_degrees(match):
     degree, minute, second, sign = match.groups()
     degree = int(degree) + 30 * ZODIAC_ZET9.index(sign)
     return dms_to_deg(degree, int(minute), float(second))
-
-
-ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
-               'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
-
-LABELS_ZET9 = get_labels()
-
-
-def calczet9(input_line):
-    "Parse an input line from a ZET9 file"
-    try:
-        degrees = int(input_line[:2])
-        minutes = int(input_line[3:5])
-        seconds = float(input_line[6:11])
-        zodiac_sign = input_line[-3:]
-    except ValueError:
-        raise ValueError(input_line)
-        
-    # Add 30 * [place in zodiac] to degrees
-    degrees = (degrees + 30 * ZODIAC_ZET9.index(zodiac_sign)) % 360
-
-    return dms_to_deg(degrees, minutes, seconds)
 
 
 def _read_zet9(infile):
@@ -76,8 +42,8 @@ def _read_zet9(infile):
     return planet_angles[:NUM_HIGH_PLANETS] + [mc, asc]
 
 
-def _read_with_encoding(file, encoding):
-    with open(file, encoding=encoding) as infile:
+def _read_with_encoding(filename, encoding):
+    with open(filename, encoding=encoding) as infile:
         # Sniff file to find source program
         line = infile.readline()
         if line.startswith('Sun'):
@@ -91,11 +57,11 @@ def _read_with_encoding(file, encoding):
                     "angles": _read_zet9(infile)}
 
 
-def read(file):
+def read(filename):
     try:
-        return _read_with_encoding(file, 'utf8')
+        return _read_with_encoding(filename, 'utf8')
     except UnicodeDecodeError:
-        return _read_with_encoding(file, 'cp1252')
+        return _read_with_encoding(filename, 'cp1252')
 
 
 def main():
