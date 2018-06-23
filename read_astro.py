@@ -1,5 +1,4 @@
-"""Reads tables from ZET9
-"""
+"""Reads tables from ZET9"""
 
 import re
 import sys
@@ -8,7 +7,6 @@ from pathlib import Path
 from lib.utils import dms_to_deg
 
 NUM_HIGH_PLANETS = 11
-PP = 13
 ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
                'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
