@@ -144,35 +144,29 @@ class Chart():
         canv.create_text([470, 498], text=text[1], fill=white, anchor='nw')
 
     def aspects(self, angles, cycle=1):
-        r = 168
-        xx = 256
-        y = 256
-        self.canvas.circle((0, 0), r, fill=white, outline='', tags='asp')
+        radius = 168
+        self.canvas.circle((0, 0), radius, fill=white, outline='', tags='asp')
         zy = -mirror_angle(angles[-1]) + 30 * (cycle - 1)
         for a, b in combinations(angles[:-3], 2):
-            v = (a - zy) % 360
-            self.canvas.set_rotation(v)
             aspect, degree = asp(a, b, orbis=8)
             if aspect is None or aspect in [0, 30]:
                 continue
             col = green
             if aspect in [90, 180]:
                 col = red
+            v = (a - zy) % 360
             v2 = (b - zy) % 360
-            extent = (v2 - v) % 360
-
             width = 1 + 2.2 * degree
+            self.canvas.chord(radius, v, v2, fill=col, width=width, tags='asp')
 
-            self.canvas.create_arc([xx - r, y - r, xx + r, y + r],
-                                   style='chord', fill='',
-                                   width=width,
-                                   outline=col, start=v, extent=extent,
-                                   tags='asp')
         pa = 10
+        x_center = 256
+        y_center = 256
         self.canvas.circle((0, 0), pa, fill=lightblue, outline='', tags='asp')
-        self.canvas.create_arc([xx - pa, y - pa, xx + pa, y + pa],
-                               fill=blue,
-                               outline='', start=180, extent=180, tags='asp')
+        self.canvas.create_arc([x_center - pa, y_center - pa,
+                                x_center + pa, y_center + pa],
+                               start=180, extent=180,
+                               fill=blue, outline='', tags='asp')
         self.canvas.circle((0, 0), pa, fill='', outline=black, tags='asp')
         self.canvas.set_rotation(angles[-1] - zy)
         self.canvas.line([[-pa, 0], [pa, 0]], fill=white, tags='asp')

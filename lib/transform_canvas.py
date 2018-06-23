@@ -42,3 +42,12 @@ class TransformCanvas(Canvas):
         new_coords = self.apply_transform(transposed)
         new_coords = complex_to_coords(new_coords)
         self.create_polygon(new_coords, **kwargs)
+
+    def chord(self, radius, start_angle, end_angle, **kwargs):
+        self.set_rotation(0)
+        start_angle = radians(start_angle)
+        end_angle = radians(end_angle)
+        coords = [[radius * cos(start_angle), -radius * sin(start_angle)],
+                  [radius * cos(end_angle), -radius * sin(end_angle)]]
+        new_coords = self.apply_transform(coords)
+        self.create_line(complex_to_coords(new_coords), **kwargs)
