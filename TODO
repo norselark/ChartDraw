@@ -1,17 +1,17 @@
 == Backlog ==
 - Select number of planets to draw (classical vs. modern)
 - Restrict number of planets to include in aspect drawing
-- Save and load configurations
 - Harmonic selection in angle table
 - Whether angle table differs from chart angles
 - Disable turned when harmonic is active?
 - Information: Turned is meaningless within harmonic (words)
 - Ideal window size is half screen width (side by side)
 - Load several configurations and display superimposed
-- Draw chords with lines, not arcs
 
 == Done ==
 - Toggle aspects with 'a' key
 - Indicate size of orbis with line width
 - Round angle table to two decimals
 - Left justified text
+- Draw chords with lines, not arcs
+- Save and load configurations

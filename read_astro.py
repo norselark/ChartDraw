@@ -1,5 +1,6 @@
 """Reads tables from ZET9"""
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -56,6 +57,14 @@ def _read_with_encoding(filename, encoding):
 
 
 def read(filename):
+    if filename.endswith('.json'):
+        with open(filename) as file:
+            j = json.load(file)
+            if 'angles' in j:
+                return j
+            else:
+                raise ValueError('JSON file does not contain required fields')
+    # Not JSON: Parse as ZET9 file
     try:
         return _read_with_encoding(filename, 'utf8')
     except UnicodeDecodeError:

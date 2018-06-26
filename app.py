@@ -4,6 +4,7 @@
 import json
 import sys
 import tkinter as tk
+import tkinter.filedialog as filedialog
 from pathlib import Path
 
 import read_astro
@@ -18,9 +19,11 @@ CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
 
 DATA_DIR = Path('aqCHARTS/aq_temp')
 
-def load_data():
+def load_data(filename=None):
     try:
-        data = read_astro.read(sys.argv[1])
+        if not filename:
+            filename = sys.argv[1]
+        data = read_astro.read(filename)
     except (FileNotFoundError, IndexError):
         data = read_astro.read(str(DATA_DIR / 'Astro-1.txt'))
 
@@ -36,9 +39,11 @@ class App(tk.Tk):
         super().__init__()
         self.cycle = 1
         self.title('ChartDraw')
+        self.data = load_data()
         self._build_gui()
         self._connect_widgets()
         self.bind('<Key>', self.dispatch)
+
         self.chart.draw_chart(self.data['base_angles'])
         self.focus_set()
         self.aspects_on = False
@@ -104,14 +109,22 @@ class App(tk.Tk):
         self.aspects_on = not self.aspects_on
     
     def _build_gui(self):
+        menubar = tk.Menu(self)
+
+        filemenu = tk.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Load", command=self._load_dialog)
+        filemenu.add_command(label="Save", command=self._save_dialog)
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=self.quit)
+        menubar.add_cascade(label="File", menu=filemenu)
+        self.config(menu=menubar)
+
         frame = tk.Frame(self)
         frame.pack()
         left_frame = tk.Frame(frame)
         left_frame.pack(side=tk.LEFT)
         right_frame = tk.Frame(frame)
         right_frame.pack(side=tk.RIGHT)
-
-        self.data = load_data()
 
         top_bar = tk.Frame(left_frame, borderwidth=5)
         top_bar.pack(side=tk.TOP, fill=tk.X)
@@ -151,6 +164,18 @@ class App(tk.Tk):
     def _connect_widgets(self):
         self.harmonic_frame.set_spinbox_command(self.turned_axes_frame.reset)
         self.turned_axes_frame.set_spinbox_command(self.harmonic_frame.reset)
+
+    def _load_dialog(self):
+        filename = filedialog.askopenfilename(parent=self, initialdir='./')
+        if filename:
+            self.data = load_data(filename)
+            self.reset_chart()
+
+    def _save_dialog(self):
+        file = filedialog.asksaveasfile(parent=self, initialdir='./')
+        if file:
+            data = {'angles': self.data['base_angles']}
+            json.dump(data, file)
 
 
 if __name__ == '__main__':
