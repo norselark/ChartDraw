@@ -46,7 +46,7 @@ class Chart():
         for degrees in range(0, 360, 30):
             canv.set_rotation(start_of_zodiac + degrees)
             canv.line(coords, fill=teal)
-        
+
         # Zodiac symbols
         coords = [p3 + 26, 0]
         for sign, degrees in zip(ZODIAC, range(0, 360, 30)):
@@ -126,7 +126,7 @@ class Chart():
 
     def axes_legend(self, cycle, text=['S', 'E']):
         canv = self.canvas
-        
+
         canv.create_text([416, 483], text='MC', fill=white, anchor='nw')
         canv.create_text([416, 498], text='ASC', fill=white, anchor='nw')
         if cycle == 1:
@@ -175,7 +175,6 @@ class Chart():
         self.canvas.circle((0, 0), 3, fill=lightteal, outline='', tags='asp')
         self.canvas.circle((0, 0), 1, fill=black, tags='asp')
 
-
     def _minichart(self, angles, start_of_zodiac, cycleoffset):
         "Draw miniature chart in the center"
         canv = self.canvas
@@ -202,5 +201,3 @@ class Chart():
         # Tiny hub
         canv.circle((0, 0), 5, fill=lightteal, outline=black)
         canv.circle((0, 0), 1, fill=black)
-
-

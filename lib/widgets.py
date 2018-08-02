@@ -2,9 +2,7 @@
 
 import tkinter as tk
 from tkinter import messagebox
-from tkinter.simpledialog import Dialog
 from tkinter.ttk import Treeview
-from .utils import truncate_rounding
 
 
 class TreeviewPanel(tk.Frame):
@@ -26,7 +24,8 @@ class TreeviewPanel(tk.Frame):
         self.tv.column('trunc', anchor='center',
                        minwidth=120, width=120, stretch=False)
 
-        for row in zip(data['glyphs'], rounded_angles, data['truncated_angles']):
+        for row in zip(
+                data['glyphs'], rounded_angles, data['truncated_angles']):
             self.tv.insert('', tk.END, values=row)
 
         self.tv.pack(side=tk.TOP)
@@ -72,7 +71,8 @@ class HarmonicSelection(tk.Frame):
         self.spinbox.pack(side='left', padx=5)
         self.spinbox.bind('<Key>', self.handler)
 
-        self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
+        self.ok_button = tk.Button(
+            box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
 
     def set_spinbox_command(self, command):
@@ -84,7 +84,7 @@ class HarmonicSelection(tk.Frame):
             return int(self.spinbox.get())
         else:
             return None
-        
+
     def handler(self, event):
         if event.keysym == 'Return':
             self.apply_command()
@@ -105,7 +105,8 @@ class HarmonicSelection(tk.Frame):
                 return True
         except Exception:
             pass
-        messagebox.showwarning('Harmonic', 'The harmonic number must be a positive integer')
+        messagebox.showwarning(
+            'Harmonic', 'The harmonic number must be a positive integer')
         return False
 
 
@@ -121,7 +122,8 @@ class CycleSelection(tk.Frame):
         self.spinbox = tk.Spinbox(box_frame, from_=1, to=12, width=5)
         self.spinbox.pack(side='left', padx=5)
 
-        self.ok_button = tk.Button(box_frame, text='Apply', command=apply_command)
+        self.ok_button = tk.Button(
+            box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
 
         self.spinbox.bind('<Key>', self.handler)
@@ -156,8 +158,10 @@ class CycleSelection(tk.Frame):
                 return True
         except Exception:
             pass
-        messagebox.showwarning('Cycle', 'The cycle number must be a positive integer')
+        messagebox.showwarning(
+            'Cycle', 'The cycle number must be a positive integer')
         return False
+
 
 if __name__ == '__main__':
     app = TreeviewPanel(None, {})
