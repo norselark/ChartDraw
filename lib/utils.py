@@ -1,5 +1,7 @@
 """Functions used by aq_draw"""
 
+from typing import Tuple, Optional, Sequence, List
+
 ZODIAC_SIGNS = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
                 'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Psc']
 
@@ -7,10 +9,8 @@ PPINT = 13
 HPINT = 12
 
 
-def truncate_rounding(angle):
+def truncate_rounding(angle: float) -> str:
     """Sub TruncateRounding"""
-    if type(angle) == str:
-        angle = float(angle)
     int_part = int(angle)
     decimal_part = angle - int_part
     zodiac_sign = ZODIAC_SIGNS[int_part // 30]
@@ -22,7 +22,7 @@ def truncate_rounding(angle):
     return "{:02}° {:02}' {}".format(int_part, i, zodiac_sign)
 
 
-def dms_to_deg(degrees, minutes, seconds):
+def dms_to_deg(degrees: int, minutes: int, seconds: float) -> float:
     "Convert a DMS angle to decimal degrees"
     if minutes < 0 or minutes >= 60:
         raise ValueError('Minutes must be 0 <= m < 60')
@@ -31,38 +31,37 @@ def dms_to_deg(degrees, minutes, seconds):
     return degrees + (minutes * 60 + seconds) / 3600
 
 
-def mirror_angle(angle):
+def mirror_angle(angle: float) -> float:
     "Mirrors the angle: 0 deg to the left, going clockwise"
     return (180 - angle) % 360
 
 
-def asp(a, b, orbis=8):
+def asp(a: float, b: float, orbis=8) -> Optional[Tuple[int, float]]:
     "Second argument is size of orbis"
     angle = min(abs(a - b), 360 - abs(a - b))
     aspects = [0, 30, 60, 90, 120, 180]
     for aspect in aspects:
-        orbis_factor = 1
+        orbis_factor = 1.0
         if aspect == 30:
             orbis_factor = 0.25
         elif aspect == 60:
             orbis_factor = 0.75
-        
         if abs(aspect - angle) <= (orbis * orbis_factor):
             return aspect, 1 - abs(aspect - angle) / (orbis * orbis_factor)
-    return None, None
+    return None
 
 
-def dist(a, b):
+def dist(a: float, b: float) -> float:
     "Closest angular distance between points a and b, in degrees"
     return min(abs(a - b), 360 - abs(a - b))
 
 
-def is_sorted(a, b):
+def is_sorted(a: float, b: float) -> bool:
     "return true if a' is the clockwise-most angle"
     return (b - a) % 360 == dist(a, b)
 
 
-def complex_to_coords(coords):
+def complex_to_coords(coords: Sequence[complex]) -> List[float]:
     "Maps a list of complex numbers to coordinates suitable for Tkinter"
     res = []
     for c in coords:
@@ -71,5 +70,5 @@ def complex_to_coords(coords):
     return res
 
 
-def harmonics(angles, harmonic):
+def harmonics(angles: Sequence[float], harmonic: int) -> List[float]:
     return [(harmonic * angle) % 360 for angle in angles]
