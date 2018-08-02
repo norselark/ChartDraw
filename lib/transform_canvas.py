@@ -2,7 +2,7 @@
 
 from tkinter import Canvas
 from math import cos, sin, radians
-from .utils import complex_to_coords
+from lib.utils import complex_to_coords
 
 class TransformCanvas(Canvas):
     def __init__(self, *args, **kwargs):
@@ -10,8 +10,11 @@ class TransformCanvas(Canvas):
         self.rotation = 1 + 0j
         self.center = 0 + 0j
 
-    def set_center(self, new_center: complex):
-        self.center = new_center
+    def set_center(self, new_center):
+        if isinstance(new_center, complex):
+            self.center = new_center
+        else:
+            self.center = complex(new_center[0], new_center[1])
 
     def set_rotation(self, angle, mode='degrees'):
         if mode == 'degrees':
@@ -29,7 +32,7 @@ class TransformCanvas(Canvas):
     def circle(self, center, radius, **kwargs):
         center = self.apply_transform([center])[0]
         x, y = center.real, center.imag
-        coords = (x - radius, y - radius, x + radius, y + radius)
+        coords = [x - radius, y - radius, x + radius, y + radius]
         self.create_oval(coords, **kwargs)
 
     def text(self, coords, **kwargs):

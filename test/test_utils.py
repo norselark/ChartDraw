@@ -33,10 +33,11 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(asp(205, 80), (120, 3 / 8))
 
         # Not within orbis
-        self.assertEqual(asp(102, 49), (None, None))
-        self.assertEqual(asp(98.05, 0), (None, None))
+        self.assertIsNone(asp(102, 49))
+        self.assertIsNone(asp(98.05, 0))
 
     def test_harmonics(self):
+        """Should calculate harmonics correctly"""
         angles = [20, 0, 180, 240]
         res = harmonics(angles, 2)
         self.assertEqual(res, [40, 0, 0, 120])

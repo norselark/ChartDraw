@@ -1,15 +1,18 @@
 from itertools import combinations
-from .utils import mirror_angle, asp
-from .constants import GLYPHS, PLANETS, ZODIAC
-from .constants import white, black, blue, lightblue, teal, lightteal, red, green
-from .optimizer import optimize
+from lib.utils import mirror_angle, asp
+from lib.constants import GLYPHS, PLANETS, ZODIAC
+from lib.constants import (
+    white, black, blue, lightblue, teal, lightteal, red, green
+)
+from lib.optimizer import optimize
 
 ARROW_COORDS = [[0, -3], [5, -3], [15, 0], [5, 3], [0, 3]]
+
 
 class Chart():
     def __init__(self, canvas):
         self.canvas = canvas
-    
+
     def draw_chart(self, angles, superimposed=None,
                    cycle=1, axes_text=['S', 'E']):
         start_of_zodiac = mirror_angle(angles[-1])

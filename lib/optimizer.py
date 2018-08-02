@@ -1,6 +1,6 @@
 "Optimize angular positions to minimize overlap"
 
-from .utils import dist, is_sorted
+from lib.utils import dist, is_sorted
 from itertools import combinations
 from operator import add
 
