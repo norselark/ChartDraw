@@ -2,7 +2,12 @@
 
 from tkinter import Canvas
 from math import cos, sin, radians
+from typing import Iterable, Tuple, List
 from lib.utils import complex_to_coords
+
+Vec2D = Tuple[float, float]
+CoordList = Iterable[Vec2D]
+
 
 class TransformCanvas(Canvas):
     def __init__(self, *args, **kwargs):
@@ -10,47 +15,46 @@ class TransformCanvas(Canvas):
         self.rotation = 1 + 0j
         self.center = 0 + 0j
 
-    def set_center(self, new_center):
-        if isinstance(new_center, complex):
-            self.center = new_center
-        else:
-            self.center = complex(new_center[0], new_center[1])
+    def set_center(self, new_center: Vec2D) -> None:
+        self.center = complex(new_center[0], new_center[1])
 
-    def set_rotation(self, angle, mode='degrees'):
+    def set_rotation(self, angle: float, mode: str = 'degrees') -> None:
         if mode == 'degrees':
             angle = radians(angle)
         self.rotation = complex(cos(angle), -sin(angle))
 
-    def apply_transform(self, coords):
+    def apply_transform(self, coords: CoordList) -> List[complex]:
         return [self.center + self.rotation * complex(x, y) for x, y in coords]
 
-    def line(self, coords, **kwargs):
-        new_coords = self.apply_transform(coords)
-        new_coords = complex_to_coords(new_coords)
+    def line(self, coords: CoordList, **kwargs) -> None:
+        complex_coords = self.apply_transform(coords)
+        new_coords = complex_to_coords(complex_coords)
         self.create_line(new_coords, **kwargs)
 
-    def circle(self, center, radius, **kwargs):
-        center = self.apply_transform([center])[0]
-        x, y = center.real, center.imag
+    def circle(self, center: Tuple[float, float],
+               radius: float, **kwargs) -> None:
+        center_p = self.apply_transform([center])[0]
+        x, y = center_p.real, center_p.imag
         coords = [x - radius, y - radius, x + radius, y + radius]
         self.create_oval(coords, **kwargs)
 
-    def text(self, coords, **kwargs):
-        new_coords = self.apply_transform([coords])
-        new_coords = complex_to_coords(new_coords)
+    def text(self, coords: Tuple[float, float], **kwargs) -> None:
+        complex_coords = self.apply_transform([coords])
+        new_coords = complex_to_coords(complex_coords)
         self.create_text(new_coords, **kwargs)
 
-    def polygon(self, origin, coords, **kwargs):
-        transposed = [[x + origin[0], y + origin[1]] for x, y in coords]
-        new_coords = self.apply_transform(transposed)
-        new_coords = complex_to_coords(new_coords)
+    def polygon(self, origin, coords: CoordList, **kwargs) -> None:
+        transposed = [(x + origin[0], y + origin[1]) for x, y in coords]
+        complex_coords = self.apply_transform(transposed)
+        new_coords = complex_to_coords(complex_coords)
         self.create_polygon(new_coords, **kwargs)
 
-    def chord(self, radius, start_angle, end_angle, **kwargs):
+    def chord(self, radius: float,
+              start_angle: float, end_angle: float, **kwargs) -> None:
         self.set_rotation(0)
         start_angle = radians(start_angle)
         end_angle = radians(end_angle)
-        coords = [[radius * cos(start_angle), -radius * sin(start_angle)],
-                  [radius * cos(end_angle), -radius * sin(end_angle)]]
+        coords = [(radius * cos(start_angle), -radius * sin(start_angle)),
+                  (radius * cos(end_angle), -radius * sin(end_angle))]
         new_coords = self.apply_transform(coords)
         self.create_line(complex_to_coords(new_coords), **kwargs)

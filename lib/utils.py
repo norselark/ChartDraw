@@ -36,7 +36,7 @@ def mirror_angle(angle: float) -> float:
     return (180 - angle) % 360
 
 
-def asp(a: float, b: float, orbis=8) -> Optional[Tuple[int, float]]:
+def asp(a: float, b: float, orbis: int = 8) -> Optional[Tuple[int, float]]:
     "Second argument is size of orbis"
     angle = min(abs(a - b), 360 - abs(a - b))
     aspects = [0, 30, 60, 90, 120, 180]

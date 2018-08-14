@@ -1,4 +1,5 @@
 """A selection of widgets for use in the GUI"""
+from typing import Mapping, Optional, Callable
 
 import tkinter as tk
 from tkinter import messagebox
@@ -6,7 +7,7 @@ from tkinter.ttk import Treeview
 
 
 class TreeviewPanel(tk.Frame):
-    def __init__(self, parent, data, *args):
+    def __init__(self, parent: tk.BaseWidget, data: Mapping, *args) -> None:
         super().__init__(parent, *args)
         self.display = 'trunc'
         self.harmonic = tk.StringVar(self, value='Current harmonic: 1')
@@ -60,7 +61,8 @@ class TreeviewPanel(tk.Frame):
 
 
 class HarmonicSelection(tk.Frame):
-    def __init__(self, parent, apply_command, *args):
+    def __init__(self, parent: tk.BaseWidget,
+                 apply_command: Callable, *args) -> None:
         super().__init__(parent, *args)
         self.apply_command = apply_command
         tk.Label(self, text='Harmonic:').pack()
@@ -75,7 +77,7 @@ class HarmonicSelection(tk.Frame):
             box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
 
-    def set_spinbox_command(self, command):
+    def set_spinbox_command(self, command: Callable):
         self.spinbox.configure(command=command)
         self.spinbox_command = command
 
@@ -111,7 +113,8 @@ class HarmonicSelection(tk.Frame):
 
 
 class CycleSelection(tk.Frame):
-    def __init__(self, parent, apply_command, *args):
+    def __init__(self, parent: tk.BaseWidget,
+                 apply_command: Callable, *args) -> None:
         super().__init__(parent, *args)
         self.apply_command = apply_command
 
@@ -128,7 +131,7 @@ class CycleSelection(tk.Frame):
 
         self.spinbox.bind('<Key>', self.handler)
 
-    def set_spinbox_command(self, command):
+    def set_spinbox_command(self, command: Callable):
         self.spinbox.configure(command=command)
         self.spinbox_command = command
 
@@ -140,7 +143,7 @@ class CycleSelection(tk.Frame):
         if event.keysym in ['a', 't', 'h']:
             return "break"
 
-    def get(self):
+    def get(self) -> Optional[int]:
         if self.validate():
             return int(self.spinbox.get())
         else:
@@ -161,9 +164,3 @@ class CycleSelection(tk.Frame):
         messagebox.showwarning(
             'Cycle', 'The cycle number must be a positive integer')
         return False
-
-
-if __name__ == '__main__':
-    app = TreeviewPanel(None, {})
-    app.pack()
-    app.mainloop()

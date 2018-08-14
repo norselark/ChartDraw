@@ -3,7 +3,7 @@
 import json
 import re
 import sys
-from pathlib import Path
+from typing import Match, TextIO, List, Dict, Any
 
 from lib.utils import dms_to_deg
 
@@ -12,17 +12,17 @@ ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
                'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
 
-def match_to_degrees(match):
+def match_to_degrees(match: Match) -> float:
     """Turn a regex match into a value in degrees.
     The match object must have four groups corresponding to
     degrees, minutes, seconds and sign of the zodiac, respectively
     """
-    degree, minute, second, sign = match.groups()
-    degree = int(degree) + 30 * ZODIAC_ZET9.index(sign)
+    raw_degree, minute, second, sign = match.groups()
+    degree = int(raw_degree) + 30 * ZODIAC_ZET9.index(sign)
     return dms_to_deg(degree, int(minute), float(second))
 
 
-def _read_zet9(infile):
+def _read_zet9(infile: TextIO) -> List[float]:
     planet_regexp = '^\\w+\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+).*$'
     asc_regexp = '^I\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
     mc_regexp = '^X\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
@@ -41,22 +41,22 @@ def _read_zet9(infile):
     return planet_angles[:NUM_HIGH_PLANETS] + [mc, asc]
 
 
-def _read_with_encoding(filename, encoding):
+def _read_with_encoding(filename: str, encoding: str) -> Dict:
     with open(filename, encoding=encoding) as infile:
         # Sniff file to find source program
         line = infile.readline()
         if line.startswith('Sun'):
             source_program = 'ZET9'
-        else:
-            raise ValueError('Unsupported file format')
         infile.seek(0)
 
         if source_program == 'ZET9':
             return {"source_program": source_program,
                     "angles": _read_zet9(infile)}
+        else:
+            raise ValueError('Unsupported file format')
 
 
-def read(filename):
+def read(filename: str) -> Dict[str, Any]:
     if filename.endswith('.json'):
         with open(filename) as file:
             j = json.load(file)
@@ -71,7 +71,7 @@ def read(filename):
         return _read_with_encoding(filename, 'cp1252')
 
 
-def main():
+def main() -> None:
     """Main function"""
     print(read(sys.argv[1]))
 

@@ -19,6 +19,7 @@ CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
 
 DATA_DIR = Path('aqCHARTS/aq_temp')
 
+
 def load_data(filename=None):
     try:
         if not filename:
@@ -61,7 +62,7 @@ class App(tk.Tk):
             self.aspects()
         elif event.keysym == 'Escape':
             self.focus_set()
-    
+
     def turned_axes_frame_reset(self):
         self.turned_axes_frame.reset()
 
@@ -107,7 +108,7 @@ class App(tk.Tk):
         else:
             self.chart.aspects(self.data['chart_angles'], self.cycle)
         self.aspects_on = not self.aspects_on
-    
+
     def _build_gui(self):
         menubar = tk.Menu(self)
 
@@ -160,7 +161,7 @@ class App(tk.Tk):
 
         self.tv = widgets.TreeviewPanel(right_frame, self.data)
         self.tv.pack(side=tk.TOP)
-    
+
     def _connect_widgets(self):
         self.harmonic_frame.set_spinbox_command(self.turned_axes_frame.reset)
         self.turned_axes_frame.set_spinbox_command(self.harmonic_frame.reset)
