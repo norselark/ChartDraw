@@ -1,7 +1,6 @@
 == Backlog ==
 - Select number of planets to draw (classical vs. modern)
 - Restrict number of planets to include in aspect drawing
-- Harmonic selection in angle table
 - Whether angle table differs from chart angles
 - Disable turned when harmonic is active?
 - Information: Turned is meaningless within harmonic (words)
@@ -15,3 +14,4 @@
 - Left justified text
 - Draw chords with lines, not arcs
 - Save and load configurations
+- Harmonic selection in angle table
