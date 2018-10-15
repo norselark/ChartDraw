@@ -11,18 +11,33 @@ GLYPHS = {
     'Neptune': u'\u2646',
     'Pluto': u'\u2647',
     'Node': u'\u260a',
-    'Ari': u'\u2648',
-    'Tau': u'\u2649',
-    'Gem': u'\u264a',
-    'Can': u'\u264b',
-    'Leo': u'\u264c',
-    'Vir': u'\u264d',
-    'Lib': u'\u264e',
-    'Sco': u'\u264f',
-    'Sag': u'\u2650',
-    'Cap': u'\u2651',
-    'Aqu': u'\u2652',
-    'Psc': u'\u2653'
+    'Ari': '♈',
+    'Tau': '♉',
+    'Gem': '♊',
+    'Can': '♋',
+    'Leo': '♌',
+    'Vir': '♍',
+    'Lib': '♎',
+    'Sco': '♏',
+    'Sag': '♐',
+    'Cap': '♑',
+    'Aqu': '♒',
+    'Psc': '♓'
+}
+
+EMOJI = {
+    'Ari': '♈\uFE0F',
+    'Tau': '♉\uFE0F',
+    'Gem': '♊\uFE0F',
+    'Can': '♋\uFE0F',
+    'Leo': '♌\uFE0F',
+    'Vir': '♍\uFE0F',
+    'Lib': '♎\uFE0F',
+    'Sco': '♏\uFE0F',
+    'Sag': '♐\uFE0F',
+    'Cap': '♑\uFE0F',
+    'Aqu': '♒\uFE0F',
+    'Psc': '♓\uFE0F'
 }
 
 blue = '#0f0e9d'
