@@ -30,3 +30,4 @@ switch.sw0
 choice.sw0
 LICENSE
 .mypy_cache/
+/*.egg-info/
