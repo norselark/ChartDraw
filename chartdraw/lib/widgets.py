@@ -8,13 +8,14 @@ from typing import Callable, Mapping, Optional
 from .utils import harmonics, truncate_rounding
 
 
-def handler(spinbox, event):
+def handler(spinbox, event) -> Optional[str]:
     if event.keysym == 'Return':
         spinbox.apply_command()
     if event.keysym in ['Up', 'Down']:
         spinbox.spinbox_command()
     if event.keysym in ['a', 't', 'h']:
         return "break"
+    return None
 
 
 class TreeviewPanel(tk.Frame):
@@ -96,7 +97,7 @@ class TreeviewPanel(tk.Frame):
             val = int(val)
             if val >= 1:
                 self.fill_data(harmonic=val)
-        except Exception:
+        except ValueError:
             messagebox.showwarning(
                 'Harmonic', 'The harmonic number must be a positive integer')
 
@@ -122,34 +123,31 @@ class HarmonicSelection(tk.Frame):
         self.spinbox.configure(command=command)
         self.spinbox_command = command
 
-    def get(self):
+    def get(self) -> Optional[int]:
         if self.validate():
             return int(self.spinbox.get())
-        else:
-            return None
+        return None
 
-    def handler(self, event):
+    def handler(self, event) -> Optional[str]:
         if event.keysym == 'Return':
             self.apply_command()
         if event.keysym in ['Up', 'Down']:
             self.spinbox_command()
         if event.keysym in ['a', 't', 'h']:
             return "break"
+        return None
 
     def reset(self):
         self.spinbox.delete(0, 'end')
         self.spinbox.insert(0, '1')
 
-    def validate(self):
+    def validate(self) -> bool:
         val = self.spinbox.get()
         try:
-            val = int(val)
-            if val >= 1:
-                return True
-        except Exception:
-            pass
-        messagebox.showwarning(
-            'Harmonic', 'The harmonic number must be a positive integer')
+            return int(val) >= 1
+        except ValueError:
+            messagebox.showwarning(
+                'Harmonic', 'The harmonic number must be a positive integer')
         return False
 
 
@@ -179,21 +177,17 @@ class CycleSelection(tk.Frame):
     def get(self) -> Optional[int]:
         if self.validate():
             return int(self.spinbox.get())
-        else:
-            return None
+        return None
 
     def reset(self):
         self.spinbox.delete(0, 'end')
         self.spinbox.insert(0, '1')
 
-    def validate(self):
+    def validate(self) -> bool:
         val = self.spinbox.get()
         try:
-            val = int(val)
-            if val >= 1:
-                return True
-        except Exception:
-            pass
-        messagebox.showwarning(
-            'Cycle', 'The cycle number must be a positive integer')
+            return int(val) >= 1
+        except ValueError:
+            messagebox.showwarning(
+                'Cycle', 'The cycle number must be a positive integer')
         return False

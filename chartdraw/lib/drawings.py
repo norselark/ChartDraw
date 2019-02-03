@@ -1,5 +1,5 @@
 from itertools import combinations
-from typing import List, Optional, Sequence, Tuple, Union  # noqa: F401
+from typing import List, Optional, Sequence, Tuple  # noqa: F401
 
 from .constants import (
     black, blue, green, lightblue, lightteal, red, teal, white
@@ -20,7 +20,7 @@ class Chart():
                    angles: Sequence[float],
                    superimposed: Optional[Sequence[float]] = None,
                    cycle: int = 1,
-                   axes_text: Tuple[str, str]=('S', 'E')) -> None:
+                   axes_text: Tuple[str, str] = ('S', 'E')) -> None:
         start_of_zodiac = mirror_angle(angles[-1])
         cycleoffset = 30 * (cycle - 1)
         if cycle != 1:

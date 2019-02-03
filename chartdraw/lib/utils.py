@@ -54,8 +54,8 @@ def asp(a: float, b: float, orbis: int = 8) -> Optional[Tuple[int, float]]:
         A tuple of the basic angle and a number between 0 and 1 indicating
         how close to exact the angle is
     """
-    dist = abs(a - b)
-    angle = min(dist, 360 - dist)
+    distance = abs(a - b)
+    angle = min(distance, 360 - distance)
     aspects = [0, 30, 60, 90, 120, 180]
     for aspect in aspects:
         if aspect == 30:

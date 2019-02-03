@@ -29,8 +29,7 @@ def deviation_gradient(angle: float, target: float) -> float:
     "Gradient for a single angle"
     if is_sorted(angle, target):
         return -dist(angle, target)
-    else:
-        return dist(angle, target)
+    return dist(angle, target)
 
 
 def total_loss(angles: Sequence[float], targets: Sequence[float]) -> float:

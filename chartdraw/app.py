@@ -8,7 +8,6 @@ import tkinter as tk
 import tkinter.filedialog as filedialog
 
 from . import read_astro
-
 from .lib import widgets
 from .lib.constants import GLYPHS, PLANETS
 from .lib.drawings import Chart
