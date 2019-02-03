@@ -3,7 +3,7 @@
 import json
 import re
 import sys
-from typing import Match, TextIO, List, Dict, Any
+from typing import Any, Dict, List, Match, TextIO
 
 from lib.utils import dms_to_deg
 

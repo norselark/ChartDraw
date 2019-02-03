@@ -1,13 +1,13 @@
 from itertools import combinations
-from typing import Sequence, Tuple, Union, Optional, List  # noqa: F401
+from typing import List, Optional, Sequence, Tuple, Union  # noqa: F401
 
-from lib.utils import mirror_angle, asp
-from lib.constants import GLYPHS, PLANETS, ZODIAC
 from lib.constants import (
-    white, black, blue, lightblue, teal, lightteal, red, green
+    black, blue, green, lightblue, lightteal, red, teal, white
 )
+from lib.constants import GLYPHS, PLANETS, ZODIAC
 from lib.optimizer import optimize
 from lib.transform_canvas import TransformCanvas
+from lib.utils import asp, mirror_angle
 
 ARROW_COORDS = [(0, -3), (5, -3), (15, 0), (5, 3), (0, 3)]
 

@@ -2,17 +2,18 @@
 """Module to manage the user interface"""
 
 import json
+from pathlib import Path
 import sys
 import tkinter as tk
 import tkinter.filedialog as filedialog
-from pathlib import Path
 
 import read_astro
-from lib.transform_canvas import TransformCanvas
+
 from lib import widgets
-from lib.utils import truncate_rounding, harmonics
-from lib.drawings import Chart
 from lib.constants import GLYPHS, PLANETS
+from lib.drawings import Chart
+from lib.transform_canvas import TransformCanvas
+from lib.utils import harmonics, truncate_rounding
 
 CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
                '2-D Turned\nDerived houses\nRadix Quadrants']

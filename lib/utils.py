@@ -1,9 +1,8 @@
 """Functions used by aq_draw"""
 
-from typing import Tuple, Optional, Sequence, List
+from typing import List, Optional, Sequence, Tuple
 
 from lib.constants import ZODIAC as ZODIAC_SIGNS
-from lib.constants import EMOJI
 
 PPINT = 13
 HPINT = 12
@@ -26,7 +25,7 @@ def truncate_rounding(angle: float) -> str:
     if i > 59:
         i -= 60
         int_part += 1
-    return "{:02}° {:02}' {}".format(int_part, i, EMOJI[zodiac_sign])
+    return "{:02}° {:02}' {}".format(int_part, i, zodiac_sign)
 
 
 def dms_to_deg(degrees: int, minutes: int, seconds: float) -> float:

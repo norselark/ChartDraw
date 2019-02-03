@@ -1,8 +1,9 @@
 """A subclass of Canvas to make it easier to work with polar coordinates."""
 
+from math import cos, radians, sin
 from tkinter import Canvas
-from math import cos, sin, radians
-from typing import Iterable, Tuple, List
+from typing import Iterable, List, Tuple
+
 from lib.utils import complex_to_coords
 
 Vec2D = Tuple[float, float]

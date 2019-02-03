@@ -1,10 +1,9 @@
 """A selection of widgets for use in the GUI"""
 from functools import partial
-from typing import Mapping, Optional, Callable
-
 import tkinter as tk
 from tkinter import messagebox
 from tkinter.ttk import Treeview
+from typing import Callable, Mapping, Optional
 
 from lib.utils import harmonics, truncate_rounding
 

@@ -1,8 +1,9 @@
 "Optimize angular positions to minimize overlap"
 
-from lib.utils import dist, is_sorted
 from itertools import combinations
-from typing import Sequence, List
+from typing import List, Sequence
+
+from lib.utils import dist, is_sorted
 
 OPTIMIZE_STEPS = 30
 LEARN_RATE = 0.1

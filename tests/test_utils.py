@@ -1,7 +1,7 @@
-from lib.utils import truncate_rounding, complex_to_coords, asp, harmonics
-import lib.utils as utils
-
 import pytest
+
+import lib.utils as utils
+from lib.utils import asp, complex_to_coords, harmonics, truncate_rounding
 
 
 def test_truncate_rounding():
