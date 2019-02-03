@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from lib.transform_canvas import TransformCanvas
+from chartdraw.lib.transform_canvas import TransformCanvas
 
 
 tc = TransformCanvas()

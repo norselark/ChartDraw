@@ -4,7 +4,7 @@ from math import cos, radians, sin
 from tkinter import Canvas
 from typing import Iterable, List, Tuple
 
-from lib.utils import complex_to_coords
+from .utils import complex_to_coords
 
 Vec2D = Tuple[float, float]
 CoordList = Iterable[Vec2D]

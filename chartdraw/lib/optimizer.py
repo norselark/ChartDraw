@@ -3,7 +3,7 @@
 from itertools import combinations
 from typing import List, Sequence
 
-from lib.utils import dist, is_sorted
+from .utils import dist, is_sorted
 
 OPTIMIZE_STEPS = 30
 LEARN_RATE = 0.1

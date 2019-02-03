@@ -9,11 +9,11 @@ import tkinter.filedialog as filedialog
 
 import read_astro
 
-from lib import widgets
-from lib.constants import GLYPHS, PLANETS
-from lib.drawings import Chart
-from lib.transform_canvas import TransformCanvas
-from lib.utils import harmonics, truncate_rounding
+from .lib import widgets
+from .lib.constants import GLYPHS, PLANETS
+from .lib.drawings import Chart
+from .lib.transform_canvas import TransformCanvas
+from .lib.utils import harmonics, truncate_rounding
 
 CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
                '2-D Turned\nDerived houses\nRadix Quadrants']

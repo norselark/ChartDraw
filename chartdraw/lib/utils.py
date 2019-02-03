@@ -2,7 +2,7 @@
 
 from typing import List, Optional, Sequence, Tuple
 
-from lib.constants import ZODIAC as ZODIAC_SIGNS
+from .constants import ZODIAC as ZODIAC_SIGNS
 
 PPINT = 13
 HPINT = 12

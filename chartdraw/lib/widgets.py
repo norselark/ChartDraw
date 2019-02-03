@@ -5,7 +5,7 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from typing import Callable, Mapping, Optional
 
-from lib.utils import harmonics, truncate_rounding
+from .utils import harmonics, truncate_rounding
 
 
 def handler(spinbox, event):
