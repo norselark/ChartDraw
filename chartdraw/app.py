@@ -7,7 +7,7 @@ import sys
 import tkinter as tk
 import tkinter.filedialog as filedialog
 
-import read_astro
+from . import read_astro
 
 from .lib import widgets
 from .lib.constants import GLYPHS, PLANETS
@@ -180,6 +180,10 @@ class App(tk.Tk):
             json.dump(data, file)
 
 
-if __name__ == '__main__':
+def main():
     app = App()
     app.mainloop()
+
+
+if __name__ == '__main__':
+    main()

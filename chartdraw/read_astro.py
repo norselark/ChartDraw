@@ -5,7 +5,7 @@ import re
 import sys
 from typing import Any, Dict, List, Match, TextIO
 
-from lib.utils import dms_to_deg
+from .lib.utils import dms_to_deg
 
 NUM_HIGH_PLANETS = 11
 ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',

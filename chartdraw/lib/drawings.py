@@ -1,7 +1,7 @@
 from itertools import combinations
 from typing import List, Optional, Sequence, Tuple, Union  # noqa: F401
 
-from lib.constants import (
+from .constants import (
     black, blue, green, lightblue, lightteal, red, teal, white
 )
 from .constants import GLYPHS, PLANETS, ZODIAC
