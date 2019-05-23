@@ -5,10 +5,11 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from typing import Callable, Mapping, Optional
 
+from .constants import NUM_HIGH_PLANETS
 from .utils import harmonics, truncate_rounding
 
 
-def handler(spinbox, event) -> Optional[str]:
+def spinbox_handler(spinbox, event) -> Optional[str]:
     if event.keysym == 'Return':
         spinbox.apply_command()
     if event.keysym in ['Up', 'Down']:
@@ -58,7 +59,7 @@ class TreeviewPanel(tk.Frame):
         self.harm_text.pack(side=tk.LEFT)
         self.harm = tk.Spinbox(self.harm_panel, from_=1, to=300, width=5)
         self.harm.pack(side=tk.LEFT, padx=5)
-        self.harm.bind('<Key>', partial(handler, self))
+        self.harm.bind('<Key>', partial(spinbox_handler, self))
 
         self.data = data
         self.fill_data(harmonic=1)
@@ -113,7 +114,7 @@ class HarmonicSelection(tk.Frame):
         box_frame.pack()
         self.spinbox = tk.Spinbox(box_frame, from_=1, to=300, width=5)
         self.spinbox.pack(side='left', padx=5)
-        self.spinbox.bind('<Key>', partial(handler, self))
+        self.spinbox.bind('<Key>', partial(spinbox_handler, self))
 
         self.ok_button = tk.Button(
             box_frame, text='Apply', command=apply_command)
@@ -126,15 +127,6 @@ class HarmonicSelection(tk.Frame):
     def get(self) -> Optional[int]:
         if self.validate():
             return int(self.spinbox.get())
-        return None
-
-    def handler(self, event) -> Optional[str]:
-        if event.keysym == 'Return':
-            self.apply_command()
-        if event.keysym in ['Up', 'Down']:
-            self.spinbox_command()
-        if event.keysym in ['a', 't', 'h']:
-            return "break"
         return None
 
     def reset(self):
@@ -168,7 +160,7 @@ class CycleSelection(tk.Frame):
             box_frame, text='Apply', command=apply_command)
         self.ok_button.pack(side='left')
 
-        self.spinbox.bind('<Key>', partial(handler, self))
+        self.spinbox.bind('<Key>', partial(spinbox_handler, self))
 
     def set_spinbox_command(self, command: Callable):
         self.spinbox.configure(command=command)
@@ -191,3 +183,30 @@ class CycleSelection(tk.Frame):
             messagebox.showwarning(
                 'Cycle', 'The cycle number must be a positive integer')
         return False
+
+
+class PlanetLimiter(tk.Frame):
+    def __init__(self, parent: tk.BaseWidget, *args) -> None:
+        super().__init__(parent, *args)
+
+        tk.Label(self, text='Number of planets:').pack()
+
+        box_frame = tk.Frame(self)
+        box_frame.pack()
+        self.spinbox = tk.Spinbox(box_frame, from_=1,
+                                  to=NUM_HIGH_PLANETS, width=5)
+        self.spinbox.pack(side='left', padx=5)
+
+        self.spinbox.bind('<Key>', self.handler)
+    
+    def apply_command(self):
+        pass
+
+    def handler(self, event) -> Optional[str]:
+        if event.keysym == 'Return':
+            self.apply_command()
+        if event.keysym in ['a', 't', 'h']:
+            return "break"
+        return None
+    
+

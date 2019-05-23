@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Module to manage the user interface"""
 
+import argparse
 import json
 from pathlib import Path
-import sys
 import tkinter as tk
 import tkinter.filedialog as filedialog
+from typing import Any, Dict, Optional
 
 from . import read_astro
 from .lib import widgets
@@ -18,15 +19,19 @@ CYCLE_TEXTS = ['2-D Radix\nHorizon view\nOrigo: Tropos',
                '2-D Turned\nDerived houses\nRadix Quadrants']
 
 DATA_DIR = Path('aqCHARTS/aq_temp')
+DEFAULT_DATA_FILE = DATA_DIR / 'Astro-1.txt'
 
 
-def load_data(filename=None):
-    try:
-        if not filename:
-            filename = sys.argv[1]
-        data = read_astro.read(filename)
-    except (FileNotFoundError, IndexError):
-        data = read_astro.read(str(DATA_DIR / 'Astro-1.txt'))
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('data-file', type=Path)
+    return parser.parse_args()
+
+
+def load_data(filename=Optional[Path]) -> Dict[str, Any]:
+    if not filename:
+        filename = DEFAULT_DATA_FILE
+    data = read_astro.read(DEFAULT_DATA_FILE)
 
     angles = data['angles']
     return {"glyphs": [GLYPHS[p] for p in PLANETS] + ['MC', 'ASC'],
@@ -150,6 +155,8 @@ class App(tk.Tk):
                                  command=self.reset_chart)
         reset_button.pack(side=tk.TOP)
 
+        self.planet_limiter = widgets.PlanetLimiter(right_frame)
+        self.planet_limiter.pack()
         self.harmonic_frame = widgets.HarmonicSelection(
             right_frame,
             apply_command=self.harmonic)

@@ -1,13 +1,14 @@
 """Reads tables from ZET9"""
 
 import json
+from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Match, TextIO
+from typing import Any, Dict, IO, List, Match
 
 from .lib.utils import dms_to_deg
+from .lib.constants import NUM_HIGH_PLANETS
 
-NUM_HIGH_PLANETS = 11
 ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
                'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
 
@@ -22,7 +23,7 @@ def match_to_degrees(match: Match) -> float:
     return dms_to_deg(degree, int(minute), float(second))
 
 
-def _read_zet9(infile: TextIO) -> List[float]:
+def _read_zet9(infile: IO[str]) -> List[float]:
     planet_regexp = '^\\w+\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+).*$'
     asc_regexp = '^I\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
     mc_regexp = '^X\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
@@ -41,8 +42,8 @@ def _read_zet9(infile: TextIO) -> List[float]:
     return planet_angles[:NUM_HIGH_PLANETS] + [mc, asc]
 
 
-def _read_with_encoding(filename: str, encoding: str) -> Dict:
-    with open(filename, encoding=encoding) as infile:
+def _read_with_encoding(filename: Path, encoding: str) -> Dict:
+    with filename.open(encoding=encoding) as infile:
         # Sniff file to find source program
         line = infile.readline()
         if line.startswith('Sun'):
@@ -56,9 +57,9 @@ def _read_with_encoding(filename: str, encoding: str) -> Dict:
             raise ValueError('Unsupported file format')
 
 
-def read(filename: str) -> Dict[str, Any]:
-    if filename.endswith('.json'):
-        with open(filename) as file:
+def read(filename: Path) -> Dict[str, Any]:
+    if filename.suffix == '.json':
+        with filename.open() as file:
             j = json.load(file)
             if 'angles' in j:
                 return j
@@ -73,7 +74,7 @@ def read(filename: str) -> Dict[str, Any]:
 
 def main() -> None:
     """Main function"""
-    print(read(sys.argv[1]))
+    print(read(Path(sys.argv[1])))
 
 
 if __name__ == '__main__':

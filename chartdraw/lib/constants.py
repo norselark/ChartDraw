@@ -54,3 +54,5 @@ ZODIAC = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir',
 
 PLANETS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter',
            'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Node']
+           
+NUM_HIGH_PLANETS = 11

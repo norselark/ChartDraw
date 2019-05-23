@@ -4,7 +4,7 @@ from typing import List, Optional, Sequence, Tuple  # noqa: F401
 from .constants import (
     black, blue, green, lightblue, lightteal, red, teal, white
 )
-from .constants import GLYPHS, PLANETS, ZODIAC
+from .constants import GLYPHS, NUM_HIGH_PLANETS, PLANETS, ZODIAC
 from .optimizer import optimize
 from .transform_canvas import TransformCanvas
 from .utils import asp, mirror_angle
@@ -21,6 +21,7 @@ class Chart():
                    superimposed: Optional[Sequence[float]] = None,
                    cycle: int = 1,
                    axes_text: Tuple[str, str] = ('S', 'E')) -> None:
+        angles = angles[:NUM_HIGH_PLANETS]
         start_of_zodiac = mirror_angle(angles[-1])
         cycleoffset = 30 * (cycle - 1)
         if cycle != 1:

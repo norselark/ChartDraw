@@ -71,6 +71,6 @@ def test_dms_to_deg():
     """Should convert degrees, minutes and seconds to bare degrees"""
     assert utils.dms_to_deg(80, 0, 0) == 80
     assert utils.dms_to_deg(70, 30, 0) == 70.5
-    assert utils.dms_to_deg(8, 20, 0) == 8 + 1/3
+    assert utils.dms_to_deg(8, 20, 0) == 8 + 1 / 3
     with pytest.raises(ValueError):
         utils.dms_to_deg(80, 80, 80)
