@@ -9,8 +9,20 @@ from typing import Any, Dict, IO, List, Match
 from .lib.utils import dms_to_deg
 from .lib.constants import NUM_HIGH_PLANETS
 
-ZODIAC_ZET9 = ['Ari', 'Tau', 'Gem', 'Cnc', 'Leo', 'Vir',
-               'Lib', 'Sco', 'Sgr', 'Cap', 'Aqr', 'Psc']
+ZODIAC_ZET9 = [
+    "Ari",
+    "Tau",
+    "Gem",
+    "Cnc",
+    "Leo",
+    "Vir",
+    "Lib",
+    "Sco",
+    "Sgr",
+    "Cap",
+    "Aqr",
+    "Psc",
+]
 
 
 def match_to_degrees(match: Match) -> float:
@@ -24,9 +36,9 @@ def match_to_degrees(match: Match) -> float:
 
 
 def _read_zet9(infile: IO[str]) -> List[float]:
-    planet_regexp = '^\\w+\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+).*$'
-    asc_regexp = '^I\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
-    mc_regexp = '^X\\s+(\\d+)°(\\d+)\'(\\d+\\.\\d+)"(\\w+)$'
+    planet_regexp = "^\\w+\\s+(\\d+)°(\\d+)'(\\d+\\.\\d+)\"(\\w+).*$"
+    asc_regexp = "^I\\s+(\\d+)°(\\d+)'(\\d+\\.\\d+)\"(\\w+)$"
+    mc_regexp = "^X\\s+(\\d+)°(\\d+)'(\\d+\\.\\d+)\"(\\w+)$"
 
     planet_angles = []
     for line in infile:
@@ -46,30 +58,29 @@ def _read_with_encoding(filename: Path, encoding: str) -> Dict:
     with filename.open(encoding=encoding) as infile:
         # Sniff file to find source program
         line = infile.readline()
-        if line.startswith('Sun'):
-            source_program = 'ZET9'
+        if line.startswith("Sun"):
+            source_program = "ZET9"
         infile.seek(0)
 
-        if source_program == 'ZET9':
-            return {"source_program": source_program,
-                    "angles": _read_zet9(infile)}
+        if source_program == "ZET9":
+            return {"source_program": source_program, "angles": _read_zet9(infile)}
         else:
-            raise ValueError('Unsupported file format')
+            raise ValueError("Unsupported file format")
 
 
 def read(filename: Path) -> Dict[str, Any]:
-    if filename.suffix == '.json':
+    if filename.suffix == ".json":
         with filename.open() as file:
             j = json.load(file)
-            if 'angles' in j:
+            if "angles" in j:
                 return j
             else:
-                raise ValueError('JSON file does not contain required fields')
+                raise ValueError("JSON file does not contain required fields")
     # Not JSON: Parse as ZET9 file
     try:
-        return _read_with_encoding(filename, 'utf8')
+        return _read_with_encoding(filename, "utf8")
     except UnicodeDecodeError:
-        return _read_with_encoding(filename, 'cp1252')
+        return _read_with_encoding(filename, "cp1252")
 
 
 def main() -> None:
@@ -77,5 +88,5 @@ def main() -> None:
     print(read(Path(sys.argv[1])))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

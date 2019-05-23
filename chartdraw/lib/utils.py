@@ -31,9 +31,9 @@ def truncate_rounding(angle: float) -> str:
 def dms_to_deg(degrees: int, minutes: int, seconds: float) -> float:
     """Convert a DMS angle to decimal degrees."""
     if minutes < 0 or minutes >= 60:
-        raise ValueError('Minutes must be 0 <= m < 60')
+        raise ValueError("Minutes must be 0 <= m < 60")
     if seconds < 0 or seconds >= 60:
-        raise ValueError('Seconds must be 0 <= s < 60')
+        raise ValueError("Seconds must be 0 <= s < 60")
     return degrees + (minutes * 60 + seconds) / 3600
 
 

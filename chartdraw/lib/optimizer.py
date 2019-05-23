@@ -13,16 +13,16 @@ OVERLAP_DIST = 6
 
 
 def overlap_loss(angles: Sequence[float]) -> float:
-    return sum(max(0, OVERLAP_DIST - dist(a, b))
-               for a, b in combinations(angles, 2))
+    return sum(max(0, OVERLAP_DIST - dist(a, b)) for a, b in combinations(angles, 2))
 
 
 def deviation_loss(angles: Sequence[float], targets: Sequence[float]) -> float:
     assert len(angles) == len(targets)
-    return (DIST_WEIGHT
-            * sum((target - angle) ** 2
-                  for target, angle in zip(targets, angles))
-            / (2 * len(angles)))
+    return (
+        DIST_WEIGHT
+        * sum((target - angle) ** 2 for target, angle in zip(targets, angles))
+        / (2 * len(angles))
+    )
 
 
 def deviation_gradient(angle: float, target: float) -> float:
@@ -40,7 +40,7 @@ def total_loss(angles: Sequence[float], targets: Sequence[float]) -> float:
 def optimize(angles: Sequence[float]) -> List[float]:
     candidate = [ang for ang in angles]
     for _ in range(OPTIMIZE_STEPS):
-        deltas = [0. for __ in angles]  # Initialize to zero
+        deltas = [0.0 for __ in angles]  # Initialize to zero
         # Compute overlap gradient
         for i, j in combinations(range(len(angles)), 2):
             ang_i = candidate[i]
@@ -53,11 +53,14 @@ def optimize(angles: Sequence[float]) -> List[float]:
                     deltas[i] += OVERLAP_WEIGHT
                     deltas[j] -= OVERLAP_WEIGHT
         # Compute deviation gradient
-        dev_gradient = [DIST_WEIGHT * deviation_gradient(ang, tgt)
-                        for ang, tgt in zip(candidate, angles)]
+        dev_gradient = [
+            DIST_WEIGHT * deviation_gradient(ang, tgt)
+            for ang, tgt in zip(candidate, angles)
+        ]
         for i, g in enumerate(dev_gradient):
             deltas[i] += g
         # Perform update
-        candidate = [(ang + LEARN_RATE * delta) % 360
-                     for ang, delta in zip(candidate, deltas)]
+        candidate = [
+            (ang + LEARN_RATE * delta) % 360 for ang, delta in zip(candidate, deltas)
+        ]
     return candidate

@@ -30,14 +30,14 @@ class TransformCanvas(Canvas):
         """
         self.center = complex(new_center[0], new_center[1])
 
-    def set_rotation(self, angle: float, mode: str = 'degrees') -> None:
+    def set_rotation(self, angle: float, mode: str = "degrees") -> None:
         """Set an angle relative to the origin.
 
         Args:
             angle: Angle, anticlockwise with 0 to the right
             mode: Defaults to 'degrees'.
         """
-        if mode == 'degrees':
+        if mode == "degrees":
             angle = radians(angle)
         self.rotation = complex(cos(angle), -sin(angle))
 
@@ -81,12 +81,15 @@ class TransformCanvas(Canvas):
         new_coords = complex_to_coords(complex_coords)
         self.create_polygon(new_coords, **kwargs)
 
-    def chord(self, radius: float,
-              start_angle: float, end_angle: float, **kwargs) -> None:
+    def chord(
+        self, radius: float, start_angle: float, end_angle: float, **kwargs
+    ) -> None:
         self.set_rotation(0)
         start_angle = radians(start_angle)
         end_angle = radians(end_angle)
-        coords = [(radius * cos(start_angle), -radius * sin(start_angle)),
-                  (radius * cos(end_angle), -radius * sin(end_angle))]
+        coords = [
+            (radius * cos(start_angle), -radius * sin(start_angle)),
+            (radius * cos(end_angle), -radius * sin(end_angle)),
+        ]
         new_coords = self.apply_transform(coords)
         self.create_line(complex_to_coords(new_coords), **kwargs)
