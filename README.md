@@ -22,5 +22,5 @@ The chart data may be a ZET 9 text file (Table.txt), or
 a configuration previously exported from ChartDraw.
 
 For information about the program, see
-<https://www.janpjoenland.com/chartdraw/>.
+<https://astrologicallyspoken.com/python-astrology-chartdraw/>.
 
